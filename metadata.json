@@ -1,0 +1,8 @@
+{
+  "name": "Remix  aprogra finall one ",
+  "description": "aprogra webiste",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
