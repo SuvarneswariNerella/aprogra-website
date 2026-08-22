@@ -7,14 +7,16 @@ gsap.registerPlugin(ScrollTrigger);
 export default function AboutCompany() {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Left Visual Refs
+  // Left Side Visuals
   const vis1Ref = useRef<HTMLDivElement>(null);
+  const vis1ContentRef = useRef<HTMLDivElement>(null);
   const vis2Ref = useRef<HTMLDivElement>(null);
   const vis3Ref = useRef<HTMLDivElement>(null);
   const vis4Ref = useRef<HTMLDivElement>(null);
 
-  // Right Text Refs
+  // Right Side Text
   const txt1Ref = useRef<HTMLDivElement>(null);
+  const txt1ContentRef = useRef<HTMLDivElement>(null);
   const txt2Ref = useRef<HTMLDivElement>(null);
   const txt3Ref = useRef<HTMLDivElement>(null);
   const txt4Ref = useRef<HTMLDivElement>(null);
@@ -49,6 +51,23 @@ export default function AboutCompany() {
 
       gsap.set([vis2Ref.current, vis3Ref.current, vis4Ref.current], { opacity: 0 });
       gsap.set(vis1Ref.current, { opacity: 1 });
+
+      // ENTRANCE ANIMATION FOR PHASE 1
+      gsap.fromTo(vis1ContentRef.current,
+        { opacity: 0, x: -60 },
+        {
+          opacity: 1, x: 0, duration: 1.4, ease: "power3.out",
+          scrollTrigger: { trigger: container, start: "top 30%", once: true }
+        }
+      );
+
+      gsap.fromTo(txt1ContentRef.current,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.4,
+          scrollTrigger: { trigger: container, start: "top 30%", once: true }
+        }
+      );
 
       // PHASE 1 -> PHASE 2
       tl.to(txt1Ref.current, { clipPath: "inset(100% 0 0 0)", opacity: 0, duration: 1 }, 1)
@@ -95,7 +114,8 @@ export default function AboutCompany() {
           
           {/* VISUAL 1: Geometric Nodes Blueprint SVG */}
           <div ref={vis1Ref} className="absolute inset-0 p-8 flex flex-col items-center justify-center transition-opacity">
-            <svg viewBox="0 0 400 300" className="w-full h-full max-h-80">
+            <div ref={vis1ContentRef} className="w-full h-full flex flex-col items-center justify-center opacity-0">
+              <svg viewBox="0 0 400 300" className="w-full h-full max-h-80">
               {/* Lines */}
               <line x1="80" y1="80" x2="200" y2="150" stroke="#0B0D12" strokeWidth="1.5" strokeDasharray="4 4" />
               <line x1="320" y1="80" x2="200" y2="150" stroke="#0B0D12" strokeWidth="1.5" />
@@ -112,7 +132,8 @@ export default function AboutCompany() {
               {/* Core */}
               <circle cx="200" cy="150" r="6" fill="#FFFFFF" />
             </svg>
-            <span className="text-xs font-mono uppercase tracking-wider text-[#0B0D12] mt-2 font-bold">Architecture Blueprint</span>
+              <span className="text-xs font-mono uppercase tracking-wider text-[#0B0D12] mt-4 font-bold">Engineering Operations</span>
+            </div>
           </div>
 
           {/* VISUAL 2: Pipeline Visualization Bars */}
@@ -193,16 +214,18 @@ export default function AboutCompany() {
         <div className="relative w-full h-full flex items-center p-6">
           
           {/* PHASE 1 TEXT */}
-          <div ref={txt1Ref} className="absolute inset-0 flex flex-col justify-center space-y-5">
-            <span className="text-badge text-[#0B0D12]">
-              Our Story
-            </span>
+          <div ref={txt1Ref} className="absolute inset-0 flex flex-col justify-center">
+            <div ref={txt1ContentRef} className="space-y-5 opacity-0">
+              <span className="text-badge text-[#0B0D12]">
+                Our Story
+              </span>
             <h2 className="text-h2 text-[#0B0D12]">
               Not just another dev shop.
             </h2>
-            <p className="text-body-lg text-[#5A5E6E]">
-              AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.
-            </p>
+              <p className="text-body-lg text-[#5A5E6E]">
+                AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.
+              </p>
+            </div>
           </div>
 
           {/* PHASE 2 TEXT */}

@@ -6,6 +6,7 @@ import {
   motion,
   useMotionValue,
   useTransform,
+  useInView,
   type ValueAnimationTransition,
 } from "motion/react";
 import {
@@ -66,13 +67,18 @@ export const CountingNumber = forwardRef<
 
     useImperativeHandle(ref, () => ({ startAnimation }));
 
+    const localRef = useRef<HTMLSpanElement>(null);
+    const isInView = useInView(localRef, { once: true, margin: "0px 0px -25% 0px" });
+
     useEffect(() => {
-      if (autoStart) startAnimation();
+      if (autoStart && isInView) {
+        startAnimation();
+      }
       return () => controlsRef.current?.stop();
-    }, [autoStart, startAnimation]);
+    }, [autoStart, isInView, startAnimation]);
 
     return (
-      <motion.span className={cn("tabular-nums", className)} {...props}>
+      <motion.span ref={localRef} className={cn("tabular-nums", className)} {...props}>
         {rounded}
       </motion.span>
     );

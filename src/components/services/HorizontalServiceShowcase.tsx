@@ -3,6 +3,7 @@ import { ArrowUpRight, CheckCircle2, ChevronLeft, ChevronRight, Compass } from '
 import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 import { ServiceItem } from './EditorialServiceSection';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -111,7 +112,7 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#0B0D12]/10 pb-4">
             
             {/* Title & Category */}
-            <div>
+            <ScrollReveal>
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[10px] font-mono font-medium text-[#0B0D12]">
                   02 / CAPABILITIES &amp; ARCHITECTURE
@@ -124,7 +125,7 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
               <h2 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#0B0D12]">
                 Core Engineering Disciplines
               </h2>
-            </div>
+            </ScrollReveal>
 
             {/* Navigation Pills & Arrow Controls */}
             <div className="flex items-center gap-3">
@@ -424,8 +425,8 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
 
                   </div>
                 </div>
-              );
-            })}
+                );
+              })}
           </div>
         </div>
 

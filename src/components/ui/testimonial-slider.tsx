@@ -40,16 +40,6 @@ export const Component = ({
   const isLockedRef = useRef<boolean>(false);
   const touchStartYRef = useRef<number | null>(null);
 
-  const heightFix = useCallback(() => {
-    if (testimonialsRef.current && testimonialsRef.current.parentElement) {
-      testimonialsRef.current.parentElement.style.height = `${testimonialsRef.current.clientHeight}px`;
-    }
-  }, []);
-
-  useEffect(() => {
-    heightFix();
-  }, [active, heightFix]);
-
   // Handle step change with locking mechanism
   const changeTestimonial = useCallback(
     (direction: "next" | "prev", e?: Event) => {
@@ -189,7 +179,6 @@ export const Component = ({
                 leave="transition-all duration-300 ease-in absolute inset-0"
                 leaveFrom="opacity-100 translate-y-0 scale-100"
                 leaveTo="opacity-0 -translate-y-3 scale-95"
-                beforeEnter={() => heightFix()}
               >
                 <img
                   className="relative left-1/2 top-4 sm:top-6 -translate-x-1/2 rounded-full object-cover shadow-sm ring-2 ring-[#0B0D12]/20"
@@ -205,22 +194,23 @@ export const Component = ({
       </div>
 
       {/* Quote Slider */}
-      <div className="mb-8 sm:mb-9 transition-all duration-150 ease-in-out">
-        <div className="relative flex flex-col min-h-[90px] justify-center" ref={testimonialsRef}>
+      <div className="mb-8 sm:mb-9">
+        <div className="grid items-center" ref={testimonialsRef}>
           {testimonials.map((testimonial, index) => (
             <Transition
               key={index}
               show={active === index}
-              enter="transition-all duration-500 ease-out order-first"
+              enter="transition-all duration-500 ease-out z-10"
               enterFrom="opacity-0 translate-y-3"
               enterTo="opacity-100 translate-y-0"
-              leave="transition-all duration-300 ease-in absolute inset-x-0"
+              leave="transition-all duration-300 ease-in z-0"
               leaveFrom="opacity-100 translate-y-0"
               leaveTo="opacity-0 -translate-y-3"
-              beforeEnter={() => heightFix()}
             >
-              <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#0B0D12] leading-relaxed px-4 sm:px-6 before:content-['\201C'] after:content-['\201D']">
-                {testimonial.quote}
+              <div className="col-start-1 row-start-1">
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-[#0B0D12] leading-relaxed px-4 sm:px-6 before:content-['\201C'] after:content-['\201D']">
+                  {testimonial.quote}
+                </div>
               </div>
             </Transition>
           ))}

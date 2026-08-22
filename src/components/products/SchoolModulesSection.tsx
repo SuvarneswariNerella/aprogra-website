@@ -11,6 +11,7 @@ import {
   Layers,
   GraduationCap
 } from 'lucide-react';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -168,110 +169,112 @@ export const SchoolModulesSection: React.FC<SchoolModulesSectionProps> = ({
           {/* ========================================================= */}
           <div className="lg:col-span-5 flex flex-col justify-center space-y-3 sm:space-y-3.5 text-left">
             
-            {/* Header Block with Product Badge */}
-            <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-xs font-semibold shadow-2xs">
-                <GraduationCap className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span className="text-[#FF4A1C] font-mono font-bold">Product #1</span>
-                <span className="text-[#5A5E6E]">· Education &amp; Daycare SaaS</span>
-              </div>
-              
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-[#0B0D12] leading-tight tracking-tight">
-                SmartSchool ERP <br />
-                <span className="text-[#FF4A1C] font-bold text-xl sm:text-2xl lg:text-3xl block mt-0.5">
-                  11 Core Modules &amp; Campus OS
-                </span>
-              </h2>
-              
-              <p className="text-xs sm:text-sm text-[#5A5E6E] leading-relaxed max-w-md">
-                A unified multi-tenant campus operating system engineered to digitize admissions CRM, biometric attendance, fee gateways, live GPS fleet telemetry, and Saraswati AI lesson planning.
-              </p>
-            </div>
-
-            {/* 4 Unified Enterprise KPI Metrics - Clean Horizontal Row */}
-            <div className="grid grid-cols-4 gap-2 pt-0.5">
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
-                  11
-                </span>
-                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                  Modules
-                </span>
+            <ScrollReveal className="space-y-6">
+              {/* Header Block with Product Badge */}
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-xs font-semibold shadow-2xs">
+                  <GraduationCap className="w-3.5 h-3.5 text-[#FF4A1C]" />
+                  <span className="text-[#FF4A1C] font-mono font-bold">Product #1</span>
+                  <span className="text-[#5A5E6E]">· Education &amp; Daycare SaaS</span>
+                </div>
+                
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-[#0B0D12] leading-tight tracking-tight">
+                  SmartSchool ERP <br />
+                  <span className="text-[#FF4A1C] font-bold text-xl sm:text-2xl lg:text-3xl block mt-0.5">
+                    11 Core Modules &amp; Campus OS
+                  </span>
+                </h2>
+                
+                <p className="text-xs sm:text-sm text-[#5A5E6E] leading-relaxed max-w-md">
+                  A unified multi-tenant campus operating system engineered to digitize admissions CRM, biometric attendance, fee gateways, live GPS fleet telemetry, and Saraswati AI lesson planning.
+                </p>
               </div>
 
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
-                  480+
-                </span>
-                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                  Screens
-                </span>
+              {/* 4 Unified Enterprise KPI Metrics - Clean Horizontal Row */}
+              <div className="grid grid-cols-4 gap-2 pt-0.5">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                  <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
+                    11
+                  </span>
+                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                    Modules
+                  </span>
+                </div>
+
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                  <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
+                    480+
+                  </span>
+                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                    Screens
+                  </span>
+                </div>
+
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                  <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
+                    99.9%
+                  </span>
+                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                    Uptime
+                  </span>
+                </div>
+
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                  <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
+                    120K+
+                  </span>
+                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                    Students
+                  </span>
+                </div>
               </div>
 
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
-                  99.9%
-                </span>
-                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                  Uptime
-                </span>
+              {/* Live Synchronized Focus Card */}
+              <div className="p-3 rounded-xl bg-white border border-[#0B0D12]/12 space-y-1.5 shadow-2xs hover:border-[#FF4A1C]/35 transition-all duration-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono uppercase text-[#5A5E6E] font-bold tracking-wider flex items-center gap-1.5">
+                    <Layers className="w-3 h-3 text-[#FF4A1C]" />
+                    Active Module in Stack
+                  </span>
+                  <span className="text-[10px] font-mono text-[#0B0D12] font-semibold bg-[#FAF8F5] border border-[#0B0D12]/10 px-2 py-0.5 rounded">
+                    {activeIndex + 1} / {modules.length}
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between gap-2">
+                  <span className="text-sm sm:text-base font-bold font-display text-[#0B0D12] leading-snug truncate">
+                    {String(activeIndex + 1).padStart(2, "0")}. {currentModule?.title}
+                  </span>
+                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF8F5] text-[#FF4A1C] border border-[#FF4A1C]/20 shrink-0">
+                    {currentModule?.tag || 'CORE'}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-1.5 pt-0.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
+                  <span className="text-[11px] sm:text-xs font-mono text-[#FF4A1C] font-semibold truncate">
+                    {currentModule?.kpi}
+                  </span>
+                </div>
               </div>
 
-              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
-                  120K+
-                </span>
-                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                  Students
-                </span>
+              {/* Action CTA Buttons */}
+              <div className="pt-0.5 flex flex-wrap gap-2.5 sm:gap-3 items-center">
+                <Link
+                  to="/contact"
+                  className="h-10 px-5 rounded-xl bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
+                >
+                  <span>Request Campus Demo</span>
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+                <Link
+                  to="/products/school-erp"
+                  className="h-10 px-4 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-xs sm:text-sm font-semibold transition-all shadow-2xs hover:shadow-xs flex items-center justify-center"
+                >
+                  Learn More
+                </Link>
               </div>
-            </div>
-
-            {/* Live Synchronized Focus Card */}
-            <div className="p-3 rounded-xl bg-white border border-[#0B0D12]/12 space-y-1.5 shadow-2xs hover:border-[#FF4A1C]/35 transition-all duration-200">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono uppercase text-[#5A5E6E] font-bold tracking-wider flex items-center gap-1.5">
-                  <Layers className="w-3 h-3 text-[#FF4A1C]" />
-                  Active Module in Stack
-                </span>
-                <span className="text-[10px] font-mono text-[#0B0D12] font-semibold bg-[#FAF8F5] border border-[#0B0D12]/10 px-2 py-0.5 rounded">
-                  {activeIndex + 1} / {modules.length}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-sm sm:text-base font-bold font-display text-[#0B0D12] leading-snug truncate">
-                  {String(activeIndex + 1).padStart(2, "0")}. {currentModule?.title}
-                </span>
-                <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF8F5] text-[#FF4A1C] border border-[#FF4A1C]/20 shrink-0">
-                  {currentModule?.tag || 'CORE'}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-1.5 pt-0.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
-                <span className="text-[11px] sm:text-xs font-mono text-[#FF4A1C] font-semibold truncate">
-                  {currentModule?.kpi}
-                </span>
-              </div>
-            </div>
-
-            {/* Action CTA Buttons */}
-            <div className="pt-0.5 flex flex-wrap gap-2.5 sm:gap-3 items-center">
-              <Link
-                to="/contact"
-                className="h-10 px-5 rounded-xl bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
-              >
-                <span>Request Campus Demo</span>
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                to="/products/school-erp"
-                className="h-10 px-4 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-xs sm:text-sm font-semibold transition-all shadow-2xs hover:shadow-xs flex items-center justify-center"
-              >
-                Learn More
-              </Link>
-            </div>
+            </ScrollReveal>
 
           </div>
 
@@ -281,7 +284,7 @@ export const SchoolModulesSection: React.FC<SchoolModulesSectionProps> = ({
           <div className="lg:col-span-7 flex flex-col justify-center items-center">
             
             {/* Top Control Bar: Modules Stack Badge + Step Indicators + Arrows */}
-            <div className="w-full max-w-2xl flex flex-wrap items-center justify-between gap-2.5 mb-3 px-1 select-none">
+            <div className="w-full max-w-2xl flex flex-wrap items-center justify-between gap-2.5 mb-8 px-1 select-none">
               
               {/* Stack Badge */}
               <div className="flex items-center gap-1.5 bg-[#FAF8F5] px-3 py-1.5 rounded-xl border border-[#0B0D12]/12 shadow-2xs">

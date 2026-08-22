@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 import { ArrowRight, Sparkles, MapPin, Clock, Briefcase, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -47,7 +48,12 @@ export default function Careers() {
       
       {/* 1. HERO SECTION */}
       <section className="px-6 max-w-7xl mx-auto py-12 md:py-16">
-        <div className="max-w-4xl space-y-6">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="max-w-4xl space-y-6"
+        >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 shadow-xs">
             <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
             <span className="text-badge text-[#0B0D12]">Careers at Aprogra</span>
@@ -61,7 +67,7 @@ export default function Careers() {
           <p className="text-body-lg text-[#5A5E6E] max-w-2xl">
             We are a tight-knit collective of systems architects, AI engineers, and product designers obsessed with craftsmanship, performance, and engineering velocity.
           </p>
-        </div>
+        </motion.div>
       </section>
 
       {/* 2. OPEN ROLES */}

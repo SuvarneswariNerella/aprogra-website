@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
@@ -279,7 +280,13 @@ export default function Hero() {
             
             {/* STATE 1: CORE VALUE PROPOSITION */}
             <div ref={state1LeftRef} className="space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-xs font-mono font-bold tracking-wider uppercase shadow-xs">
+              <motion.div 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="space-y-6"
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-xs font-mono font-bold tracking-wider uppercase shadow-xs">
                 <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
                 <span>Modern Software & AI Architecture</span>
               </div>
@@ -312,6 +319,7 @@ export default function Hero() {
                   Explore Products
                 </Link>
               </div>
+              </motion.div>
             </div>
 
             {/* STATE 2: 40+ SHIPPED PRODUCTS STORY */}

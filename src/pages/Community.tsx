@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import { 
   Sparkles, Search, Calendar, Clock, User, ArrowRight, 
   ChevronRight, BookOpen, CheckCircle2, 
   X, ThumbsUp, Code
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 export interface BlogPost {
   id: string;
@@ -218,6 +220,30 @@ export default function Community() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeArticle, setActiveArticle] = useState<BlogPost | null>(null);
   const [likedArticles, setLikedArticles] = useState<Record<string, boolean>>({});
+  const articleRef = useRef<HTMLDivElement>(null);
+
+  // Prevent background scrolling and handle Escape key when modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && activeArticle) {
+        setActiveArticle(null);
+      }
+    };
+
+    if (activeArticle) {
+      document.body.style.overflow = 'hidden';
+      if ((window as any).lenis) (window as any).lenis.stop();
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+      if ((window as any).lenis) (window as any).lenis.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      if ((window as any).lenis) (window as any).lenis.start();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [activeArticle]);
 
   // Filter logic
   const filteredPosts = BLOG_POSTS.filter((post) => {
@@ -260,7 +286,12 @@ export default function Community() {
           {/* ======================================================= */}
           {/* LEFT COLUMN: Headings, Search & Topic Quick Filters    */}
           {/* ======================================================= */}
-          <div className="lg:col-span-7 space-y-3 sm:space-y-4 text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="lg:col-span-7 space-y-3 sm:space-y-4 text-left"
+          >
             
             {/* Eyebrow Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white border border-[#0B0D12]/12 text-[#0B0D12] text-xs font-semibold shadow-2xs">
@@ -325,12 +356,12 @@ export default function Community() {
               </div>
             </div>
 
-          </div>
+          </motion.div>
 
           {/* ======================================================= */}
           {/* RIGHT COLUMN: Interactive Featured Deep Dive Card       */}
           {/* ======================================================= */}
-          <div className="lg:col-span-5 space-y-3">
+          <ScrollReveal className="lg:col-span-5 space-y-3" stagger={0.15}>
             <div className="rounded-2xl bg-white border border-[#0B0D12]/15 p-4 sm:p-5 shadow-md space-y-3">
               
               {/* Header row */}
@@ -401,9 +432,8 @@ export default function Community() {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
-
             </div>
-          </div>
+          </ScrollReveal>
 
         </div>
       </section>
@@ -442,8 +472,9 @@ export default function Community() {
 
         {/* Featured Post Card (Shows when 'All Articles' is selected or featured post matches query) */}
         {selectedCategory === 'All Articles' && !searchQuery && (
-          <div className="group bg-[#0B0D12] text-[#F4F1EA] rounded-lg p-6 sm:p-10 shadow-md relative overflow-hidden border border-[#0B0D12] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4 relative z-10">
+          <ScrollReveal>
+            <div className="group bg-[#0B0D12] text-[#F4F1EA] rounded-lg p-6 sm:p-10 shadow-md relative overflow-hidden border border-[#0B0D12] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-8 space-y-4 relative z-10">
               <div className="flex items-center gap-3">
                 <span className="px-3 py-1 rounded bg-white/10 text-white border border-white/15 text-xs font-mono font-bold uppercase tracking-wider">
                   Featured Article
@@ -509,10 +540,11 @@ export default function Community() {
               </div>
             </div>
           </div>
-        )}
+        </ScrollReveal>
+      )}
 
         {/* Blog Posts Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <ScrollReveal className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.1}>
           {filteredPosts.map((post) => (
             <article 
               key={post.id}
@@ -581,7 +613,7 @@ export default function Community() {
 
             </article>
           ))}
-        </div>
+        </ScrollReveal>
 
         {filteredPosts.length === 0 && (
           <div className="py-16 text-center bg-white rounded-lg border border-[#0B0D12]/15 p-8 space-y-3 shadow-xs">
@@ -605,8 +637,21 @@ export default function Community() {
       {/* READ ARTICLE MODAL                                        */}
       {/* ========================================================= */}
       {activeArticle && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200 overflow-y-auto">
-          <div className="bg-[#FAF8F5] rounded-lg max-w-3xl w-full my-8 p-6 sm:p-10 space-y-6 shadow-2xl relative border border-[#0B0D12]/20 max-h-[90vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-in fade-in duration-200"
+          onClick={() => setActiveArticle(null)}
+          onWheel={(e) => {
+            if (articleRef.current) {
+              articleRef.current.scrollTop += e.deltaY;
+            }
+          }}
+        >
+          <div 
+            ref={articleRef}
+            onClick={(e) => e.stopPropagation()}
+            onWheel={(e) => e.stopPropagation()}
+            className="bg-[#FAF8F5] rounded-lg max-w-3xl w-full my-8 p-6 sm:p-10 space-y-6 shadow-2xl relative border border-[#0B0D12]/20 max-h-[90vh] overflow-y-auto"
+          >
             
             {/* Close button */}
             <button 

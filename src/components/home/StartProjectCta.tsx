@@ -110,6 +110,7 @@ export default function StartProjectCta() {
   return (
     <section 
       ref={sectionRef} 
+      
       id="contact" 
       className="w-full bg-[#F4F1EA] text-[#0B0D12] pt-20 md:pt-28 pb-20 sm:pb-28 overflow-hidden font-sans border-t border-[#0B0D12]/10 relative"
     >

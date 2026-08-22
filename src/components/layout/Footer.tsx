@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Infinity, 
   ArrowUpRight, 
@@ -7,27 +7,14 @@ import {
   Linkedin, 
   Twitter, 
   ArrowUp, 
-  CheckCircle2, 
   Sparkles, 
   ShieldCheck, 
   Globe2, 
-  Terminal,
   Cpu
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [subscribed, setSubscribed] = useState(false);
-
-  const handleSubscribe = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !email.includes('@')) return;
-    setSubscribed(true);
-    setTimeout(() => {
-      setEmail('');
-    }, 2000);
-  };
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -43,51 +30,6 @@ export default function Footer() {
       
       <div className="max-w-7xl mx-auto">
         
-        {/* Top Feature Bar: Newsletter & Engineering Dispatch */}
-        <div className="pb-8 sm:pb-10 border-b border-[#0B0D12]/10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-          <div className="lg:col-span-7 space-y-1.5">
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0B0D12]/5 border border-[#0B0D12]/10 text-[11px] font-semibold uppercase tracking-wider text-[#0B0D12]">
-              <Terminal className="w-3 h-3 text-[#FF4A1C]" />
-              <span>Engineering Dispatch</span>
-            </div>
-            <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#0B0D12]">
-              Architectural insights, systems benchmarks &amp; tech updates.
-            </h3>
-            <p className="text-xs sm:text-sm text-[#5A5E6E] max-w-xl">
-              Join 12,000+ software architects and CTOs receiving our bi-weekly deep dives into autonomous systems.
-            </p>
-          </div>
-
-          <div className="lg:col-span-5">
-            {subscribed ? (
-              <div className="flex items-center gap-2.5 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-medium">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>You're subscribed! Check your inbox for our latest system teardowns.</span>
-              </div>
-            ) : (
-              <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-2">
-                <input
-                  type="email"
-                  required
-                  placeholder="Enter your work email..."
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="flex-grow px-3.5 py-2 rounded-lg bg-white border border-[#0B0D12]/15 text-xs sm:text-sm text-[#0B0D12] placeholder:text-[#5A5E6E]/60 focus:outline-none focus:border-[#0B0D12] focus:ring-1 focus:ring-[#0B0D12] transition-all"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white text-xs font-semibold uppercase tracking-wider rounded-lg transition-colors whitespace-nowrap cursor-pointer shadow-2xs"
-                >
-                  Subscribe
-                </button>
-              </form>
-            )}
-            <span className="block text-[10px] sm:text-[11px] text-[#5A5E6E] mt-1.5">
-              No spam. Unsubscribe anytime. Strictly engineering content.
-            </span>
-          </div>
-        </div>
-
         {/* Main Footer Directory Columns */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-12 gap-8 lg:gap-10 py-8 sm:py-10 border-b border-[#0B0D12]/10">
           

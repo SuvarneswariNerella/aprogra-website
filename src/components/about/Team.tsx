@@ -1,6 +1,7 @@
 import { InteractivePhotoStack, PhotoStackItem } from '@/components/ui/photo-stack';
 import { Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 const teamMembers: PhotoStackItem[] = [
   {
@@ -52,13 +53,7 @@ export default function Team() {
       <div className="max-w-7xl mx-auto w-full space-y-16 relative z-10">
         
         {/* Section Header */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-50px' }}
-          transition={{ duration: 0.7 }}
-          className="text-center max-w-3xl mx-auto space-y-4"
-        >
+        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded border border-[#0B0D12]/15 bg-white text-badge text-[#0B0D12]">
             <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
             <span>World-Class Engineers &amp; Designers</span>
@@ -71,7 +66,7 @@ export default function Team() {
           <p className="text-body-lg text-[#0B0D12]/70">
             Hover over the photo stack to scatter the team and reveal member bios, skills, and background information directly on each card.
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Interactive Photo Stack Section */}
         <motion.div 

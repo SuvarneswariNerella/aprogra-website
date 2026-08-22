@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CountingNumber } from '@/components/ui/counting-number';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 const stats = [
   { target: 60, suffix: "+", label: "Enterprise Partners" },
@@ -21,7 +22,7 @@ export default function StatsCounters() {
         {/* ======================================================== */}
         {/* SECTION HEADER                                           */}
         {/* ======================================================== */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#0B0D12]/10">
+        <ScrollReveal className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#0B0D12]/10">
           <div className="space-y-2.5 max-w-2xl">
             <div className="inline-flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
@@ -40,7 +41,7 @@ export default function StatsCounters() {
             <span>Learn our engineering ethos</span>
             <ArrowUpRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Link>
-        </div>
+        </ScrollReveal>
 
         {/* ======================================================== */}
         {/* COUNTING NUMBER STATS STRIP (Minimal & Simple)           */}

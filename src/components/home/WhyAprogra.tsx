@@ -181,6 +181,7 @@ export default function WhyAprogra() {
       data-snap-section
       data-no-snap="true"
       data-interactive-section="true"
+      
       className="h-screen min-h-screen w-full bg-[#F4F1EA] text-[#0B0D12] flex items-center justify-center overflow-hidden relative border-b border-[#0B0D12]/10"
     >
       {/* Canvas Ripples */}

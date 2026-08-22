@@ -154,7 +154,7 @@ export default function ServicesHero() {
             {/* Outcome-Led Large Bold Headline */}
             <h1 className="hero-stagger text-h1 text-[#0B0D12]">
               Services Built to Ship, <br />
-              <span className="bg-gradient-to-r from-[#0B0D12] via-[#3B82F6] to-[#FF4A1C] bg-clip-text text-transparent">
+              <span className="text-[#FF4A1C]">
                 Not Just Scope.
               </span>
             </h1>

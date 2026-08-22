@@ -11,6 +11,7 @@ import Products from './pages/Products';
 import SchoolERP from './pages/SchoolERP';
 import OmniChatProduct from './pages/OmniChatProduct';
 import Services from './pages/Services';
+import ServiceArchitecture from './pages/ServiceArchitecture';
 import Community from './pages/Community';
 import Contact from './pages/Contact';
 import Careers from './pages/Careers';
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="products/school-erp" element={<SchoolERP />} />
           <Route path="products/omnichat" element={<OmniChatProduct />} />
           <Route path="services" element={<Services />} />
+          <Route path="services/architecture/:id" element={<ServiceArchitecture />} />
           <Route path="community" element={<Community />} />
           <Route path="contact" element={<Contact />} />
           <Route path="careers" element={<Careers />} />

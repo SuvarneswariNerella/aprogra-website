@@ -11,6 +11,7 @@ import { ServiceItem } from './EditorialServiceSection';
 import HorizontalServiceShowcase from './HorizontalServiceShowcase';
 import EditorialScrollProgress from './EditorialScrollProgress';
 import { initGlobalScrollReveal } from '@/utils/scrollReveal';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -188,29 +189,27 @@ export default function EditorialServicesPage() {
 
       {/* 6. CLOSING CTA BAND */}
       <section className="relative z-10 w-full py-20 sm:py-28 bg-[#FAF8F5] border-t border-[#0B0D12]/10">
-        <div 
-          className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8 reveal-group" 
-          data-reveal-group 
-          data-reveal-stagger="0.12"
-          data-reveal-start="top 80%"
+        <ScrollReveal 
+          className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-8" 
+          stagger={0.12}
         >
           
-          <div className="reveal-item inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-[#0B0D12]/15 text-xs font-mono text-[#0B0D12] shadow-2xs">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-[#0B0D12]/15 text-xs font-mono text-[#0B0D12] shadow-2xs">
             <ShieldCheck className="w-3.5 h-3.5 text-[#FF4A1C]" />
             <span>DIRECT ACCESS TO LEAD ARCHITECTS</span>
           </div>
 
           <div className="space-y-4">
-            <h2 className="reveal-item reveal-heading text-3xl sm:text-5xl md:text-6xl font-bold font-display tracking-tight text-[#0B0D12]">
+            <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold font-display tracking-tight text-[#0B0D12]">
               Let's build what's next.
             </h2>
-            <p className="reveal-item text-base sm:text-lg text-[#5A5E6E] max-w-xl mx-auto font-sans leading-relaxed">
+            <p className="text-base sm:text-lg text-[#5A5E6E] max-w-xl mx-auto font-sans leading-relaxed">
               Eliminate vendor fragmentation. Aprogra takes single-source ownership of your software engineering lifecycle.
             </p>
           </div>
 
           {/* Action Button */}
-          <div className="reveal-item flex flex-wrap items-center justify-center gap-4 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Link
               to="/contact"
               className="inline-flex items-center gap-3 px-8 py-4 rounded-xl bg-[#0B0D12] hover:bg-[#FF4A1C] text-white font-mono text-sm font-bold tracking-wide uppercase shadow-md transition-all hover:scale-[1.02] cursor-pointer"
@@ -228,12 +227,12 @@ export default function EditorialServicesPage() {
           </div>
 
           {/* Bottom Security & Standards Note */}
-          <div className="reveal-item pt-8 border-t border-[#0B0D12]/10 flex flex-wrap items-center justify-between text-xs font-mono text-[#5A5E6E] gap-4">
+          <div className="pt-8 border-t border-[#0B0D12]/10 flex flex-wrap items-center justify-between text-xs font-mono text-[#5A5E6E] gap-4">
             <span>© {new Date().getFullYear()} Aprogra Engineering Group.</span>
             <span>SOC2 Type II & ISO 27001 Aligned Process</span>
           </div>
 
-        </div>
+        </ScrollReveal>
       </section>
 
     </div>

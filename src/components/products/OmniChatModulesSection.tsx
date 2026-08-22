@@ -11,6 +11,7 @@ import {
   Layers,
   MessageSquare
 } from 'lucide-react';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -168,8 +169,9 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
           {/* ========================================================= */}
           <div className="lg:col-span-5 flex flex-col justify-center space-y-3 sm:space-y-3.5 text-left">
             
-            {/* Header Block with Product Badge */}
-            <div className="space-y-1.5">
+            <ScrollReveal className="space-y-6">
+              {/* Header Block with Product Badge */}
+              <div className="space-y-1.5">
               <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-xs font-semibold shadow-2xs">
                 <MessageSquare className="w-3.5 h-3.5 text-[#FF4A1C]" />
                 <span className="text-[#FF4A1C] font-mono font-bold">Product #2</span>
@@ -272,6 +274,7 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
                 Learn More
               </Link>
             </div>
+            </ScrollReveal>
 
           </div>
 
@@ -281,7 +284,7 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
           <div className="lg:col-span-7 flex flex-col justify-center items-center">
             
             {/* Top Control Bar: Stack Badge + Step Indicators + Arrows */}
-            <div className="w-full max-w-2xl flex flex-wrap items-center justify-between gap-2.5 mb-3 px-1 select-none">
+            <div className="w-full max-w-2xl flex flex-wrap items-center justify-between gap-2.5 mb-8 px-1 select-none">
               
               {/* Stack Badge */}
               <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-[#0B0D12]/12 shadow-2xs">

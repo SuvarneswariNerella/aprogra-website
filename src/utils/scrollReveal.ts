@@ -106,8 +106,8 @@ export function initGlobalScrollReveal(
           scrollTrigger: {
             trigger: container,
             start: groupStart,
-            toggleActions: defaultOnce ? 'play none none none' : 'play none none reverse',
-            once: defaultOnce,
+            end: 'top 75%',
+            scrub: true,
           },
         }
       );
@@ -142,9 +142,9 @@ export function initGlobalScrollReveal(
           ease: headingEase,
           scrollTrigger: {
             trigger: heading,
-            start: headingStart,
-            toggleActions: defaultOnce ? 'play none none none' : 'play none none reverse',
-            once: defaultOnce,
+            start: 'top 95%',
+            end: 'top 75%',
+            scrub: true,
           },
         }
       );
@@ -181,9 +181,9 @@ export function initGlobalScrollReveal(
           ease: cardEase,
           scrollTrigger: {
             trigger: card,
-            start: cardStart,
-            toggleActions: defaultOnce ? 'play none none none' : 'play none none reverse',
-            once: defaultOnce,
+            start: 'top 95%',
+            end: 'top 75%',
+            scrub: true,
           },
         }
       );
@@ -222,13 +222,78 @@ export function initGlobalScrollReveal(
           ease: itemEase,
           scrollTrigger: {
             trigger: el,
-            start: itemStart,
-            toggleActions: defaultOnce ? 'play none none none' : 'play none none reverse',
-            once: defaultOnce,
+            start: itemStart === 'top 85%' ? 'top 95%' : itemStart,
+            end: 'top 75%',
+            scrub: true,
           },
         }
       );
     });
+
+    // 5. Global Auto-Discovery for True Scroll Scrub Reveal
+    // Automatically find all content sections and apply a physics-based scrub to their text elements
+    const allSections = root.querySelectorAll<HTMLElement>('main section:not(:first-of-type)');
+    
+    allSections.forEach((section) => {
+      // Skip sections that opt-out or manage their own complex pinning
+      if (
+        section.hasAttribute('data-no-reveal') ||
+        section.classList.contains('reveal-group') ||
+        section.hasAttribute('data-reveal-group')
+      ) {
+        return;
+      }
+
+      // Deep query for actual semantic content elements inside this section
+      // This ensures we animate the text/content, not just the layout wrappers
+      const itemsToReveal = section.querySelectorAll<HTMLElement>(
+        'h1, h2, h3, h4, h5, h6, p, img, button, .card, blockquote, .reveal-target'
+      );
+
+      // Filter out elements that shouldn't be animated individually
+      const filteredItems = Array.from(itemsToReveal).filter(item => {
+         const hasNoReveal = item.hasAttribute('data-no-reveal') || item.closest('[data-no-reveal]');
+         const isAbsolute = item.classList.contains('absolute') || window.getComputedStyle(item).position === 'absolute';
+         const isManualReveal = item.matches('.reveal-item, [data-reveal], .reveal-fade-up, .reveal-heading, .reveal-card') || item.closest('.reveal-group, [data-reveal-group]');
+         const isTooSmall = item.tagName === 'IMG' && (item.clientWidth < 40 && item.clientWidth > 0); // Skip tiny decorative icons if they are imgs
+         
+         // Prevent double-animation: If this item is inside another item that is ALSO being revealed in this batch
+         const hasRevealedAncestor = Array.from(itemsToReveal).some(ancestor => ancestor !== item && ancestor.contains(item) && !ancestor.classList.contains('absolute'));
+
+         return !hasNoReveal && !isAbsolute && !isManualReveal && !isTooSmall && !hasRevealedAncestor;
+      });
+
+      if (filteredItems.length === 0) return;
+
+      // Create a Timeline for the section.
+      // The timeline's progress is scrubbed by the section's scroll position.
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: 'top 85%',
+          end: 'top 30%', // By the time section top reaches 30% from top of viewport, animation completes
+          scrub: true,    // True scroll scrub: 1:1 instantaneous, no smoothing/lag
+        }
+      });
+
+      // Add all filtered content elements to this timeline with a stagger.
+      // Because they are in an array, GSAP will naturally stagger them in DOM order:
+      // (e.g. Heading -> Paragraph -> Button)
+      tl.fromTo(
+        filteredItems,
+        {
+          opacity: 0,
+          y: 40,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.15, // 0.15 seconds of timeline progress between each element
+          ease: 'none',  // Linear ease is best for scrubbed animations
+        }
+      );
+    });
+
   }, root);
 
   return ctx;

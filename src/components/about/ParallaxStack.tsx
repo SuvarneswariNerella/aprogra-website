@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -119,26 +120,7 @@ export default function ParallaxStack() {
         ref={stickyRef}
         className="sticky top-0 h-screen min-h-[100vh] w-full overflow-hidden m-0 p-0"
       >
-        {/* TOP-RIGHT PROGRESS DOTS INDICATOR */}
-        <div className="absolute top-6 right-6 sm:top-8 sm:right-8 z-50 flex items-center gap-3 bg-[#FAF8F5]/90 backdrop-blur-md px-4 py-2 rounded border border-[#0B0D12]/15 shadow-sm">
-          <span className="text-xs font-mono font-semibold text-[#0B0D12]/70 uppercase tracking-wider">
-            {activePanel === 0 ? "01 / About" : activePanel === 1 ? "02 / Mission" : "03 / Vision"}
-          </span>
-          <div className="flex items-center gap-2">
-            {[0, 1, 2].map((idx) => (
-              <button
-                key={idx}
-                onClick={() => scrollToPanel(idx)}
-                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
-                  activePanel === idx
-                    ? 'bg-[#FF4A1C] scale-125'
-                    : 'border border-[#0B0D12]/40 bg-transparent hover:bg-[#0B0D12]/20'
-                }`}
-                aria-label={`Jump to panel ${idx + 1}`}
-              />
-            ))}
-          </div>
-        </div>
+        {/* Removed Progress Dots Indicator per user request */}
 
         {/* ================= PANEL 1: ABOUT COMPANY ================= */}
         <div 
@@ -164,7 +146,7 @@ export default function ParallaxStack() {
           </div>
 
           {/* RIGHT: TEXT (50%) */}
-          <div className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto">
+          <ScrollReveal className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto">
             <span className="text-badge text-[#FF4A1C]">
               Who We Are
             </span>
@@ -194,7 +176,7 @@ export default function ParallaxStack() {
                 <div className="text-caption text-[#0B0D12]/60">Working with clients across 12 countries</div>
               </div>
             </div>
-          </div>
+          </ScrollReveal>
         </div>
 
         {/* ================= PANEL 2: MISSION ================= */}

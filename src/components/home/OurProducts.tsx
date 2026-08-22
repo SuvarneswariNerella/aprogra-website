@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { ArrowRight, GraduationCap, MessageSquare, Sparkles, Bell, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -11,6 +12,8 @@ export default function OurProducts() {
   const stageRef = useRef<HTMLDivElement>(null);
   const card1Ref = useRef<HTMLDivElement>(null);
   const card2Ref = useRef<HTMLDivElement>(null);
+  const leftContentRef = useRef<HTMLDivElement>(null);
+  const rightContentRef = useRef<HTMLDivElement>(null);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(1);
   const stInstanceRef = useRef<ScrollTrigger | null>(null);
 
@@ -46,6 +49,23 @@ export default function OurProducts() {
 
       // Store scrollTrigger reference for indicator button clicks
       stInstanceRef.current = tl.scrollTrigger || null;
+
+      // Entrance animation for Card 1
+      gsap.fromTo(leftContentRef.current,
+        { opacity: 0, x: -60 },
+        {
+          opacity: 1, x: 0, duration: 1.4, ease: "power3.out",
+          scrollTrigger: { trigger: section, start: "top 30%", once: true }
+        }
+      );
+
+      gsap.fromTo(rightContentRef.current,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.4,
+          scrollTrigger: { trigger: section, start: "top 30%", once: true }
+        }
+      );
 
       // Phase 1 (0.0 -> 0.4): Card 1 remains fixed & fully visible while OmniChat remains hidden below
       tl.to(card1, {
@@ -99,11 +119,12 @@ export default function OurProducts() {
   return (
     <section 
       ref={sectionRef} 
+      
       className="relative w-full min-h-screen bg-[#F4F1EA] text-[#0B0D12] py-6 sm:py-10 px-3 sm:px-6 flex flex-col justify-between items-center overflow-hidden border-b border-[#0B0D12]/10"
     >
       
-      {/* SECTION HEADER */}
-      <div className="text-center space-y-2 shrink-0 z-30 px-4 max-w-3xl mx-auto pt-1 sm:pt-2">
+      {/* SECTION HEADER wrapped in ScrollReveal */}
+      <ScrollReveal className="text-center space-y-2 shrink-0 z-30 px-4 max-w-3xl mx-auto pt-1 sm:pt-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#0B0D12]/5 text-[#0B0D12] text-badge border border-[#0B0D12]/15">
           <Layers className="w-3.5 h-3.5 text-[#FF4A1C]" />
           <span>IN-HOUSE PRODUCTS • STACKED VIEW</span>
@@ -114,7 +135,7 @@ export default function OurProducts() {
         <p className="text-body text-[#5A5E6E] max-w-[540px] mx-auto hidden sm:block">
           Scroll down to reveal our stacked notification cards for enterprise digital solutions.
         </p>
-      </div>
+      </ScrollReveal>
 
       {/* STACKED NOTIFICATION CARDS CONTAINER */}
       <div 
@@ -152,7 +173,7 @@ export default function OurProducts() {
             <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10 h-full py-2">
               
               {/* Left Content: Minimalist & Clean */}
-              <div className="w-full lg:w-[50%] flex flex-col justify-between h-full space-y-4">
+              <div ref={leftContentRef} className="w-full lg:w-[50%] flex flex-col justify-between h-full space-y-4 opacity-0">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0B0D12] text-white text-caption font-medium">
@@ -205,7 +226,7 @@ export default function OurProducts() {
 
               {/* Right Mockup: Clean Minimalist Preview Card */}
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
-                <div className="w-full max-w-[360px] bg-white rounded-xl border border-[#0B0D12]/15 shadow-sm overflow-hidden text-xs">
+                <div ref={rightContentRef} className="w-full max-w-[360px] bg-white rounded-xl border border-[#0B0D12]/15 shadow-sm overflow-hidden text-xs opacity-0">
                   <div className="bg-[#0B0D12] text-white px-4 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <span className="w-2.5 h-2.5 rounded-full bg-[#FF4A1C]" />

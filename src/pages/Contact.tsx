@@ -3,10 +3,11 @@ import {
   Sparkles, ArrowRight, ShieldCheck, Clock, UserCheck, 
   Compass, FileCheck, Rocket, Send, CheckCircle2, Copy, Check, 
   Mail, Phone, MapPin, Globe, ExternalLink, Video, Calendar, X,
-  Lock, ArrowUp, ChevronRight, MessageSquare, Star
+  Lock, ArrowUp, ChevronRight, MessageSquare, Star, Shield
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -61,19 +62,55 @@ export default function Contact() {
   // Refs for Animations
   const mainRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
+  const rightColumnRef = useRef<HTMLDivElement>(null);
   const processRef = useRef<HTMLDivElement>(null);
   const briefRef = useRef<HTMLDivElement>(null);
   const directRef = useRef<HTMLDivElement>(null);
+
+  // Prevent background scrolling and handle Escape key when modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isModalOpen) {
+        setIsModalOpen(false);
+        setModalConfirmed(false);
+      }
+    };
+
+    if (isModalOpen) {
+      document.body.style.overflow = 'hidden';
+      if ((window as any).lenis) (window as any).lenis.stop();
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+      if ((window as any).lenis) (window as any).lenis.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      if ((window as any).lenis) (window as any).lenis.start();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isModalOpen]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       // Hero entrance
       if (heroRef.current) {
         gsap.from(heroRef.current.children, {
-          y: 30,
+          x: -40,
           opacity: 0,
           duration: 0.8,
           stagger: 0.1,
+          ease: 'power3.out'
+        });
+      }
+
+      // Hero Right Column entrance
+      if (rightColumnRef.current) {
+        gsap.from(rightColumnRef.current, {
+          y: 40,
+          opacity: 0,
+          duration: 0.8,
+          delay: 0.2,
           ease: 'power3.out'
         });
       }
@@ -223,7 +260,10 @@ export default function Contact() {
               </button>
 
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  document.getElementById('video-call-section')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                  setTimeout(() => setIsModalOpen(true), 800);
+                }}
                 className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-white border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-xs sm:text-sm font-semibold transition-all shadow-2xs hover:shadow-xs flex items-center gap-2 cursor-pointer"
               >
                 <Calendar className="w-4 h-4 text-[#FF4A1C]" />
@@ -252,7 +292,7 @@ export default function Contact() {
           {/* ======================================================= */}
           {/* RIGHT COLUMN: Fast-Track Direct Channels & Pod Status   */}
           {/* ======================================================= */}
-          <div className="lg:col-span-5 space-y-3">
+          <div ref={rightColumnRef} className="lg:col-span-5 space-y-3">
             <div className="rounded-2xl bg-white border border-[#0B0D12]/15 p-4 sm:p-5 shadow-md space-y-3">
               
               {/* Header row */}
@@ -363,25 +403,26 @@ export default function Contact() {
 
       {/* 4. PROJECT BRIEF / CONTACT FORM SECTION */}
       <section id="project-brief" ref={briefRef} className="py-20 px-6 max-w-7xl mx-auto scroll-mt-24">
-        
-        <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-xs">
-            <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-            <span>Interactive Brief Generator</span>
-          </div>
-          <h2 className="text-h2 text-[#0B0D12]">
-            Tell us about your project.
-          </h2>
-          <p className="text-body-lg text-[#5A5E6E] max-w-xl mx-auto">
-            Fill out the brief below to generate your custom project preview and start a direct conversation with our technical team.
-          </p>
-        </div>
-
-        {/* TWO-COLUMN GRID */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
+        <ScrollReveal stagger={0.15}>
           
-          {/* LEFT COLUMN: CONTACT FORM */}
-          <div className="lg:col-span-7 bg-[#FAF8F5] rounded-lg p-6 sm:p-10 border border-[#0B0D12]/15 shadow-sm space-y-6">
+          <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
+              <span>Interactive Brief Generator</span>
+            </div>
+            <h2 className="text-h2 text-[#0B0D12]">
+              Tell us about your project.
+            </h2>
+            <p className="text-body-lg text-[#5A5E6E] max-w-xl mx-auto">
+              Fill out the brief below to generate your custom project preview and start a direct conversation with our technical team.
+            </p>
+          </div>
+
+          {/* TWO-COLUMN GRID */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch">
+            
+            {/* LEFT COLUMN: CONTACT FORM */}
+            <div className="lg:col-span-7 bg-[#FAF8F5] rounded-lg p-6 sm:p-10 border border-[#0B0D12]/15 shadow-sm space-y-6">
             
             {isSubmitted ? (
               <div className="py-12 px-6 text-center space-y-5">
@@ -610,10 +651,10 @@ export default function Contact() {
           </div>
 
           {/* RIGHT COLUMN: LIVE BRIEF SUMMARY & BOOKING CARD */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="lg:col-span-5 flex flex-col gap-6 h-full">
             
             {/* Live Brief Summary Card (Dark Container) */}
-            <div className="bg-[#0B0D12] text-[#F4F1EA] rounded-lg p-6 sm:p-8 shadow-md relative overflow-hidden border border-[#0B0D12]">
+            <div className="bg-[#0B0D12] text-[#F4F1EA] rounded-lg p-6 sm:p-8 shadow-md relative overflow-hidden border border-[#0B0D12] flex-1 flex flex-col">
               <div className="flex items-center justify-between pb-4 border-b border-white/10 relative z-10">
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
@@ -671,18 +712,67 @@ export default function Contact() {
 
                 {/* Overview Snippet */}
                 {formData.message.trim() && (
-                  <div className="pt-2 border-t border-white/10">
+                  <div className="pt-4 border-t border-white/10">
                     <div className="text-label-mono text-[#F4F1EA]/60">Brief Snippet</div>
                     <p className="text-caption text-[#F4F1EA]/80 mt-1 line-clamp-3 italic">
                       "{formData.message}"
                     </p>
                   </div>
                 )}
+                
+                {/* Engineering Focus / Next Steps */}
+                <div className="pt-4 border-t border-white/10">
+                  <div className="text-label-mono text-[#F4F1EA]/60 mb-3">Engagement Architecture</div>
+                  <div className="space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">1</div>
+                      <div>
+                        <div className="text-caption font-semibold text-white">Initial Brief Review</div>
+                        <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">Our lead architects analyze your specific requirements.</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">2</div>
+                      <div>
+                        <div className="text-caption font-semibold text-white">System Design & Scope</div>
+                        <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">We map out technical constraints and platform architecture.</div>
+                      </div>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">3</div>
+                      <div>
+                        <div className="text-caption font-semibold text-white">Engineering Kickoff</div>
+                        <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">Dedicated pods are spun up for immediate development.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Security & Guarantees */}
+                <div className="pt-4 border-t border-white/10">
+                  <div className="text-label-mono text-[#F4F1EA]/60 mb-3">Enterprise Guarantees</div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-white/5 p-3 rounded-md border border-white/10">
+                      <div className="flex items-center gap-1.5 mb-1 text-white">
+                        <Lock className="w-3.5 h-3.5 text-[#FF4A1C]" />
+                        <span className="text-caption font-bold">Strict NDA</span>
+                      </div>
+                      <div className="text-[11px] text-[#F4F1EA]/70 font-sans">100% IP Protection</div>
+                    </div>
+                    <div className="bg-white/5 p-3 rounded-md border border-white/10">
+                      <div className="flex items-center gap-1.5 mb-1 text-white">
+                        <Shield className="w-3.5 h-3.5 text-[#FF4A1C]" />
+                        <span className="text-caption font-bold">SOC2 Type II</span>
+                      </div>
+                      <div className="text-[11px] text-[#F4F1EA]/70 font-sans">Bank-grade security</div>
+                    </div>
+                  </div>
+                </div>
 
               </div>
 
               {/* Status footer */}
-              <div className="pt-4 border-t border-white/10 flex items-center justify-between text-caption text-[#F4F1EA]/70 relative z-10 font-mono">
+              <div className="pt-4 mt-auto border-t border-white/10 flex items-center justify-between text-caption text-[#F4F1EA]/70 relative z-10 font-mono">
                 <div className="flex items-center gap-1.5">
                   <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" />
                   <span>SLA Response: &lt; 2 hrs</span>
@@ -693,23 +783,9 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Testimonial Review Box */}
-            <div className="bg-[#FAF8F5] rounded-lg p-5 border border-[#0B0D12]/15 shadow-xs space-y-2">
-              <div className="flex items-center gap-1 text-[#FF4A1C]">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-[#FF4A1C]" />
-                ))}
-              </div>
-              <p className="text-body text-[#5A5E6E] italic">
-                "Aprogra delivered our core platform ahead of schedule with flawless architecture. Their technical team feels like an in-house extension."
-              </p>
-              <div className="text-caption font-bold text-[#0B0D12] font-mono">
-                — Marcus Vance, CTO at SaaSify
-              </div>
-            </div>
 
             {/* Book a 15-Min Intro Call Box */}
-            <div className="bg-[#FAF8F5] rounded-lg p-5 border border-[#0B0D12]/15 shadow-xs space-y-3">
+            <div id="video-call-section" className="bg-[#FAF8F5] rounded-lg p-5 border border-[#0B0D12]/15 shadow-xs space-y-3 scroll-mt-24">
               <div className="flex items-center gap-2">
                 <Video className="w-5 h-5 text-[#FF4A1C]" />
                 <h4 className="text-h4 text-[#0B0D12]">
@@ -731,6 +807,7 @@ export default function Contact() {
           </div>
 
         </div>
+        </ScrollReveal>
       </section>
 
       {/* 5. DIRECT CONTACT SECTION */}
@@ -940,79 +1017,125 @@ export default function Contact() {
 
       {/* MODAL: BOOK A 15-MIN INTRO CALL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-[#FAF8F5] rounded-lg max-w-md w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-[#0B0D12]/20">
+        <div 
+          onClick={() => {
+            setIsModalOpen(false);
+            setModalConfirmed(false);
+          }}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200 cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[#0B0D12] rounded-xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-[0_0_40px_rgba(255,74,28,0.1)] relative border border-white/10 cursor-default"
+          >
             <button 
               onClick={() => {
                 setIsModalOpen(false);
                 setModalConfirmed(false);
               }}
-              className="absolute top-5 right-5 text-[#5A5E6E] hover:text-[#0B0D12] p-1 rounded-full cursor-pointer"
+              className="absolute top-5 right-5 text-[#F4F1EA]/60 hover:text-white p-1 rounded-full cursor-pointer transition-colors z-10"
             >
               <X className="w-5 h-5" />
             </button>
 
             {!modalConfirmed ? (
-              <div className="space-y-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-lg bg-[#0B0D12] text-white flex items-center justify-center">
-                    <Video className="w-5 h-5 text-[#FF4A1C]" />
+              <div className="space-y-6">
+                <div className="flex items-start gap-4 border-b border-white/10 pb-4">
+                  <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 text-white flex items-center justify-center shrink-0">
+                    <Video className="w-6 h-6 text-[#FF4A1C]" />
                   </div>
                   <div>
-                    <h3 className="text-h4 text-[#0B0D12]">Book 15-Min Intro Call</h3>
-                    <p className="text-caption text-[#5A5E6E]">Directly with our Lead Solutions Architect</p>
+                    <h3 className="text-h3 text-white">Engineering Kickoff Call</h3>
+                    <p className="text-caption text-[#F4F1EA]/70 mt-1">Directly with our Lead Solutions Architect. 15 minutes to evaluate technical fit.</p>
                   </div>
                 </div>
 
-                <div className="space-y-2 pt-2">
-                  <label className="text-label-mono text-[#0B0D12] block">Select Preferred Time Slot</label>
-                  <select 
-                    value={modalDate} 
-                    onChange={(e) => setModalDate(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-[#0B0D12]/15 text-body text-[#0B0D12] outline-none focus:border-[#0B0D12] bg-white font-mono"
-                  >
-                    <option>Tomorrow, 10:00 AM EST</option>
-                    <option>Tomorrow, 2:30 PM EST</option>
-                    <option>Thursday, 11:00 AM EST</option>
-                    <option>Friday, 4:00 PM EST</option>
-                  </select>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                  <div className="space-y-1.5">
+                    <label className="text-label-mono text-[#F4F1EA]/80 block">Full Name</label>
+                    <input 
+                      type="text"
+                      placeholder="e.g. Sarah Jenkins"
+                      defaultValue={formData.name}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-white/5"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-label-mono text-[#F4F1EA]/80 block">Work Email</label>
+                    <input 
+                      type="email"
+                      placeholder="you@company.com"
+                      defaultValue={formData.email}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-white/5"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-label-mono text-[#0B0D12] block">Your Work Email</label>
+                  <label className="text-label-mono text-[#F4F1EA]/80 block">Company / Organization</label>
                   <input 
-                    type="email"
-                    placeholder="you@company.com"
-                    defaultValue={formData.email}
-                    className="w-full px-3.5 py-2.5 rounded-lg border border-[#0B0D12]/15 text-body text-[#0B0D12] outline-none focus:border-[#0B0D12] bg-white"
+                    type="text"
+                    placeholder="Company Name"
+                    defaultValue={formData.company}
+                    className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-white/5"
                   />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-label-mono text-[#F4F1EA]/80 block">Primary Topic</label>
+                    <select 
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-[#161922]"
+                    >
+                      <option>System Architecture</option>
+                      <option>AI & Automation</option>
+                      <option>Project Rescue</option>
+                      <option>Team Augmentation</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-label-mono text-[#F4F1EA]/80 block">Select Time Slot</label>
+                    <select 
+                      value={modalDate} 
+                      onChange={(e) => setModalDate(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-[#161922] font-mono text-sm"
+                    >
+                      <option>Tomorrow, 10:00 AM EST</option>
+                      <option>Tomorrow, 2:30 PM EST</option>
+                      <option>Thursday, 11:00 AM EST</option>
+                      <option>Friday, 4:00 PM EST</option>
+                    </select>
+                  </div>
                 </div>
 
                 <button
                   onClick={() => setModalConfirmed(true)}
-                  className="w-full py-3 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white rounded-lg text-badge flex items-center justify-center gap-2 cursor-pointer shadow-xs transition-colors"
+                  className="w-full py-3.5 mt-2 bg-[#FF4A1C] hover:bg-[#E03E14] text-white rounded-lg text-badge flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:shadow-xl transition-all"
                 >
                   <Calendar className="w-4 h-4" />
                   <span>Confirm Calendar Reservation</span>
                 </button>
               </div>
             ) : (
-              <div className="py-6 text-center space-y-4">
-                <div className="w-12 h-12 bg-[#0B0D12] text-white rounded-full flex items-center justify-center mx-auto">
-                  <CheckCircle2 className="w-6 h-6 text-[#FF4A1C]" />
+              <div className="py-8 text-center space-y-5">
+                <div className="w-16 h-16 bg-white/5 border border-white/10 text-white rounded-full flex items-center justify-center mx-auto relative">
+                  <div className="absolute inset-0 bg-[#FF4A1C]/20 rounded-full animate-ping" />
+                  <CheckCircle2 className="w-8 h-8 text-[#FF4A1C]" />
                 </div>
-                <h4 className="text-h4 text-[#0B0D12]">Call Reserved!</h4>
-                <p className="text-body text-[#5A5E6E]">
-                  Calendar invite dispatched for <span className="font-semibold text-[#0B0D12]">{modalDate}</span>. We've sent a Google Meet link to your inbox.
-                </p>
+                <div>
+                  <h4 className="text-h3 text-white">Call Reserved!</h4>
+                  <p className="text-body text-[#F4F1EA]/70 mt-2 max-w-sm mx-auto">
+                    Calendar invite dispatched for <span className="font-semibold text-white">{modalDate}</span>. We've sent a Google Meet link to your inbox.
+                  </p>
+                </div>
                 <button
                   onClick={() => {
                     setIsModalOpen(false);
                     setModalConfirmed(false);
                   }}
-                  className="px-6 py-2 bg-[#0B0D12] text-white text-caption font-mono font-semibold rounded cursor-pointer"
+                  className="px-8 py-2.5 bg-white/10 hover:bg-white/20 text-white text-caption font-mono font-semibold rounded cursor-pointer transition-colors"
                 >
-                  Close
+                  Close Window
                 </button>
               </div>
             )}

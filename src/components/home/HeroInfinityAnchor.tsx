@@ -39,11 +39,13 @@ export default function HeroInfinityAnchor() {
 
   // Storytelling Content Panels
   const panel1Ref = useRef<HTMLDivElement>(null);
+  const panel1ContentRef = useRef<HTMLDivElement>(null); // Inner ref for entrance animation
   const panel2Ref = useRef<HTMLDivElement>(null);
   const panel3Ref = useRef<HTMLDivElement>(null);
 
   // Right Side Companion Panels
   const sidePanel1Ref = useRef<HTMLDivElement>(null);
+  const sidePanel1ContentRef = useRef<HTMLDivElement>(null); // Inner ref for entrance animation
   const sidePanel2Ref = useRef<HTMLDivElement>(null);
   const sidePanel3Ref = useRef<HTMLDivElement>(null);
 
@@ -77,7 +79,18 @@ export default function HeroInfinityAnchor() {
       // 1. Initial fade-in of the infinity stroke on mount
       gsap.fromTo(path, 
         { opacity: 0, scale: 0.95 },
-        { opacity: 1, scale: 1, duration: 1.4, ease: "power2.out" }
+        { opacity: 1, scale: 1, duration: 2.2, ease: "power2.out" }
+      );
+
+      // --- PAGE LOAD ENTRANCE ANIMATION FOR FIRST PANELS ---
+      gsap.fromTo(panel1ContentRef.current, 
+        { opacity: 0, x: -60 },
+        { opacity: 1, x: 0, duration: 2.2, ease: "power3.out", delay: 0.4 }
+      );
+      
+      gsap.fromTo(sidePanel1ContentRef.current,
+        { opacity: 0, y: 60 },
+        { opacity: 1, y: 0, duration: 2.2, ease: "power3.out", delay: 1.2 }
       );
 
       // 2. ScrollTrigger Pinned Sequence
@@ -277,7 +290,8 @@ export default function HeroInfinityAnchor() {
           <div className="lg:col-span-5 relative h-full flex flex-col justify-center max-w-lg lg:pr-2 z-20">
             
             {/* PANEL 1: CORE VALUE PROPOSITION */}
-            <div ref={panel1Ref} className="space-y-4 will-change-[transform,opacity]">
+            <div ref={panel1Ref} className="will-change-[transform,opacity] w-full">
+              <div ref={panel1ContentRef} className="space-y-4 opacity-0">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge shadow-2xs">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FF4A1C] opacity-75" />
@@ -316,6 +330,7 @@ export default function HeroInfinityAnchor() {
                   Explore Products
                 </Link>
               </div>
+            </div>
             </div>
 
             {/* PANEL 2: 40+ SHIPPED PRODUCTS STORY */}
@@ -394,7 +409,8 @@ export default function HeroInfinityAnchor() {
           <div className="lg:col-span-5 relative h-full flex items-center justify-end min-h-[280px] max-w-lg ml-auto w-full lg:pl-2 z-20">
             
             {/* SIDE PANEL 1: Technical Stack Bento */}
-            <div ref={sidePanel1Ref} className="w-full space-y-2 sm:space-y-2.5 relative z-10 will-change-[transform,opacity]">
+            <div ref={sidePanel1Ref} className="w-full relative z-10 will-change-[transform,opacity]">
+              <div ref={sidePanel1ContentRef} className="space-y-2 sm:space-y-2.5 opacity-0">
               <div className="bg-[#FAF8F5] rounded-xl border border-[#0B0D12]/15 p-3.5 sm:p-4 shadow-xs space-y-2">
                 <div className="flex items-center justify-between pb-1.5 border-b border-[#0B0D12]/10">
                   <span className="text-xs font-mono font-bold text-[#0B0D12] uppercase tracking-wider flex items-center gap-1.5">
@@ -428,6 +444,7 @@ export default function HeroInfinityAnchor() {
                 </div>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               </div>
+            </div>
             </div>
 
             {/* SIDE PANEL 2: Shipped Metrics Grid */}

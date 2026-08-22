@@ -285,6 +285,14 @@
   .animate-spin-y {
     animation: spinY 0.7s cubic-bezier(0.4, 0, 0.2, 1);
   }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 html.lenis, html.lenis body {

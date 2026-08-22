@@ -11,6 +11,9 @@ export default function Services() {
   const trackRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
+  const leftContentRef = useRef<HTMLDivElement>(null);
+  const rightContentRef = useRef<HTMLDivElement>(null);
+
   const [activeCardIndex, setActiveCardIndex] = useState(0);
 
   useEffect(() => {
@@ -40,6 +43,23 @@ export default function Services() {
         }
       });
 
+      // Entrance animation for Card 1
+      gsap.fromTo(leftContentRef.current,
+        { opacity: 0, x: -60 },
+        {
+          opacity: 1, x: 0, duration: 1.4, ease: "power3.out",
+          scrollTrigger: { trigger: container, start: "top 30%", once: true }
+        }
+      );
+
+      gsap.fromTo(rightContentRef.current,
+        { opacity: 0, y: 60 },
+        {
+          opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.4,
+          scrollTrigger: { trigger: container, start: "top 30%", once: true }
+        }
+      );
+
       // Horizontal Scroll Animation
       tl.to(track, {
         x: `-${(totalCards - 1) * 100}vw`,
@@ -60,6 +80,7 @@ export default function Services() {
   return (
     <section 
       ref={containerRef}
+      
       className="relative h-screen w-full bg-[#F4F1EA] overflow-hidden border-b border-[#0B0D12]/10"
     >
       {/* STICKY HEADER */}
@@ -86,7 +107,7 @@ export default function Services() {
           </div>
 
           <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 pt-12">
-            <div className="space-y-5">
+            <div ref={leftContentRef} className="space-y-5 opacity-0">
               <span className="px-2.5 py-0.5 rounded bg-[#0B0D12] text-white text-badge">
                 Core Service
               </span>
@@ -112,7 +133,7 @@ export default function Services() {
             </div>
 
             {/* Right SVG Diagram */}
-            <div className="bg-[#FAF8F5] p-8 rounded-lg border border-[#0B0D12]/15 shadow-sm flex flex-col justify-center space-y-4">
+            <div ref={rightContentRef} className="bg-[#FAF8F5] p-8 rounded-lg border border-[#0B0D12]/15 shadow-sm flex flex-col justify-center space-y-4 opacity-0">
               <div className="text-xs font-mono uppercase text-[#0B0D12] font-bold">Lifecycle Pipeline</div>
               <div className="flex items-center justify-between gap-2 border-b border-[#0B0D12]/10 pb-4">
                 {["Idea", "Design", "Build", "Test", "Deploy"].map((step, i) => (

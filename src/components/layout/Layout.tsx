@@ -23,6 +23,19 @@ export default function Layout() {
       smoothWheel: true,
     });
 
+    // Disable native scroll restoration to force scroll to top on page reload
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    
+    // Aggressively force scroll to top after a tiny delay to override browser restoration
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      lenis.scrollTo(0, { immediate: true });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    }, 50);
+
     lenis.on('scroll', ScrollTrigger.update);
 
     const updateTicker = (time: number) => {
@@ -31,10 +44,13 @@ export default function Layout() {
 
     gsap.ticker.add(updateTicker);
     gsap.ticker.lagSmoothing(0);
+    
+    (window as any).lenis = lenis;
 
     return () => {
       gsap.ticker.remove(updateTicker);
       lenis.destroy();
+      delete (window as any).lenis;
     };
   }, []);
 

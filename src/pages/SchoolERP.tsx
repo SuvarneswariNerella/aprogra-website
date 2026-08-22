@@ -330,6 +330,29 @@ export default function SchoolERP() {
   const [selectedImageModal, setSelectedImageModal] = useState<string | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
+  // Prevent background scrolling and handle Escape key when image modal is open
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && selectedImageModal) {
+        setSelectedImageModal(null);
+      }
+    };
+
+    if (selectedImageModal) {
+      document.body.style.overflow = 'hidden';
+      if ((window as any).lenis) (window as any).lenis.stop();
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+      if ((window as any).lenis) (window as any).lenis.start();
+    }
+    return () => {
+      document.body.style.overflow = '';
+      if ((window as any).lenis) (window as any).lenis.start();
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedImageModal]);
+
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);

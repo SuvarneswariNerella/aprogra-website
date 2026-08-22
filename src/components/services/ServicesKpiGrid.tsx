@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useNavigate } from 'react-router-dom';
 import { 
   Code2, 
   Cpu, 
@@ -10,6 +11,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import CardFlip from '@/components/ui/flip-card';
+import ScrollReveal from '@/components/animations/ScrollReveal';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -44,7 +46,7 @@ export const KPI_SERVICES: KpiServiceItem[] = [
     ],
     icon: Code2,
     accentColor: '#3B82F6',
-    targetId: 'service-web-app',
+    targetId: 'web-app',
   },
   {
     id: 'ai-agents',
@@ -61,7 +63,7 @@ export const KPI_SERVICES: KpiServiceItem[] = [
     ],
     icon: Cpu,
     accentColor: '#8B5CF6',
-    targetId: 'service-ai-agents',
+    targetId: 'ai-agents',
   },
   {
     id: 'saas-product',
@@ -78,7 +80,7 @@ export const KPI_SERVICES: KpiServiceItem[] = [
     ],
     icon: Layers,
     accentColor: '#06B6D4',
-    targetId: 'service-saas-product',
+    targetId: 'saas-product',
   },
   {
     id: 'design-systems',
@@ -95,7 +97,7 @@ export const KPI_SERVICES: KpiServiceItem[] = [
     ],
     icon: PenTool,
     accentColor: '#F43F5E',
-    targetId: 'service-design-systems',
+    targetId: 'design-systems',
   },
   {
     id: 'cloud-devops',
@@ -112,13 +114,14 @@ export const KPI_SERVICES: KpiServiceItem[] = [
     ],
     icon: Cloud,
     accentColor: '#10B981',
-    targetId: 'service-cloud-devops',
+    targetId: 'cloud-devops',
   },
 ];
 
 export default function ServicesKpiGrid() {
   const containerRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const container = containerRef.current;
@@ -167,10 +170,7 @@ export default function ServicesKpiGrid() {
   const handleCardAction = (targetId: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const elem = document.getElementById(targetId);
-    if (elem) {
-      elem.scrollIntoView({ behavior: 'smooth' });
-    }
+    navigate(`/services/architecture/${targetId}`);
   };
 
   return (
@@ -182,7 +182,7 @@ export default function ServicesKpiGrid() {
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="max-w-3xl mb-12 sm:mb-16">
+        <ScrollReveal className="max-w-3xl mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-2xs mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
             <span>DISCIPLINE MATRIX</span>
@@ -194,7 +194,7 @@ export default function ServicesKpiGrid() {
           <p className="mt-4 text-body-lg text-[#5A5E6E]">
             Hover or tap any card to reveal core deliverables and inspect verified architecture schematics.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* 5-Card Symmetrical Grid (3 on Top Row, 2 Centered on Bottom Row for Desktop) */}
         <div
