@@ -12,42 +12,38 @@ import {
   Server, 
   CheckCircle2,
   Terminal,
-  Activity
+  Activity,
+  Zap,
+  Box
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAboutPage, PillarItem } from '@/lib/strapi';
 
-const STUDIO_PILLARS = [
-  {
-    id: '01',
-    title: 'Full-Spectrum Architecture',
-    desc: 'Zero-handoff engineering from cloud infrastructure to 60fps responsive interfaces.',
-    icon: Layers,
-    color: '#FF4A1C'
-  },
-  {
-    id: '02',
-    title: 'Dual-Engine Innovation',
-    desc: 'High-velocity bespoke client pods alongside our proprietary commercial SaaS products.',
-    icon: Server,
-    color: '#3B82F6'
-  },
-  {
-    id: '03',
-    title: 'Autonomous AI Integration',
-    desc: 'Production-ready LLM agents, vector retrieval RAG pipelines, and automated CRM workflows.',
-    icon: Cpu,
-    color: '#10B981'
-  },
-  {
-    id: '04',
-    title: 'Global Delivery Standards',
-    desc: 'Hyderabad engineering headquarters with 99.98% production SLA across 12+ countries.',
-    icon: Globe2,
-    color: '#8B5CF6'
+function getPillarIcon(iconName: string) {
+  switch ((iconName || '').toLowerCase()) {
+    case 'server':
+      return Server;
+    case 'cpu':
+      return Cpu;
+    case 'globe2':
+    case 'globe':
+      return Globe2;
+    case 'code':
+      return Code;
+    case 'zap':
+      return Zap;
+    case 'box':
+      return Box;
+    case 'layers':
+    default:
+      return Layers;
   }
-];
+}
 
 export default function AboutHero() {
+  const { aboutPage } = useAboutPage();
+  const heroData = aboutPage.hero;
+
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [activePillar, setActivePillar] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -113,22 +109,19 @@ export default function AboutHero() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF4A1C]" />
             </span>
             <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-            <span>ABOUT APROGRA • HYDERABAD &amp; GLOBAL</span>
+            <span>{heroData.badgeText || 'ABOUT APROGRA • HYDERABAD & GLOBAL'}</span>
           </div>
 
           {/* Main Headline (Single H1) */}
           <div className="space-y-1.5">
             <h1 className="text-h1 text-[#0B0D12] leading-[1.08]">
-              We don't just write code. <br />
-              <span className="text-[#FF4A1C]">
-                We engineer futures.
-              </span>
+              {heroData.headline || 'Architecting the Future of High-Scale Software & Autonomous Intelligence'}
             </h1>
           </div>
 
           {/* Subheading / Description */}
           <p className="text-sm sm:text-base lg:text-[15px] xl:text-base text-[#5A5E6E] max-w-xl leading-relaxed">
-            AProgra is a full-spectrum software engineering studio — founded in Hyderabad, trusted globally, obsessed with craft, architectural clarity, and long-term product resilience.
+            {heroData.subheadline || 'AProgra is a full-spectrum software engineering studio — founded in Hyderabad, trusted globally, obsessed with craft, architectural clarity, and long-term product resilience.'}
           </p>
 
           {/* Actions / CTAs */}
@@ -137,33 +130,48 @@ export default function AboutHero() {
               onClick={scrollToStory}
               className="h-10 sm:h-11 px-5 sm:px-6 rounded-xl bg-[#FF4A1C] hover:bg-[#E03A0F] text-white text-badge shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 cursor-pointer group"
             >
-              <span>Explore Our Story</span>
+              <span>{heroData.secondaryCtaLabel || 'Explore Our Story'}</span>
               <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
             </button>
 
             <Link
-              to="/products"
+              to={heroData.primaryCtaUrl || '/contact'}
               className="h-10 sm:h-11 px-5 sm:px-6 rounded-xl bg-white border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-badge transition-all shadow-2xs hover:shadow-xs flex items-center gap-2"
             >
-              <span>Our Shipped SaaS</span>
+              <span>{heroData.primaryCtaLabel || 'Start Your Brief'}</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
           {/* Micro Telemetry Ticker / Metrics */}
-          <div className="pt-4 lg:pt-4.5 xl:pt-5 border-t border-[#0B0D12]/10 grid grid-cols-3 gap-3 sm:gap-4 max-w-lg">
-            <div>
-              <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#0B0D12]">2020</span>
-              <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">Founded in Hyd</span>
-            </div>
-            <div>
-              <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#FF4A1C]">60+</span>
-              <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">Global Deployments</span>
-            </div>
-            <div>
-              <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#0B0D12]">100%</span>
-              <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">In-House Pods</span>
-            </div>
+          <div className="pt-4 lg:pt-4.5 xl:pt-5 border-t border-[#0B0D12]/10 grid grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4 max-w-xl">
+            {heroData.kpiStats && heroData.kpiStats.length > 0 ? (
+              heroData.kpiStats.map((kpi, idx) => (
+                <div key={idx}>
+                  <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#0B0D12]">
+                    {kpi.value}
+                  </span>
+                  <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">
+                    {kpi.label}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <>
+                <div>
+                  <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#0B0D12]">100%</span>
+                  <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">In-House</span>
+                </div>
+                <div>
+                  <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#FF4A1C]">4.9★</span>
+                  <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">Rating</span>
+                </div>
+                <div>
+                  <span className="block text-lg sm:text-xl lg:text-[1.35rem] xl:text-2xl font-bold font-display text-[#0B0D12]">&lt;100ms</span>
+                  <span className="text-[10px] sm:text-caption font-mono text-[#5A5E6E] uppercase tracking-wider">Latency</span>
+                </div>
+              </>
+            )}
           </div>
         </motion.div>
 
@@ -193,12 +201,14 @@ export default function AboutHero() {
 
             {/* Pillar Interactive List */}
             <div className="space-y-2 lg:space-y-2 xl:space-y-2.5">
-              {STUDIO_PILLARS.map((pillar, idx) => {
-                const IconComponent = pillar.icon;
+              {heroData.pillars.map((pillar, idx) => {
+                const IconComponent = getPillarIcon(pillar.icon);
                 const isActive = activePillar === idx;
+                const accentColor = pillar.accentColor || '#FF4A1C';
+
                 return (
                   <div
-                    key={pillar.id}
+                    key={pillar.id || idx}
                     onClick={() => setActivePillar(idx)}
                     className={`p-2 sm:p-2.5 lg:p-2.5 xl:p-3 rounded-xl border transition-all cursor-pointer ${
                       isActive 
@@ -209,7 +219,7 @@ export default function AboutHero() {
                     <div className="flex items-start gap-2.5 sm:gap-3">
                       <div 
                         className="w-7 h-7 sm:w-7.5 sm:h-7.5 lg:w-7.5 lg:h-7.5 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ backgroundColor: `${pillar.color}15`, color: pillar.color }}
+                        style={{ backgroundColor: `${accentColor}15`, color: accentColor }}
                       >
                         <IconComponent className="w-3.5 h-3.5" />
                       </div>
@@ -217,14 +227,14 @@ export default function AboutHero() {
                       <div className="space-y-0.5 flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
                           <span className="text-xs font-mono font-bold text-[#0B0D12]">
-                            {pillar.id} {pillar.title}
+                            {pillar.orderNumber} {pillar.title}
                           </span>
                           {isActive && (
                             <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0" />
                           )}
                         </div>
                         <p className="text-[11px] sm:text-xs text-[#5A5E6E] leading-relaxed">
-                          {pillar.desc}
+                          {pillar.description}
                         </p>
                       </div>
                     </div>

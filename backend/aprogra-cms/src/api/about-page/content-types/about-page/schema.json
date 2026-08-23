@@ -1,0 +1,51 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_pages",
+  "info": {
+    "singularName": "about-page",
+    "pluralName": "about-pages",
+    "displayName": "About Page",
+    "description": "Structured single type for About page editorial content"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.hero-section"
+    },
+    "panelWhoWeAre": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.parallax-panel-who-we-are"
+    },
+    "panelMission": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.parallax-panel-mission"
+    },
+    "panelVision": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.parallax-panel-vision"
+    },
+    "clientLogos": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.client-logo-item"
+    },
+    "contactCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "about.about-contact-section"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

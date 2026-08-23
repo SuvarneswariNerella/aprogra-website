@@ -1,0 +1,57 @@
+{
+  "collectionName": "components_product_feature_items",
+  "info": {
+    "displayName": "Feature & Module Item",
+    "icon": "apps",
+    "description": "Enterprise feature, functional module, or channel integration"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "description": "Feature or module name (e.g. Admissions CRM, WhatsApp Business API)"
+    },
+    "description": {
+      "type": "text",
+      "required": true,
+      "description": "Comprehensive explanation of what this feature accomplishes"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Lucide icon identifier (e.g. Users, Bus, Bot, MessageSquare, Clock)"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "module",
+        "channel",
+        "capability",
+        "integration"
+      ],
+      "default": "module",
+      "description": "Classification of the feature item"
+    },
+    "tag": {
+      "type": "string",
+      "description": "Badge / pill tag (e.g. Hardware Integrated, Meta Broadcasts, Visual Workflows)"
+    },
+    "metricLabel": {
+      "type": "string",
+      "description": "KPI metric title (e.g. Higher Lead Conversion, Parent Absence Alert Speed)"
+    },
+    "metricValue": {
+      "type": "string",
+      "description": "KPI metric value (e.g. +38%, < 2 Sec, 98% Open Rate)"
+    },
+    "highlights": {
+      "type": "text",
+      "description": "Newline-separated key highlights or bullet points for this feature"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Sort order in feature lists and pinned carousels"
+    }
+  }
+}

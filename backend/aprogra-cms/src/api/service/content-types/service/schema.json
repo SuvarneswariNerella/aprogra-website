@@ -1,0 +1,121 @@
+{
+  "kind": "collectionType",
+  "collectionName": "services",
+  "info": {
+    "singularName": "service",
+    "pluralName": "services",
+    "displayName": "Service",
+    "description": "Individual software engineering discipline or service offering"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    },
+    "tag": {
+      "type": "string"
+    },
+    "subheading": {
+      "type": "string"
+    },
+    "shortDescription": {
+      "type": "text",
+      "required": true
+    },
+    "heroDescription": {
+      "type": "text"
+    },
+    "accentColor": {
+      "type": "string",
+      "default": "#3B82F6"
+    },
+    "iconMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "illustrationType": {
+      "type": "enumeration",
+      "enum": [
+        "web",
+        "ai",
+        "saas",
+        "design",
+        "cloud",
+        "other"
+      ],
+      "default": "web"
+    },
+    "deliverables": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.deliverable"
+    },
+    "metrics": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.metric"
+    },
+    "technologies": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.tech-group"
+    },
+    "architecturePoints": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.architecture-point"
+    },
+    "mermaidGraph": {
+      "type": "text"
+    },
+    "gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.faq"
+    },
+    "cta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "elements.cta-button"
+    },
+    "metaTitle": {
+      "type": "string"
+    },
+    "metaDescription": {
+      "type": "text"
+    }
+  }
+}

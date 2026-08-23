@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_elements_takeaways",
+  "info": {
+    "displayName": "Takeaway",
+    "icon": "check"
+  },
+  "options": {},
+  "attributes": {
+    "point": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

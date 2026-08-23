@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_elements_preview_steps",
+  "info": {
+    "displayName": "Preview Step",
+    "icon": "check"
+  },
+  "options": {},
+  "attributes": {
+    "stepNumber": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "collectionName": "components_sections_spotlight_sections",
+  "info": {
+    "displayName": "Spotlight Section",
+    "icon": "star"
+  },
+  "options": {},
+  "attributes": {
+    "headerTitle": {
+      "type": "string",
+      "default": "FLAGSHIP DISPATCH"
+    },
+    "editionBadge": {
+      "type": "string",
+      "default": "EDITION #42"
+    },
+    "category": {
+      "type": "string",
+      "default": "AI & Agentic Systems"
+    },
+    "readTime": {
+      "type": "string",
+      "default": "8 MIN READ"
+    },
+    "title": {
+      "type": "string",
+      "default": "Architecting Deterministic Multi-Agent Execution Loops in Production",
+      "required": true
+    },
+    "excerpt": {
+      "type": "text",
+      "default": "How we eliminate agent drift and state explosion using constrained JSON schemas, air-gapped SLM reasoning gates, and deterministic state-machine orchestrators."
+    },
+    "point1": {
+      "type": "string",
+      "default": "Dual-pass validation agents reducing hallucination rates to <0.02%"
+    },
+    "point2": {
+      "type": "string",
+      "default": "Air-gapped SLM reasoning gates cutting LLM compute costs by 68%"
+    },
+    "authorName": {
+      "type": "string",
+      "default": "Arjun Mehta"
+    },
+    "authorRole": {
+      "type": "string",
+      "default": "Lead AI Systems Architect"
+    },
+    "authorAvatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "authorAvatarUrl": {
+      "type": "string"
+    },
+    "buttonText": {
+      "type": "string",
+      "default": "Read Deep Dive"
+    }
+  }
+}

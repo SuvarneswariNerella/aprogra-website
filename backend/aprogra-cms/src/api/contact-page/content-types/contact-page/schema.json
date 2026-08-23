@@ -1,0 +1,57 @@
+{
+  "kind": "singleType",
+  "collectionName": "contact_pages",
+  "info": {
+    "singularName": "contact-page",
+    "pluralName": "contact-pages",
+    "displayName": "Contact Page (Structured Modular)",
+    "description": "Structured sections for the Contact page"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact-hero-section"
+    },
+    "roadmap": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.roadmap-section"
+    },
+    "brief": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.brief-section"
+    },
+    "preview": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.brief-preview-section"
+    },
+    "directChannelsHeader": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.direct-channels-section"
+    },
+    "closingBanner": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.closing-banner-section"
+    },
+    "introCallModal": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.intro-call-modal-section"
+    },
+    "metaTitle": {
+      "type": "string"
+    },
+    "metaDescription": {
+      "type": "text"
+    }
+  }
+}

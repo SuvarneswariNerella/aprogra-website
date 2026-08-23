@@ -2,10 +2,14 @@ import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { useAboutPage } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function ParallaxStack() {
+  const { aboutPage } = useAboutPage();
+  const { panelWhoWeAre, panelMission, panelVision } = aboutPage;
+
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const panel1Ref = useRef<HTMLDivElement>(null);
@@ -135,46 +139,63 @@ export default function ParallaxStack() {
               01
             </span>
 
-            {/* Overlapping Circles Abstract Graphic */}
-            <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center">
-              <div className="absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border border-[#0B0D12]/20 bg-[#0B0D12]/[0.02]" />
-              <div className="absolute w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.04] translate-x-8 -translate-y-6" />
-              <div className="absolute w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-full bg-white border border-[#0B0D12]/10 shadow-lg -translate-x-6 translate-y-8 flex items-center justify-center">
-                <div className="w-4 h-4 lg:w-5 lg:h-5 rounded-full bg-[#FF4A1C]" />
+            {panelWhoWeAre.coverImageUrl ? (
+              <img 
+                src={panelWhoWeAre.coverImageUrl} 
+                alt={panelWhoWeAre.headline} 
+                className="w-full h-full object-cover relative z-10"
+              />
+            ) : (
+              /* Overlapping Circles Abstract Graphic */
+              <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center">
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border border-[#0B0D12]/20 bg-[#0B0D12]/[0.02]" />
+                <div className="absolute w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.04] translate-x-8 -translate-y-6" />
+                <div className="absolute w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-full bg-white border border-[#0B0D12]/10 shadow-lg -translate-x-6 translate-y-8 flex items-center justify-center">
+                  <div className="w-4 h-4 lg:w-5 lg:h-5 rounded-full bg-[#FF4A1C]" />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* RIGHT: TEXT (50%) */}
           <ScrollReveal className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto">
             <span className="text-badge text-[#FF4A1C]">
-              Who We Are
+              {panelWhoWeAre.badge || 'Who We Are'}
             </span>
 
             <h2 className="text-h2 text-[#0B0D12]">
-              Not just another dev shop.
+              {panelWhoWeAre.headline || 'Not just another dev shop.'}
             </h2>
 
             <p className="text-body-lg text-[#0B0D12]/70">
-              AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.
+              {panelWhoWeAre.description || 'AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.'}
             </p>
 
-            {/* 3 Feature Rows */}
+            {/* Feature Rows */}
             <div className="space-y-3.5 pt-1">
-              <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                <div className="text-h4 text-[#0B0D12]">In-house only</div>
-                <div className="text-caption text-[#0B0D12]/60">Every line of code written by our team</div>
-              </div>
-
-              <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                <div className="text-h4 text-[#0B0D12]">End-to-end ownership</div>
-                <div className="text-caption text-[#0B0D12]/60">Design through deployment</div>
-              </div>
-
-              <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                <div className="text-h4 text-[#0B0D12]">Hyderabad-based</div>
-                <div className="text-caption text-[#0B0D12]/60">Working with clients across 12 countries</div>
-              </div>
+              {panelWhoWeAre.highlightRows && panelWhoWeAre.highlightRows.length > 0 ? (
+                panelWhoWeAre.highlightRows.map((row, idx) => (
+                  <div key={row.id || idx} className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">{row.title}</div>
+                    <div className="text-caption text-[#0B0D12]/60">{row.description}</div>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">In-house only</div>
+                    <div className="text-caption text-[#0B0D12]/60">Every line of code written by our team</div>
+                  </div>
+                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">End-to-end ownership</div>
+                    <div className="text-caption text-[#0B0D12]/60">Design through deployment</div>
+                  </div>
+                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">Hyderabad-based</div>
+                    <div className="text-caption text-[#0B0D12]/60">Working with clients across 12 countries</div>
+                  </div>
+                </>
+              )}
             </div>
           </ScrollReveal>
         </div>
@@ -188,21 +209,21 @@ export default function ParallaxStack() {
           {/* LEFT: TEXT (50%) */}
           <div className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 order-2 lg:order-1 overflow-y-auto">
             <span className="text-badge text-[#FF4A1C]">
-              Our Mission
+              {panelMission.badge || 'Our Mission'}
             </span>
 
             <h2 className="text-h2 text-[#FAF8F5]">
-              Build software that actually matters.
+              {panelMission.headline || 'Build software that actually matters.'}
             </h2>
 
             <p className="text-body-lg text-[#FAF8F5]/70">
-              Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.
+              {panelMission.description || 'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.'}
             </p>
 
             {/* Mission Statement Box */}
             <div className="mt-4 sm:mt-6 pl-4 sm:pl-6 border-l-2 border-[#FF4A1C] py-2">
               <p className="text-h3 text-[#FAF8F5] leading-snug font-normal">
-                "To make world-class engineering accessible to every visionary who dares to build."
+                {panelMission.missionQuote || '"To make world-class engineering accessible to every visionary who dares to build."'}
               </p>
             </div>
           </div>
@@ -214,15 +235,23 @@ export default function ParallaxStack() {
               02
             </span>
 
-            {/* Target / Bullseye Visual */}
-            <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center">
-              <div className="absolute w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full border border-white/10" />
-              <div className="absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border border-white/15 bg-white/[0.02]" />
-              <div className="absolute w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.05]" />
-              <div className="absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-[#FF4A1C] flex items-center justify-center shadow-lg shadow-[#FF4A1C]/30">
-                <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white" />
+            {panelMission.coverImageUrl ? (
+              <img 
+                src={panelMission.coverImageUrl} 
+                alt={panelMission.headline} 
+                className="w-full h-full object-cover relative z-10"
+              />
+            ) : (
+              /* Target / Bullseye Visual */
+              <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center">
+                <div className="absolute w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full border border-white/10" />
+                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border border-white/15 bg-white/[0.02]" />
+                <div className="absolute w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.05]" />
+                <div className="absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-[#FF4A1C] flex items-center justify-center shadow-lg shadow-[#FF4A1C]/30">
+                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white" />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -239,53 +268,72 @@ export default function ParallaxStack() {
               03
             </span>
 
-            {/* Glowing Infinity / Futuristic Visual */}
-            <div className="relative flex items-center justify-center">
-              {/* Central Technical Shield */}
-              <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-72 lg:h-72 flex items-center justify-center bg-white rounded-lg border border-[#0B0D12]/10 shadow-lg p-6 group">
-                <div className="absolute -top-3 -right-3 px-2.5 py-0.5 bg-[#0B0D12] text-white text-badge rounded">
-                  2030 Vision
-                </div>
+            {panelVision.coverImageUrl ? (
+              <img 
+                src={panelVision.coverImageUrl} 
+                alt={panelVision.headline} 
+                className="w-full h-full object-cover relative z-10"
+              />
+            ) : (
+              /* Glowing Infinity / Futuristic Visual */
+              <div className="relative flex items-center justify-center">
+                {/* Central Technical Shield */}
+                <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-72 lg:h-72 flex items-center justify-center bg-white rounded-lg border border-[#0B0D12]/10 shadow-lg p-6 group">
+                  <div className="absolute -top-3 -right-3 px-2.5 py-0.5 bg-[#0B0D12] text-white text-badge rounded">
+                    {panelVision.visionBadgeYear || '2030 Vision'}
+                  </div>
 
-                <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center justify-center relative overflow-hidden">
-                  <svg className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-[#0B0D12] relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                    <path d="M12 12c-2-2.5-4-4-6.5-4A4.5 4.5 0 0 0 1 12.5 4.5 4.5 0 0 0 5.5 17c2.5 0 4.5-1.5 6.5-4zm0 0c2 2.5 4 4 6.5 4a4.5 4.5 0 0 0 4.5-4.5A4.5 4.5 0 0 0 18.5 7c-2.5 0-4.5 1.5-6.5 4z" />
-                  </svg>
+                  <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center justify-center relative overflow-hidden">
+                    <svg className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-[#0B0D12] relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <path d="M12 12c-2-2.5-4-4-6.5-4A4.5 4.5 0 0 0 1 12.5 4.5 4.5 0 0 0 5.5 17c2.5 0 4.5-1.5 6.5-4zm0 0c2 2.5 4 4 6.5 4a4.5 4.5 0 0 0 4.5-4.5A4.5 4.5 0 0 0 18.5 7c-2.5 0-4.5 1.5-6.5 4z" />
+                    </svg>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* RIGHT: TEXT (50%) */}
           <div className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto">
             <span className="text-badge text-[#FF4A1C]">
-              Our Vision
+              {panelVision.badge || 'Our Vision'}
             </span>
 
             <h2 className="text-h2 text-[#0B0D12]">
-              The engineering partner for the next generation of global tech leaders.
+              {panelVision.headline || 'Empowering the next generation of digital empires.'}
             </h2>
 
             <p className="text-body-lg text-[#0B0D12]/70">
-              We envision a world where founders and enterprises can build, scale, and transform their digital capabilities with zero compromise on engineering standards or velocity.
+              {panelVision.description || 'We envision a world where ambitious software ventures scale frictionlessly from idea to global impact, powered by autonomous multi-agent engineering pods and mathematically sound design systems.'}
             </p>
 
-            {/* 3 Vision Feature Rows (Matching Panel 1 layout) */}
+            {/* Vision Feature Rows */}
             <div className="space-y-3.5 pt-1">
-              <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                <div className="text-h4 text-[#0B0D12]">Global Reach</div>
-                <div className="text-caption text-[#0B0D12]/60">Serving visionaries across 12+ countries with scale-ready architecture</div>
-              </div>
+              {panelVision.highlightRows && panelVision.highlightRows.length > 0 ? (
+                panelVision.highlightRows.map((row, idx) => (
+                  <div key={row.id || idx} className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">{row.title}</div>
+                    <div className="text-caption text-[#0B0D12]/60">{row.description}</div>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">Global Reach</div>
+                    <div className="text-caption text-[#0B0D12]/60">Serving visionaries across 12+ countries with scale-ready architecture</div>
+                  </div>
 
-              <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                <div className="text-h4 text-[#0B0D12]">Agentic & Autonomous Speed</div>
-                <div className="text-caption text-[#0B0D12]/60">Integrating cutting-edge AI workflows with human craftsmanship</div>
-              </div>
+                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">Agentic &amp; Autonomous Speed</div>
+                    <div className="text-caption text-[#0B0D12]/60">Integrating cutting-edge AI workflows with human craftsmanship</div>
+                  </div>
 
-              <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                <div className="text-h4 text-[#0B0D12]">Infinite Scale</div>
-                <div className="text-caption text-[#0B0D12]/60">Architected from day one to handle millions of active users</div>
-              </div>
+                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
+                    <div className="text-h4 text-[#0B0D12]">Infinite Scale</div>
+                    <div className="text-caption text-[#0B0D12]/60">Architected from day one to handle millions of active users</div>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </div>

@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_about_parallax_panel_visions",
+  "info": {
+    "displayName": "Parallax Panel: Vision",
+    "icon": "shield",
+    "description": "Panel 03 2030 Vision for Parallax Stack"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "2030 Vision"
+    },
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "visionBadgeYear": {
+      "type": "string",
+      "default": "2030 Vision"
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "highlightRows": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.panel-highlight"
+    }
+  }
+}

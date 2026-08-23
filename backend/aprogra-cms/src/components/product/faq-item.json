@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_product_faq_items",
+  "info": {
+    "displayName": "FAQ Item",
+    "icon": "question",
+    "description": "Frequently asked question and answer pair"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true,
+      "description": "Question headline"
+    },
+    "answer": {
+      "type": "text",
+      "required": true,
+      "description": "Comprehensive answer text"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Accordion display sequence"
+    }
+  }
+}

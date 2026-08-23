@@ -1,0 +1,24 @@
+{
+  "collectionName": "components_product_hero_pills",
+  "info": {
+    "displayName": "Hero Telemetry Pill",
+    "icon": "pulse",
+    "description": "Live telemetry status chip displayed in the hero section (e.g. RFID Active, GPS Online)"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Label text (e.g. Live RFID Sync, WhatsApp 24h Session, Bus Fleet Radar)"
+    },
+    "value": {
+      "type": "string",
+      "description": "Status or metric value (e.g. 99.8% Accuracy, 4 Channels Active)"
+    },
+    "icon": {
+      "type": "string",
+      "description": "Lucide icon identifier (e.g. Activity, Signal, Shield, CheckCircle2)"
+    }
+  }
+}

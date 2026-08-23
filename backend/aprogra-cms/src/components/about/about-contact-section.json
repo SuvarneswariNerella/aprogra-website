@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_about_about_contact_sections",
+  "info": {
+    "displayName": "About Contact Section",
+    "icon": "mail",
+    "description": "About page bottom contact & brief CTA section"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "LET'S CONNECT"
+    },
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "email": {
+      "type": "string",
+      "default": "hello@aprogra.com"
+    },
+    "phone": {
+      "type": "string",
+      "default": "+1 (800) 555-0199"
+    },
+    "officeLocation": {
+      "type": "string",
+      "default": "Hyderabad, India"
+    },
+    "ctaLabel": {
+      "type": "string",
+      "default": "Submit Project Brief"
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": "/contact"
+    }
+  }
+}

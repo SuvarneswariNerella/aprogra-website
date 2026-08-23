@@ -11,6 +11,8 @@ export interface CardFlipProps {
   tag?: string;
   number?: string;
   icon?: LucideIcon | React.ElementType;
+  iconMediaUrl?: string;
+  coverImageUrl?: string;
   actionText?: string;
   onActionClick?: (e: React.MouseEvent) => void;
   className?: string;
@@ -30,6 +32,8 @@ export default function CardFlip({
   tag,
   number,
   icon: CustomIcon,
+  iconMediaUrl,
+  coverImageUrl,
   actionText = 'Start Building',
   onActionClick,
   className,
@@ -43,7 +47,7 @@ export default function CardFlip({
         ['--primary' as string]: color ?? '#2563eb',
       } as React.CSSProperties}
       className={cn(
-        'group relative h-[380px] w-full max-w-[340px] [perspective:2000px]',
+        'group relative h-[400px] w-full max-w-[340px] [perspective:2000px]',
         className
       )}
       onMouseEnter={() => setIsFlipped(true)}
@@ -73,96 +77,78 @@ export default function CardFlip({
             'bg-white',
             'border border-[#0B0D12]/15',
             'shadow-md',
-            'transition-all duration-700',
+            'transition-all duration-700 flex flex-col justify-between',
             'group-hover:shadow-xl',
             'group-hover:border-primary/40',
             isFlipped ? 'opacity-0' : 'opacity-100',
           )}
         >
-          {/* Top header badge if number/tag present */}
-          {(number || tag) && (
-            <div className="absolute top-4 left-5 right-5 z-20 flex items-center justify-between pointer-events-none">
-              <span 
-                className="text-xs font-mono font-bold tracking-widest px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#0B0D12]/10 shadow-2xs"
-                style={{ color }}
-              >
-                {number || tag}
-              </span>
-              <span className="text-[10px] font-mono uppercase tracking-widest text-[#5A5E6E]">
+          {/* Top image preview area */}
+          <div className="relative w-full h-[220px] overflow-hidden bg-[#0B0D12]/5 shrink-0">
+            {coverImageUrl ? (
+              <img
+                src={coverImageUrl}
+                alt={title}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#0B0D12]/5 to-[#0B0D12]/10">
+                <IconComponentToUse className="w-12 h-12 text-[#0B0D12]/30" />
+              </div>
+            )}
+
+            {/* Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+            {/* Top header badge if number/tag present */}
+            <div className="absolute top-3.5 left-4 right-4 z-20 flex items-center justify-between pointer-events-none">
+              {(number || tag) && (
+                <span 
+                  className="text-[11px] font-mono font-bold tracking-wider px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md text-white border border-white/20 shadow-xs"
+                >
+                  {number || tag}
+                </span>
+              )}
+              <span className="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded bg-white/80 backdrop-blur-md text-[#0B0D12] font-semibold">
                 HOVER TO FLIP
               </span>
             </div>
-          )}
 
-          {/* Background subtle warm glow */}
-          <div className="from-primary/5 absolute inset-0 bg-gradient-to-br via-transparent to-transparent pointer-events-none" />
-
-          {/* Animated code blocks */}
-          <div className="absolute inset-0 flex items-center justify-center pt-8">
-            <div className="relative flex h-[110px] w-[220px] flex-col items-center justify-center gap-2">
-              {/* Code blocks animation */}
-              {[...Array(6)].map((_, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    'h-3 w-full rounded-sm',
-                    'from-primary/20 via-primary/30 to-primary/20 bg-gradient-to-r',
-                    'animate-[slideIn_2s_ease-in-out_infinite]',
-                    'opacity-0',
-                  )}
-                  style={{
-                    width: `${60 + ((i * 13) % 40)}%`,
-                    animationDelay: `${i * 0.2}s`,
-                    marginLeft: `${((i * 17) % 25)}%`,
-                  }}
-                />
-              ))}
-
-              {/* Central icon */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div
-                  className={cn(
-                    'h-13 w-13 rounded-2xl',
-                    'from-primary via-primary/90 to-primary/80 bg-gradient-to-br',
-                    'flex items-center justify-center',
-                    'shadow-primary/25 shadow-lg',
-                    'animate-pulse',
-                    'transition-all duration-500 group-hover:scale-110 group-hover:rotate-12',
-                  )}
-                  style={{
-                    backgroundColor: color,
-                  }}
-                >
-                  <IconComponentToUse className="h-6 w-6 text-white" />
-                </div>
+            {/* Small icon badge in bottom left of image */}
+            <div className="absolute bottom-3 left-4 z-20 flex items-center gap-2">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center shadow-md overflow-hidden"
+                style={{ backgroundColor: color }}
+              >
+                {iconMediaUrl ? (
+                  <img src={iconMediaUrl} alt={title} className="w-4 h-4 object-contain" />
+                ) : (
+                  <IconComponentToUse className="w-4 h-4 text-white" />
+                )}
               </div>
             </div>
           </div>
 
-          {/* Bottom content */}
-          <div className="absolute right-0 bottom-0 left-0 p-5 bg-gradient-to-t from-white via-white/90 to-transparent">
-            <div className="flex items-center justify-between gap-3">
-              <div className="space-y-1.5 flex-1 min-w-0">
-                <h3 className="text-h4 text-[#0B0D12] transition-all duration-500 ease-out group-hover:translate-y-[-4px] truncate">
-                  {title}
-                </h3>
-                <p className="line-clamp-2 text-sm tracking-tight text-[#5A5E6E] transition-all delay-[50ms] duration-500 ease-out group-hover:translate-y-[-4px]">
-                  {subtitle}
-                </p>
-              </div>
-              <div className="group/icon relative shrink-0">
-                <div
-                  className={cn(
-                    'absolute inset-[-8px] rounded-lg transition-opacity duration-300',
-                    'from-primary/20 via-primary/10 bg-gradient-to-br to-transparent',
-                    'opacity-0 group-hover/icon:opacity-100',
-                  )}
-                />
-                <Zap 
-                  className="relative z-10 h-5 w-5 transition-all duration-300 group-hover/icon:scale-110 group-hover/icon:rotate-12" 
-                  style={{ color }}
-                />
-              </div>
+          {/* Bottom content area */}
+          <div className="p-5 flex-1 flex flex-col justify-between bg-white">
+            <div className="space-y-1.5">
+              <h3 className="text-lg font-bold text-[#0B0D12] tracking-tight leading-snug group-hover:text-[#FF4A1C] transition-colors truncate">
+                {title}
+              </h3>
+              <p className="line-clamp-2 text-xs sm:text-sm text-[#5A5E6E] leading-relaxed">
+                {subtitle}
+              </p>
+            </div>
+
+            <div className="pt-3 border-t border-[#0B0D12]/8 flex items-center justify-between text-xs font-mono text-[#5A5E6E]">
+              <span className="text-[11px] font-semibold text-[#0B0D12]">
+                {features.length} Deliverables Included
+              </span>
+              <span className="flex items-center gap-1 font-bold text-[#0B0D12] group-hover:translate-x-0.5 transition-transform" style={{ color }}>
+                <span>Inspect</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </span>
             </div>
           </div>
         </div>
@@ -190,10 +176,14 @@ export default function CardFlip({
             <div className="space-y-2">
               <div className="mb-2 flex items-center gap-2">
                 <div 
-                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br shadow-xs"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br shadow-xs overflow-hidden"
                   style={{ backgroundColor: color }}
                 >
-                  <Code2 className="h-4 w-4 text-white" />
+                  {iconMediaUrl ? (
+                    <img src={iconMediaUrl} alt={title} className="h-4 w-4 object-contain" />
+                  ) : (
+                    <Code2 className="h-4 w-4 text-white" />
+                  )}
                 </div>
                 <h3 className="text-h4 text-[#0B0D12] transition-all duration-500 ease-out group-hover:translate-y-[-2px]">
                   {title}

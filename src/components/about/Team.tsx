@@ -1,52 +1,26 @@
+import React from 'react';
 import { InteractivePhotoStack, PhotoStackItem } from '@/components/ui/photo-stack';
 import { Sparkles } from 'lucide-react';
 import { motion } from 'motion/react';
 import ScrollReveal from '@/components/animations/ScrollReveal';
-
-const teamMembers: PhotoStackItem[] = [
-  {
-    src: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1887&auto=format&fit=crop",
-    name: "Alexandre Vane",
-    role: "Founder & Chief Architect",
-    bio: "Ex-Google Staff Architect with 12+ years building distributed cloud platforms & high-throughput APIs.",
-    skills: ["Cloud Arch", "Distributed Systems", "Rust & Go"],
-    social: { linkedin: "https://linkedin.com", github: "https://github.com", twitter: "https://twitter.com" }
-  },
-  {
-    src: "https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1887&auto=format&fit=crop",
-    name: "Isabella Chen",
-    role: "Head of Product & Design",
-    bio: "Pioneer in motion graphics & spatial UI design. Transformed digital products for 30+ enterprise firms.",
-    skills: ["Design Systems", "Motion Graphics", "UX Strategy"],
-    social: { linkedin: "https://linkedin.com", github: "https://github.com", twitter: "https://twitter.com" }
-  },
-  {
-    src: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop",
-    name: "Sophia Thorne",
-    role: "Director of AI Research",
-    bio: "Specializing in custom LLM fine-tuning, autonomous agentic workflows, and edge neural deployments.",
-    skills: ["LLMs & RAG", "Machine Learning", "Autonomous Agents"],
-    social: { linkedin: "https://linkedin.com", github: "https://github.com", twitter: "https://twitter.com" }
-  },
-  {
-    src: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop",
-    name: "Mia Rostova",
-    role: "Lead Full-Stack Engineer",
-    bio: "Polyglot software leader specializing in React 19, TypeScript, WebAudio, and frontend state engines.",
-    skills: ["React / Next.js", "TypeScript", "State Engines"],
-    social: { linkedin: "https://linkedin.com", github: "https://github.com", twitter: "https://twitter.com" }
-  },
-  {
-    src: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop",
-    name: "Charlotte Vance",
-    role: "Principal Infrastructure Lead",
-    bio: "Cloud-native infrastructure specialist building zero-downtime multi-region Kubernetes deployments.",
-    skills: ["Kubernetes", "AWS / GCP", "Terraform"],
-    social: { linkedin: "https://linkedin.com", github: "https://github.com", twitter: "https://twitter.com" }
-  }
-];
+import { useTeamMembers } from '@/lib/strapi';
 
 export default function Team() {
+  const { teamMembers } = useTeamMembers();
+
+  const stackItems: PhotoStackItem[] = teamMembers.map((m) => ({
+    src: m.photoUrl,
+    name: m.name,
+    role: m.role,
+    bio: m.bio,
+    skills: m.skills,
+    social: {
+      linkedin: m.linkedinUrl || 'https://linkedin.com',
+      github: m.githubUrl || 'https://github.com',
+      twitter: m.twitterUrl || 'https://twitter.com',
+    },
+  }));
+
   return (
     <section className="min-h-screen py-24 md:py-32 px-6 bg-[#FAF8F5] text-[#0B0D12] flex flex-col justify-center border-t border-[#0B0D12]/10 relative overflow-hidden m-0 mt-0 mb-0">
       
@@ -77,7 +51,7 @@ export default function Team() {
           className="py-4"
         >
           <InteractivePhotoStack
-            items={teamMembers}
+            items={stackItems}
             title="Our Leadership & Core Architects"
           />
         </motion.div>

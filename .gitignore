@@ -4,5 +4,21 @@ dist/
 coverage/
 .DS_Store
 *.log
-.env*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 !.env.example
+
+# Strapi Backend
+backend/aprogra-cms/node_modules/
+backend/aprogra-cms/dist/
+backend/aprogra-cms/build/
+backend/aprogra-cms/.tmp/
+backend/aprogra-cms/.strapi/
+backend/aprogra-cms/.env*
+!backend/aprogra-cms/.env.example
+backend/aprogra-cms/public/uploads/*
+!backend/aprogra-cms/public/uploads/.gitkeep
+

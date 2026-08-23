@@ -1,0 +1,32 @@
+{
+  "kind": "collectionType",
+  "collectionName": "about_faqs",
+  "info": {
+    "singularName": "about-faq",
+    "pluralName": "about-faqs",
+    "displayName": "About FAQ",
+    "description": "Questions and answers for About page accordion"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "answer": {
+      "type": "text",
+      "required": true
+    },
+    "category": {
+      "type": "string",
+      "default": "General"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

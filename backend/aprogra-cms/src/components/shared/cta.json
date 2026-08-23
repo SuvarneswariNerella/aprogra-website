@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_shared_ctas",
+  "info": {
+    "displayName": "Call to Action",
+    "icon": "cursor",
+    "description": "Configurable button or link action"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true,
+      "description": "Button display text"
+    },
+    "link": {
+      "type": "string",
+      "required": true,
+      "description": "Destination URL or route path (e.g. /contact or https://...)"
+    },
+    "style": {
+      "type": "enumeration",
+      "enum": [
+        "primary",
+        "secondary",
+        "ghost"
+      ],
+      "default": "primary",
+      "description": "Visual visual treatment for the CTA button"
+    }
+  }
+}

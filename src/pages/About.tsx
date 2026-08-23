@@ -3,7 +3,6 @@ import AboutHero from '@/components/about/AboutHero';
 import ParallaxStack from '@/components/about/ParallaxStack';
 import ClientLogos from '@/components/home/ClientLogos';
 import Team from '@/components/about/Team';
-import Testimonials from '@/components/home/Testimonials';
 import AboutFAQ from '@/components/about/AboutFAQ';
 import AboutContact from '@/components/about/AboutContact';
 
@@ -13,22 +12,19 @@ export default function About() {
       {/* 1. Hero Section */}
       <AboutHero />
 
-      {/* 2. About + Mission + Vision (3-panel parallax stack) */}
+      {/* 2. Parallax Stack: 3-Panel Scroll Transition (Who We Are -> Mission -> Vision) */}
       <ParallaxStack />
 
-      {/* 3. Our Clients (Logos) */}
+      {/* 3. Client Partner Logos */}
       <ClientLogos />
 
-      {/* 4. Team Section (Kept as existing) */}
+      {/* 4. Interactive Leadership & Architect Photo Stack (Collection Type: Team Members) */}
       <Team />
 
-      {/* 5. Testimonials Section */}
-      <Testimonials />
-
-      {/* 6. FAQs Section */}
+      {/* 5. Accordion FAQs: Transparent Answers (Collection Type: About FAQs) */}
       <AboutFAQ />
 
-      {/* 7. Contact Section */}
+      {/* 6. Direct Lead Conversion & Project Brief Form */}
       <AboutContact />
     </div>
   );

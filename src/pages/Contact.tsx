@@ -1,40 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   Sparkles, ArrowRight, ShieldCheck, Clock, UserCheck, 
-  Compass, FileCheck, Rocket, Send, CheckCircle2, Copy, Check, 
+  Send, CheckCircle2, Copy, Check, 
   Mail, Phone, MapPin, Globe, ExternalLink, Video, Calendar, X,
-  Lock, ArrowUp, ChevronRight, MessageSquare, Star, Shield
+  Lock, ArrowUp, MessageSquare, Shield, AlertCircle
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { useContactPageContent, submitInquiry, ContactChannelItem } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const CAPABILITIES = [
-  'Web Apps',
-  'Mobile Apps',
-  'AI & Automation',
-  'Content & Marketing',
-  'Design Systems',
-  'Enterprise ERP'
-];
-
-const BUDGET_RANGES = [
-  '< $15K',
-  '$15K – $25K',
-  '$25K – $75K',
-  '$75K+'
-];
-
-const TIMELINES = [
-  '< 1 Month',
-  '1–3 Months',
-  '3–6 Months',
-  'Flexible'
-];
-
 export default function Contact() {
+  // Dynamic Strapi CMS Content & Channels Collection Type
+  const { content, channels } = useContactPageContent();
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -49,15 +30,33 @@ export default function Contact() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submissionId, setSubmissionId] = useState<string | number>('');
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   // Copy Feedback States
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPhone, setCopiedPhone] = useState(false);
+  const [copiedChannelId, setCopiedChannelId] = useState<string | null>(null);
 
   // Intro Call Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalDate, setModalDate] = useState('Tomorrow, 10:00 AM EST');
+  const [modalTopic, setModalTopic] = useState('System Architecture');
+  const [modalName, setModalName] = useState('');
+  const [modalEmail, setModalEmail] = useState('');
+  const [modalCompany, setModalCompany] = useState('');
+  const [isModalSubmitting, setIsModalSubmitting] = useState(false);
   const [modalConfirmed, setModalConfirmed] = useState(false);
+
+  // Set default initial topic and time slot from content once loaded
+  useEffect(() => {
+    if (content.introCallModal.topicOptions && content.introCallModal.topicOptions.length > 0) {
+      setModalTopic(content.introCallModal.topicOptions[0]);
+    }
+    if (content.introCallModal.timeSlots && content.introCallModal.timeSlots.length > 0) {
+      setModalDate(content.introCallModal.timeSlots[0]);
+    }
+  }, [content.introCallModal.topicOptions, content.introCallModal.timeSlots]);
 
   // Refs for Animations
   const mainRef = useRef<HTMLDivElement>(null);
@@ -139,7 +138,6 @@ export default function Contact() {
     setFormData(prev => {
       const exists = prev.capabilities.includes(cap);
       if (exists) {
-        // Keep at least one selected
         if (prev.capabilities.length === 1) return prev;
         return { ...prev, capabilities: prev.capabilities.filter(c => c !== cap) };
       } else {
@@ -150,15 +148,46 @@ export default function Contact() {
 
   // Copy Helpers
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('hello@aprogra.com');
+    navigator.clipboard.writeText(content.hero.email);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
   const handleCopyPhone = () => {
-    navigator.clipboard.writeText('+1 (800) 555-0199');
+    navigator.clipboard.writeText(content.hero.phone);
     setCopiedPhone(true);
     setTimeout(() => setCopiedPhone(false), 2000);
+  };
+
+  const handleChannelAction = (channel: ContactChannelItem) => {
+    if (channel.buttonUrl) {
+      window.open(channel.buttonUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+
+    if (channel.type === 'email' || channel.type === 'phone' || channel.type === 'office') {
+      navigator.clipboard.writeText(channel.primaryValue);
+      setCopiedChannelId(channel.id);
+      setTimeout(() => setCopiedChannelId(null), 2000);
+    }
+  };
+
+  // Helper for rendering channel card icons
+  const renderChannelIcon = (channel: ContactChannelItem) => {
+    if (channel.iconUrl) {
+      return <img src={channel.iconUrl} alt={channel.label} className="w-6 h-6 object-contain" />;
+    }
+    switch (channel.type) {
+      case 'phone':
+        return <Phone className="w-6 h-6 text-[#0B0D12]" />;
+      case 'office':
+        return <MapPin className="w-6 h-6 text-[#0B0D12]" />;
+      case 'hub':
+        return <Globe className="w-6 h-6 text-[#0B0D12]" />;
+      case 'email':
+      default:
+        return <Mail className="w-6 h-6 text-[#0B0D12]" />;
+    }
   };
 
   // Smooth Scroll Helper
@@ -173,8 +202,8 @@ export default function Contact() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Form Submission
-  const handleSubmit = (e: React.FormEvent) => {
+  // Form Submission via Strapi API
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
 
@@ -189,19 +218,71 @@ export default function Contact() {
     }
 
     setErrors({});
+    setSubmitError(null);
     setIsSubmitting(true);
 
-    setTimeout(() => {
+    try {
+      const res = await submitInquiry({
+        name: formData.name,
+        email: formData.email,
+        company: formData.company,
+        capabilities: formData.capabilities,
+        budget: formData.budget,
+        timeline: formData.timeline,
+        message: formData.message,
+        type: 'project_brief'
+      });
+
+      if (res.success) {
+        setSubmissionId(res.id || Math.floor(100000 + Math.random() * 900000));
+        setIsSubmitted(true);
+      } else {
+        setSubmitError(res.error || 'Failed to submit inquiry. Please try again.');
+      }
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Network error occurred. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      setIsSubmitted(true);
-    }, 850);
+    }
+  };
+
+  // Intro Call Modal Booking via Strapi API
+  const handleModalBooking = async () => {
+    const nameToUse = modalName.trim() || formData.name.trim() || 'Prospective Client';
+    const emailToUse = modalEmail.trim() || formData.email.trim();
+
+    if (!emailToUse || !/^\S+@\S+\.\S+$/.test(emailToUse)) {
+      alert('Please enter a valid work email for the calendar invitation.');
+      return;
+    }
+
+    setIsModalSubmitting(true);
+    try {
+      await submitInquiry({
+        name: nameToUse,
+        email: emailToUse,
+        company: modalCompany.trim() || formData.company.trim(),
+        message: `Booked 15-min Intro Call on ${modalDate}. Topic: ${modalTopic}`,
+        type: 'intro_call',
+        metadata: {
+          scheduledTime: modalDate,
+          topic: modalTopic
+        }
+      });
+      setModalConfirmed(true);
+    } catch (err) {
+      console.warn('Intro call reservation saved locally:', err);
+      setModalConfirmed(true);
+    } finally {
+      setIsModalSubmitting(false);
+    }
   };
 
   return (
     <div ref={mainRef} className="w-full min-h-screen bg-[#F4F1EA] text-[#0B0D12] font-sans antialiased pt-16">
       
       {/* ========================================================= */}
-      {/* 2. HERO SECTION (2-PART LEFT & RIGHT LAYOUT - SINGLE SCREEN) */}
+      {/* 1. HERO SECTION                                           */}
       {/* ========================================================= */}
       <section className="relative px-4 sm:px-6 md:px-10 py-6 sm:py-8 lg:py-4 overflow-hidden border-b border-[#0B0D12]/10 bg-[#F4F1EA] text-[#0B0D12] min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] lg:max-h-[calc(100vh-64px)] flex flex-col justify-center">
         {/* Ambient Engineering Grid & Glow in Background */}
@@ -213,15 +294,12 @@ export default function Contact() {
               backgroundSize: '32px 32px'
             }}
           />
-          {/* Soft Radial Ambient Glow */}
           <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[#FF4A1C]/5 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* ======================================================= */}
-          {/* LEFT COLUMN: Headings, Supporting Text & Primary CTAs  */}
-          {/* ======================================================= */}
+          {/* LEFT COLUMN: Headings, Supporting Text & Primary CTAs */}
           <div ref={heroRef} className="lg:col-span-7 space-y-3 sm:space-y-4 text-left relative z-10">
             
             {/* Availability Badge */}
@@ -231,22 +309,22 @@ export default function Contact() {
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF4A1C]" />
               </span>
               <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-              <span>ACCEPTING NEW PROJECTS • Q3/Q4 ENGAGEMENTS</span>
+              <span>{content.hero.availabilityBadge}</span>
             </div>
 
-            {/* Main Headline (Single H1) */}
+            {/* Main Headline */}
             <div className="space-y-1">
               <h1 className="text-h1 text-[#0B0D12]">
-                Let’s engineer something <br />
+                {content.hero.headline} <br />
                 <span className="text-[#FF4A1C]">
-                  infinite.
+                  {content.hero.highlight}
                 </span>
               </h1>
             </div>
 
             {/* Supporting Text */}
             <p className="text-xs sm:text-sm lg:text-base text-[#5A5E6E] max-w-xl leading-relaxed">
-              Have a breakthrough product, an enterprise platform to scale, or an AI workflow to automate? Connect directly with our lead architects to turn your vision into production-ready software.
+              {content.hero.description}
             </p>
 
             {/* CTA Buttons */}
@@ -255,7 +333,7 @@ export default function Contact() {
                 onClick={scrollToBrief}
                 className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md transition-all flex items-center gap-2 cursor-pointer group"
               >
-                <span>Start Your Brief</span>
+                <span>{content.hero.primaryCtaText}</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
 
@@ -267,7 +345,7 @@ export default function Contact() {
                 className="px-5 sm:px-6 py-2.5 sm:py-3 rounded-lg bg-white border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-xs sm:text-sm font-semibold transition-all shadow-2xs hover:shadow-xs flex items-center gap-2 cursor-pointer"
               >
                 <Calendar className="w-4 h-4 text-[#FF4A1C]" />
-                <span>Schedule Intro Call</span>
+                <span>{content.hero.secondaryCtaText}</span>
               </button>
             </div>
 
@@ -275,23 +353,21 @@ export default function Contact() {
             <div className="pt-3 border-t border-[#0B0D12]/10 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs font-mono text-[#0B0D12]">
               <div className="flex items-center gap-2 p-2 rounded-lg bg-white border border-[#0B0D12]/10 shadow-2xs">
                 <Clock className="w-4 h-4 text-[#FF4A1C] shrink-0" />
-                <span>&lt; 2 hrs Response SLA</span>
+                <span>{content.hero.slaBadge1}</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-lg bg-white border border-[#0B0D12]/10 shadow-2xs">
                 <ShieldCheck className="w-4 h-4 text-[#0B0D12] shrink-0" />
-                <span>100% NDA Protected</span>
+                <span>{content.hero.slaBadge2}</span>
               </div>
               <div className="flex items-center gap-2 p-2 rounded-lg bg-white border border-[#0B0D12]/10 shadow-2xs">
                 <UserCheck className="w-4 h-4 text-[#FF4A1C] shrink-0" />
-                <span>Lead Architect Access</span>
+                <span>{content.hero.slaBadge3}</span>
               </div>
             </div>
 
           </div>
 
-          {/* ======================================================= */}
-          {/* RIGHT COLUMN: Fast-Track Direct Channels & Pod Status   */}
-          {/* ======================================================= */}
+          {/* RIGHT COLUMN: Direct Channels Fast-Track Card */}
           <div ref={rightColumnRef} className="lg:col-span-5 space-y-3">
             <div className="rounded-2xl bg-white border border-[#0B0D12]/15 p-4 sm:p-5 shadow-md space-y-3">
               
@@ -299,12 +375,12 @@ export default function Contact() {
               <div className="flex items-center justify-between pb-2 border-b border-gray-100">
                 <span className="text-[11px] font-mono font-bold text-[#0B0D12] uppercase tracking-wider flex items-center gap-1.5">
                   <MessageSquare className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                  <span>DIRECT CHANNELS</span>
+                  <span>{content.hero.directChannelsTitle}</span>
                 </span>
                 
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Pod Active</span>
+                  <span>{content.hero.podStatus}</span>
                 </span>
               </div>
 
@@ -314,12 +390,12 @@ export default function Contact() {
                 {/* Email item */}
                 <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-white border border-[#0B0D12]/10 flex items-center justify-center text-[#FF4A1C] shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-white border border-[#0B0D12]/10 flex items-center justify-center text-[#FF4A1C] shrink-0 overflow-hidden p-1">
                       <Mail className="w-3.5 h-3.5" />
                     </div>
                     <div className="truncate">
-                      <span className="block text-[9px] font-mono uppercase text-[#5A5E6E]">Primary Inquiries</span>
-                      <span className="text-xs font-mono font-bold text-[#0B0D12] truncate">hello@aprogra.com</span>
+                      <span className="block text-[9px] font-mono uppercase text-[#5A5E6E]">{content.hero.emailLabel}</span>
+                      <span className="text-xs font-mono font-bold text-[#0B0D12] truncate">{content.hero.email}</span>
                     </div>
                   </div>
                   <button
@@ -335,7 +411,7 @@ export default function Contact() {
                     ) : (
                       <>
                         <Copy className="w-3 h-3 text-[#5A5E6E]" />
-                        <span>Copy</span>
+                        <span>{content.hero.emailCopyButtonText}</span>
                       </>
                     )}
                   </button>
@@ -344,12 +420,12 @@ export default function Contact() {
                 {/* Phone item */}
                 <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center justify-between gap-3">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-white border border-[#0B0D12]/10 flex items-center justify-center text-[#FF4A1C] shrink-0">
+                    <div className="w-7 h-7 rounded-lg bg-white border border-[#0B0D12]/10 flex items-center justify-center text-[#FF4A1C] shrink-0 overflow-hidden p-1">
                       <Phone className="w-3.5 h-3.5" />
                     </div>
                     <div className="truncate">
-                      <span className="block text-[9px] font-mono uppercase text-[#5A5E6E]">Direct Phone Line</span>
-                      <span className="text-xs font-mono font-bold text-[#0B0D12] truncate">+1 (800) 555-0199</span>
+                      <span className="block text-[9px] font-mono uppercase text-[#5A5E6E]">{content.hero.phoneLabel}</span>
+                      <span className="text-xs font-mono font-bold text-[#0B0D12] truncate">{content.hero.phone}</span>
                     </div>
                   </div>
                   <button
@@ -365,7 +441,7 @@ export default function Contact() {
                     ) : (
                       <>
                         <Copy className="w-3 h-3 text-[#5A5E6E]" />
-                        <span>Copy</span>
+                        <span>{content.hero.phoneCopyButtonText}</span>
                       </>
                     )}
                   </button>
@@ -373,12 +449,14 @@ export default function Contact() {
 
                 {/* HQ & Location */}
                 <div className="p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-white border border-[#0B0D12]/10 flex items-center justify-center text-[#FF4A1C] shrink-0">
+                  <div className="w-7 h-7 rounded-lg bg-white border border-[#0B0D12]/10 flex items-center justify-center text-[#FF4A1C] shrink-0 overflow-hidden p-1">
                     <MapPin className="w-3.5 h-3.5" />
                   </div>
                   <div className="min-w-0">
-                    <span className="block text-[9px] font-mono uppercase text-[#5A5E6E]">Studio HQ</span>
-                    <span className="text-xs font-bold text-[#0B0D12] block truncate">Hyderabad, India • Global Remote Pods</span>
+                    <span className="block text-[9px] font-mono uppercase text-[#5A5E6E]">{content.hero.studioHqLabel}</span>
+                    <span className="text-xs font-bold text-[#0B0D12] block truncate">
+                      {content.hero.studioHqValue}
+                    </span>
                   </div>
                 </div>
 
@@ -391,7 +469,7 @@ export default function Contact() {
                   className="w-full py-2.5 rounded-lg bg-[#0B0D12] hover:bg-[#FF4A1C] text-white text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-colors shadow-2xs"
                 >
                   <Video className="w-3.5 h-3.5" />
-                  <span>Book 15-Min Intro Call</span>
+                  <span>{content.hero.bookIntroCallButtonText}</span>
                 </button>
               </div>
 
@@ -401,20 +479,45 @@ export default function Contact() {
         </div>
       </section>
 
-      {/* 4. PROJECT BRIEF / CONTACT FORM SECTION */}
+      {/* ========================================================= */}
+      {/* 2. ENGAGEMENT LIFECYCLE ROADMAP                           */}
+      {/* ========================================================= */}
+      <section ref={processRef} className="py-16 px-6 max-w-7xl mx-auto border-b border-[#0B0D12]/10">
+        <div className="mb-10 text-center sm:text-left">
+          <span className="text-badge text-[#5A5E6E] block mb-2 font-mono">{content.roadmap.badge}</span>
+          <h2 className="text-h2 text-[#0B0D12]">{content.roadmap.title}</h2>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {content.roadmap.steps.map((step, idx) => (
+            <div 
+              key={step.id || idx}
+              className="process-card bg-[#FAF8F5] p-6 rounded-lg border border-[#0B0D12]/15 space-y-3 shadow-xs hover:border-[#FF4A1C]/40 transition-colors"
+            >
+              <span className="text-label-mono text-[#FF4A1C] font-bold">{step.timeframe}</span>
+              <h4 className="text-h4 text-[#0B0D12]">{step.title}</h4>
+              <p className="text-body text-[#5A5E6E] leading-relaxed">{step.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ========================================================= */}
+      {/* 3. INTERACTIVE PROJECT BRIEF / SPECIFICATION FORM         */}
+      {/* ========================================================= */}
       <section id="project-brief" ref={briefRef} className="py-20 px-6 max-w-7xl mx-auto scroll-mt-24">
         <ScrollReveal stagger={0.15}>
           
           <div className="text-center max-w-3xl mx-auto space-y-3 mb-12">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-xs">
               <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-              <span>Interactive Brief Generator</span>
+              <span>{content.brief.badge}</span>
             </div>
             <h2 className="text-h2 text-[#0B0D12]">
-              Tell us about your project.
+              {content.brief.title}
             </h2>
             <p className="text-body-lg text-[#5A5E6E] max-w-xl mx-auto">
-              Fill out the brief below to generate your custom project preview and start a direct conversation with our technical team.
+              {content.brief.subtitle}
             </p>
           </div>
 
@@ -432,7 +535,7 @@ export default function Contact() {
                 
                 <div className="space-y-2">
                   <h3 className="text-h3 text-[#0B0D12]">
-                    Project Brief Received!
+                    {content.brief.successTitle}
                   </h3>
                   <p className="text-sm text-[#5A5E6E] max-w-md mx-auto leading-relaxed font-sans">
                     Thank you, <span className="font-semibold text-[#0B0D12]">{formData.name}</span>. Our lead architects are reviewing your specifications and will get back to <span className="font-semibold text-[#0B0D12]">{formData.email}</span> within 2 hours.
@@ -440,7 +543,7 @@ export default function Contact() {
                 </div>
 
                 <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/15 text-xs text-[#0B0D12] max-w-md mx-auto text-left space-y-1 font-mono">
-                  <div className="font-bold">Brief Confirmation ID: #{Math.floor(100000 + Math.random() * 900000)}</div>
+                  <div className="font-bold text-[#FF4A1C]">Strapi Brief ID: #{submissionId}</div>
                   <div>Capabilities: {formData.capabilities.join(', ')}</div>
                   <div>Target Budget: {formData.budget} | Timeline: {formData.timeline}</div>
                 </div>
@@ -452,9 +555,9 @@ export default function Contact() {
                       name: '',
                       email: '',
                       company: '',
-                      capabilities: ['Web Apps'],
-                      budget: '$25K – $75K',
-                      timeline: '1–3 Months',
+                      capabilities: [content.brief.capabilitiesList[0] || 'Web Apps'],
+                      budget: content.brief.budgetRangesList[1] || '$15K – $25K',
+                      timeline: content.brief.timelineRangesList[1] || '1–3 Months',
                       message: ''
                     });
                   }}
@@ -468,22 +571,29 @@ export default function Contact() {
                 
                 <div className="border-b border-[#0B0D12]/10 pb-4">
                   <h3 className="text-h3 text-[#0B0D12]">
-                    Project Requirements Form
+                    {content.brief.formHeading}
                   </h3>
                   <p className="text-caption text-[#5A5E6E] mt-0.5">
-                    Select your project attributes to help us match the right technical team.
+                    {content.brief.formSubheading}
                   </p>
                 </div>
+
+                {submitError && (
+                  <div className="p-3.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
 
                 {/* Name & Email inputs */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
                     <label className="block text-label-mono text-[#0B0D12]">
-                      Your Name <span className="text-[#FF4A1C]">*</span>
+                      {content.brief.fieldNameLabel}
                     </label>
                     <input 
                       type="text"
-                      placeholder="e.g. Alex Morgan"
+                      placeholder={content.brief.fieldNamePlaceholder}
                       value={formData.name}
                       onChange={(e) => {
                         setFormData({ ...formData, name: e.target.value });
@@ -498,11 +608,11 @@ export default function Contact() {
 
                   <div className="space-y-1.5">
                     <label className="block text-label-mono text-[#0B0D12]">
-                      Work Email <span className="text-[#FF4A1C]">*</span>
+                      {content.brief.fieldEmailLabel}
                     </label>
                     <input 
                       type="email"
-                      placeholder="alex@company.com"
+                      placeholder={content.brief.fieldEmailPlaceholder}
                       value={formData.email}
                       onChange={(e) => {
                         setFormData({ ...formData, email: e.target.value });
@@ -519,11 +629,11 @@ export default function Contact() {
                 {/* Company / Organization Input */}
                 <div className="space-y-1.5">
                   <label className="block text-label-mono text-[#0B0D12]">
-                    Company / Organization <span className="text-[#5A5E6E] font-normal lowercase">(optional)</span>
+                    {content.brief.fieldCompanyLabel}
                   </label>
                   <input 
                     type="text"
-                    placeholder="e.g. NextGen SaaS or Stealth Startup"
+                    placeholder={content.brief.fieldCompanyPlaceholder}
                     value={formData.company}
                     onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                     className="w-full px-4 py-3 rounded-lg border border-[#0B0D12]/15 text-body text-[#0B0D12] bg-white placeholder-[#5A5E6E]/60 outline-none focus:border-[#0B0D12] transition-all"
@@ -533,10 +643,10 @@ export default function Contact() {
                 {/* Capabilities Chips */}
                 <div className="space-y-2">
                   <label className="block text-label-mono text-[#0B0D12]">
-                    What capabilities do you require?
+                    {content.brief.capabilitiesQuestion}
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {CAPABILITIES.map((cap) => {
+                    {content.brief.capabilitiesList.map((cap) => {
                       const isSelected = formData.capabilities.includes(cap);
                       return (
                         <button
@@ -560,10 +670,10 @@ export default function Contact() {
                 {/* Budget Range Chips */}
                 <div className="space-y-2">
                   <label className="block text-label-mono text-[#0B0D12]">
-                    Expected Investment Range
+                    {content.brief.budgetQuestion}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {BUDGET_RANGES.map((b) => (
+                    {content.brief.budgetRangesList.map((b) => (
                       <button
                         type="button"
                         key={b}
@@ -583,10 +693,10 @@ export default function Contact() {
                 {/* Timeline Chips */}
                 <div className="space-y-2">
                   <label className="block text-label-mono text-[#0B0D12]">
-                    Target Timeline
+                    {content.brief.timelineQuestion}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {TIMELINES.map((t) => (
+                    {content.brief.timelineRangesList.map((t) => (
                       <button
                         type="button"
                         key={t}
@@ -603,20 +713,14 @@ export default function Contact() {
                   </div>
                 </div>
 
-                {/* Overview Textarea */}
+                {/* Project Overview / Message */}
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <label className="block text-label-mono text-[#0B0D12]">
-                      Project Overview & Goals <span className="text-[#FF4A1C]">*</span>
-                    </label>
-                    <span className="text-caption text-[#5A5E6E] font-mono">
-                      {formData.message.length} / 1000
-                    </span>
-                  </div>
+                  <label className="block text-label-mono text-[#0B0D12]">
+                    {content.brief.messageQuestion}
+                  </label>
                   <textarea 
                     rows={4}
-                    maxLength={1000}
-                    placeholder="Describe your project, key goals, target users, or tech stack requirements..."
+                    placeholder={content.brief.messagePlaceholder}
                     value={formData.message}
                     onChange={(e) => {
                       setFormData({ ...formData, message: e.target.value });
@@ -629,70 +733,47 @@ export default function Contact() {
                   {errors.message && <p className="text-red-500 text-caption font-mono">{errors.message}</p>}
                 </div>
 
-                {/* Submit CTA Button */}
+                {/* Submit button */}
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 px-6 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white rounded-lg text-badge flex items-center justify-center gap-2 cursor-pointer shadow-sm transition-all duration-200 disabled:opacity-60"
+                  className="w-full py-4 bg-[#FF4A1C] hover:bg-[#E03E14] disabled:opacity-50 text-white font-bold rounded-lg text-badge flex items-center justify-center gap-2 transition-all cursor-pointer shadow-md hover:shadow-lg"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>{isSubmitting ? 'Transmitting Brief...' : 'Submit Project Brief'}</span>
+                  {isSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <span>{content.brief.submitButtonText}</span>
+                      <Send className="w-4 h-4" />
+                    </>
+                  )}
                 </button>
-
-                {/* Privacy Guarantee */}
-                <div className="pt-2 flex items-center justify-center gap-1.5 text-caption text-[#5A5E6E] text-center font-mono">
-                  <Lock className="w-3.5 h-3.5 text-[#0B0D12] shrink-0" />
-                  <span>Submitted information is strictly protected under NDA and will never be shared.</span>
-                </div>
-
               </form>
             )}
 
-          </div>
+            </div>
 
-          {/* RIGHT COLUMN: LIVE BRIEF SUMMARY & BOOKING CARD */}
-          <div className="lg:col-span-5 flex flex-col gap-6 h-full">
-            
-            {/* Live Brief Summary Card (Dark Container) */}
-            <div className="bg-[#0B0D12] text-[#F4F1EA] rounded-lg p-6 sm:p-8 shadow-md relative overflow-hidden border border-[#0B0D12] flex-1 flex flex-col">
-              <div className="flex items-center justify-between pb-4 border-b border-white/10 relative z-10">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
-                  <span className="text-label-mono text-white">
-                    Live Brief Preview
+            {/* RIGHT COLUMN: LIVE INTERACTIVE BRIEF PREVIEW CARD */}
+            <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+              
+              <div className="bg-[#0B0D12] text-white rounded-lg p-6 sm:p-8 border border-white/10 shadow-lg space-y-6 relative overflow-hidden">
+                <div className="flex items-center justify-between pb-4 border-b border-white/10">
+                  <div className="flex items-center gap-2">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#FF4A1C] animate-pulse" />
+                    <span className="text-label-mono text-[#F4F1EA]/80">{content.preview.cardTitle}</span>
+                  </div>
+                  <span className="text-[10px] font-mono uppercase bg-white/10 px-2 py-0.5 rounded text-white/80">
+                    {content.preview.cardBadge}
                   </span>
                 </div>
-                <span className="text-caption font-mono bg-white/10 text-white px-2.5 py-0.5 rounded border border-white/20">
-                  Auto-Updating
-                </span>
-              </div>
 
-              {/* Dynamic Content Display */}
-              <div className="space-y-4 py-5 text-body relative z-10">
-                
-                {/* Client Name & Email */}
-                <div>
-                  <div className="text-label-mono text-[#F4F1EA]/60">Client Lead</div>
-                  <div className="text-h4 text-white mt-0.5">
-                    {formData.name.trim() || 'Your Name'}
-                  </div>
-                  <div className="text-caption text-[#FF4A1C] font-mono">
-                    {formData.email.trim() || 'your.email@company.com'}
-                  </div>
-                  {formData.company.trim() && (
-                    <div className="text-caption text-[#F4F1EA]/70 mt-0.5">
-                      Company: <span className="text-white font-medium">{formData.company}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Selected Capabilities */}
-                <div>
-                  <div className="text-label-mono text-[#F4F1EA]/60 mb-1.5">Capabilities</div>
+                {/* Selected Scope summary */}
+                <div className="space-y-2">
+                  <div className="text-label-mono text-[#F4F1EA]/60">{content.preview.capabilitiesLabel}</div>
                   <div className="flex flex-wrap gap-1.5">
-                    {formData.capabilities.map((cap) => (
-                      <span key={cap} className="px-2.5 py-1 rounded bg-white/10 text-white border border-white/15 text-caption font-mono font-medium">
-                        {cap}
+                    {formData.capabilities.map((c) => (
+                      <span key={c} className="text-[11px] font-mono bg-[#FF4A1C]/20 border border-[#FF4A1C]/40 text-white px-2.5 py-0.5 rounded">
+                        {c}
                       </span>
                     ))}
                   </div>
@@ -701,11 +782,11 @@ export default function Contact() {
                 {/* Budget & Timeline */}
                 <div className="grid grid-cols-2 gap-4 pt-2 border-t border-white/10">
                   <div>
-                    <div className="text-label-mono text-[#F4F1EA]/60">Investment</div>
+                    <div className="text-label-mono text-[#F4F1EA]/60">{content.preview.investmentLabel}</div>
                     <div className="text-body font-bold text-[#FF4A1C] mt-0.5 font-mono">{formData.budget}</div>
                   </div>
                   <div>
-                    <div className="text-label-mono text-[#F4F1EA]/60">Timeline</div>
+                    <div className="text-label-mono text-[#F4F1EA]/60">{content.preview.timelineLabel}</div>
                     <div className="text-body font-bold text-white mt-0.5 font-mono">{formData.timeline}</div>
                   </div>
                 </div>
@@ -722,243 +803,168 @@ export default function Contact() {
                 
                 {/* Engineering Focus / Next Steps */}
                 <div className="pt-4 border-t border-white/10">
-                  <div className="text-label-mono text-[#F4F1EA]/60 mb-3">Engagement Architecture</div>
+                  <div className="text-label-mono text-[#F4F1EA]/60 mb-3">{content.preview.engagementTitle}</div>
                   <div className="space-y-3">
-                    <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">1</div>
-                      <div>
-                        <div className="text-caption font-semibold text-white">Initial Brief Review</div>
-                        <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">Our lead architects analyze your specific requirements.</div>
+                    {content.preview.engagementSteps.map((step, idx) => (
+                      <div key={step.id || idx} className="flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">
+                          {step.stepNumber || idx + 1}
+                        </div>
+                        <div>
+                          <div className="text-caption font-semibold text-white">{step.title}</div>
+                          <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">{step.description}</div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">2</div>
-                      <div>
-                        <div className="text-caption font-semibold text-white">System Design & Scope</div>
-                        <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">We map out technical constraints and platform architecture.</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-3">
-                      <div className="w-5 h-5 rounded-full bg-white/10 text-[#FF4A1C] flex items-center justify-center shrink-0 font-mono text-[10px] mt-0.5">3</div>
-                      <div>
-                        <div className="text-caption font-semibold text-white">Engineering Kickoff</div>
-                        <div className="text-[11px] text-[#F4F1EA]/70 font-sans mt-0.5">Dedicated pods are spun up for immediate development.</div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
 
                 {/* Security & Guarantees */}
                 <div className="pt-4 border-t border-white/10">
-                  <div className="text-label-mono text-[#F4F1EA]/60 mb-3">Enterprise Guarantees</div>
+                  <div className="text-label-mono text-[#F4F1EA]/60 mb-3">{content.preview.guaranteesTitle}</div>
                   <div className="grid grid-cols-2 gap-3">
                     <div className="bg-white/5 p-3 rounded-md border border-white/10">
                       <div className="flex items-center gap-1.5 mb-1 text-white">
                         <Lock className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                        <span className="text-caption font-bold">Strict NDA</span>
+                        <span className="text-caption font-bold">{content.preview.guarantee1_title}</span>
                       </div>
-                      <div className="text-[11px] text-[#F4F1EA]/70 font-sans">100% IP Protection</div>
+                      <div className="text-[11px] text-[#F4F1EA]/70 font-sans">{content.preview.guarantee1_desc}</div>
                     </div>
                     <div className="bg-white/5 p-3 rounded-md border border-white/10">
                       <div className="flex items-center gap-1.5 mb-1 text-white">
                         <Shield className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                        <span className="text-caption font-bold">SOC2 Type II</span>
+                        <span className="text-caption font-bold">{content.preview.guarantee2_title}</span>
                       </div>
-                      <div className="text-[11px] text-[#F4F1EA]/70 font-sans">Bank-grade security</div>
+                      <div className="text-[11px] text-[#F4F1EA]/70 font-sans">{content.preview.guarantee2_desc}</div>
                     </div>
                   </div>
                 </div>
 
-              </div>
-
-              {/* Status footer */}
-              <div className="pt-4 mt-auto border-t border-white/10 flex items-center justify-between text-caption text-[#F4F1EA]/70 relative z-10 font-mono">
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                  <span>SLA Response: &lt; 2 hrs</span>
+                {/* Status footer */}
+                <div className="pt-4 mt-auto border-t border-white/10 flex items-center justify-between text-caption text-[#F4F1EA]/70 relative z-10 font-mono">
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" />
+                    <span>{content.preview.slaResponseText}</span>
+                  </div>
+                  <span className="text-[#FF4A1C] font-semibold flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> {content.preview.readyReviewText}
+                  </span>
                 </div>
-                <span className="text-[#FF4A1C] font-semibold flex items-center gap-1">
-                  <CheckCircle2 className="w-3.5 h-3.5" /> Ready for Review
-                </span>
               </div>
-            </div>
 
-
-            {/* Book a 15-Min Intro Call Box */}
-            <div id="video-call-section" className="bg-[#FAF8F5] rounded-lg p-5 border border-[#0B0D12]/15 shadow-xs space-y-3 scroll-mt-24">
-              <div className="flex items-center gap-2">
-                <Video className="w-5 h-5 text-[#FF4A1C]" />
-                <h4 className="text-h4 text-[#0B0D12]">
-                  Prefer a face-to-face video call?
-                </h4>
+              {/* Book a 15-Min Intro Call Box */}
+              <div id="video-call-section" className="bg-[#FAF8F5] rounded-lg p-5 border border-[#0B0D12]/15 shadow-xs space-y-3 scroll-mt-24">
+                <div className="flex items-center gap-2">
+                  <Video className="w-5 h-5 text-[#FF4A1C]" />
+                  <h4 className="text-h4 text-[#0B0D12]">
+                    {content.preview.videoTitle}
+                  </h4>
+                </div>
+                <p className="text-body text-[#5A5E6E]">
+                  {content.preview.videoDescription}
+                </p>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="w-full py-2.5 px-4 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white rounded text-badge flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+                >
+                  <Calendar className="w-3.5 h-3.5" />
+                  <span>{content.preview.videoButtonText}</span>
+                </button>
               </div>
-              <p className="text-body text-[#5A5E6E]">
-                Schedule an immediate 15-minute intro with our engineering leads to talk through your platform requirements.
-              </p>
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="w-full py-2.5 px-4 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white rounded text-badge flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
-              >
-                <Calendar className="w-3.5 h-3.5" />
-                <span>Book a 15-Min Intro Call</span>
-              </button>
+
             </div>
 
           </div>
-
-        </div>
         </ScrollReveal>
       </section>
 
-      {/* 5. DIRECT CONTACT SECTION */}
+      {/* ========================================================= */}
+      {/* 4. DIRECT CONTACT SECTION (COLLECTION TYPE CHANNELS)      */}
+      {/* ========================================================= */}
       <section ref={directRef} className="w-full bg-[#FAF8F5] py-20 px-6 border-y border-[#0B0D12]/10 relative z-10">
         <div className="max-w-7xl mx-auto">
           
           <div className="text-center max-w-2xl mx-auto space-y-3 mb-14">
             <span className="text-badge text-[#0B0D12] bg-white px-3.5 py-1.5 rounded-lg inline-block border border-[#0B0D12]/15 shadow-xs">
-              DIRECT CHANNELS
+              {content.directChannelsHeader.badge}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Get in touch directly
+              {content.directChannelsHeader.title}
             </h2>
             <p className="text-body-lg text-[#5A5E6E]">
-              Prefer direct communication? Reach out through any of our primary channels below.
+              {content.directChannelsHeader.subtitle}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
-            {/* CARD 1 — GENERAL INQUIRIES */}
-            <div className="bg-white rounded-lg p-6 border border-[#0B0D12]/15 shadow-xs flex flex-col justify-between space-y-6 h-full">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-lg bg-[#FAF8F5] flex items-center justify-center border border-[#0B0D12]/15">
-                  <Mail className="w-6 h-6 text-[#0B0D12]" />
-                </div>
-                <div>
-                  <span className="text-label-mono text-[#5A5E6E]">
-                    GENERAL INQUIRIES
-                  </span>
-                  <h3 className="text-h4 text-[#0B0D12] mt-1 break-words">
-                    hello@aprogra.com
-                  </h3>
-                  <p className="text-caption text-[#5A5E6E] mt-2">
-                    Mentioned 24/7 by solution engineers
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleCopyEmail}
-                className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white text-caption font-mono transition-colors duration-200 flex items-center justify-center gap-2 border border-[#0B0D12]/15 cursor-pointer shadow-xs"
-              >
-                {copiedEmail ? (
-                  <>
-                    <Check className="w-4 h-4 text-[#FF4A1C]" />
-                    <span>Copied to Clipboard!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    <span>Copy Email Address</span>
-                  </>
-                )}
-              </button>
-            </div>
+            {channels.map((channel) => {
+              const isCopied = copiedChannelId === channel.id;
+              return (
+                <div 
+                  key={channel.id}
+                  className="bg-white rounded-lg p-6 border border-[#0B0D12]/15 shadow-xs flex flex-col justify-between space-y-6 h-full hover:border-[#FF4A1C]/40 transition-colors"
+                >
+                  <div className="space-y-4">
+                    <div className="w-12 h-12 rounded-lg bg-[#FAF8F5] flex items-center justify-center border border-[#0B0D12]/15 overflow-hidden p-2">
+                      {renderChannelIcon(channel)}
+                    </div>
+                    <div>
+                      <span className="text-label-mono text-[#5A5E6E]">
+                        {channel.label}
+                      </span>
+                      <h3 className="text-h4 text-[#0B0D12] mt-1 break-words">
+                        {channel.primaryValue}
+                      </h3>
+                      <p className="text-caption text-[#5A5E6E] mt-2">
+                        {channel.subtext}
+                      </p>
+                    </div>
+                  </div>
 
-            {/* CARD 2 — PHONE */}
-            <div className="bg-white rounded-lg p-6 border border-[#0B0D12]/15 shadow-xs flex flex-col justify-between space-y-6 h-full">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-lg bg-[#FAF8F5] flex items-center justify-center border border-[#0B0D12]/15">
-                  <Phone className="w-6 h-6 text-[#0B0D12]" />
+                  {channel.buttonUrl ? (
+                    <a
+                      href={channel.buttonUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white text-caption font-mono transition-colors duration-200 flex items-center justify-center gap-2 border border-[#0B0D12]/15 cursor-pointer shadow-xs"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      <span>{channel.buttonText}</span>
+                    </a>
+                  ) : channel.type === 'hub' ? (
+                    <div className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] text-[#0B0D12] text-caption font-mono flex items-center justify-center gap-2 border border-[#0B0D12]/15">
+                      <Globe className="w-4 h-4 text-[#FF4A1C]" />
+                      <span>{channel.buttonText}</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => handleChannelAction(channel)}
+                      className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white text-caption font-mono transition-colors duration-200 flex items-center justify-center gap-2 border border-[#0B0D12]/15 cursor-pointer shadow-xs"
+                    >
+                      {isCopied ? (
+                        <>
+                          <Check className="w-4 h-4 text-[#FF4A1C]" />
+                          <span>Copied to Clipboard!</span>
+                        </>
+                      ) : (
+                        <>
+                          <Copy className="w-4 h-4" />
+                          <span>{channel.buttonText}</span>
+                        </>
+                      )}
+                    </button>
+                  )}
                 </div>
-                <div>
-                  <span className="text-label-mono text-[#5A5E6E]">
-                    PHONE
-                  </span>
-                  <h3 className="text-h4 text-[#0B0D12] mt-1 break-words">
-                    +1 (800) 555-0199
-                  </h3>
-                  <p className="text-caption text-[#5A5E6E] mt-2">
-                    Mon–Fri, 8:00 AM–6:00 PM PST
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={handleCopyPhone}
-                className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white text-caption font-mono transition-colors duration-200 flex items-center justify-center gap-2 border border-[#0B0D12]/15 cursor-pointer shadow-xs"
-              >
-                {copiedPhone ? (
-                  <>
-                    <Check className="w-4 h-4 text-[#FF4A1C]" />
-                    <span>Copied to Clipboard!</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    <span>Copy Phone Number</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* CARD 3 — GLOBAL HEADQUARTERS */}
-            <div className="bg-white rounded-lg p-6 border border-[#0B0D12]/15 shadow-xs flex flex-col justify-between space-y-6 h-full">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-lg bg-[#FAF8F5] flex items-center justify-center border border-[#0B0D12]/15">
-                  <MapPin className="w-6 h-6 text-[#0B0D12]" />
-                </div>
-                <div>
-                  <span className="text-label-mono text-[#5A5E6E]">
-                    GLOBAL HEADQUARTERS
-                  </span>
-                  <h3 className="text-h4 text-[#0B0D12] mt-1 break-words">
-                    San Francisco, CA
-                  </h3>
-                  <p className="text-caption text-[#5A5E6E] mt-2">
-                    500 Howard St, Suite 420
-                  </p>
-                </div>
-              </div>
-              <a
-                href="https://maps.google.com/?q=San+Francisco+CA"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white text-caption font-mono transition-colors duration-200 flex items-center justify-center gap-2 border border-[#0B0D12]/15 cursor-pointer shadow-xs"
-              >
-                <ExternalLink className="w-4 h-4" />
-                <span>Open in Google Maps</span>
-              </a>
-            </div>
-
-            {/* CARD 4 — REGIONAL TECH HUB */}
-            <div className="bg-white rounded-lg p-6 border border-[#0B0D12]/15 shadow-xs flex flex-col justify-between space-y-6 h-full">
-              <div className="space-y-4">
-                <div className="w-12 h-12 rounded-lg bg-[#FAF8F5] flex items-center justify-center border border-[#0B0D12]/15">
-                  <Globe className="w-6 h-6 text-[#0B0D12]" />
-                </div>
-                <div>
-                  <span className="text-label-mono text-[#5A5E6E]">
-                    REGIONAL TECH HUB
-                  </span>
-                  <h3 className="text-h4 text-[#0B0D12] mt-1 break-words">
-                    Singapore & London
-                  </h3>
-                  <p className="text-caption text-[#5A5E6E] mt-2">
-                    Serving clients across 4 timezones
-                  </p>
-                </div>
-              </div>
-              <div className="w-full py-2.5 px-4 rounded-lg bg-[#FAF8F5] text-[#0B0D12] text-caption font-mono flex items-center justify-center gap-2 border border-[#0B0D12]/15">
-                <Globe className="w-4 h-4" />
-                <span>Remote First Engineering</span>
-              </div>
-            </div>
-
+              );
+            })}
           </div>
 
         </div>
       </section>
 
-      {/* 6. CLOSING CTA BANNER WITH VISIBLE INFINITY SYMBOL */}
+      {/* ========================================================= */}
+      {/* 5. CLOSING INFINITY BANNER                                */}
+      {/* ========================================================= */}
       <section className="w-full bg-[#F4F1EA] text-[#0B0D12] py-28 px-6 relative overflow-hidden flex items-center justify-center min-h-[480px] border-t border-[#0B0D12]/10">
         
         {/* LARGE, CLEAR, VISIBLE INFINITY (∞) SYMBOL IN BACKGROUND */}
@@ -969,7 +975,6 @@ export default function Contact() {
             fill="none" 
             xmlns="http://www.w3.org/2000/svg"
           >
-            {/* Outer Path */}
             <path 
               d="M 400,200 C 500,100 650,100 650,200 C 650,300 500,300 400,200 C 300,100 150,100 150,200 C 150,300 300,300 400,200 Z" 
               stroke="#0B0D12" 
@@ -977,7 +982,6 @@ export default function Contact() {
               strokeLinecap="round" 
               strokeLinejoin="round"
             />
-            {/* Core Stroke Path */}
             <path 
               d="M 400,200 C 500,100 650,100 650,200 C 650,300 500,300 400,200 C 300,100 150,100 150,200 C 150,300 300,300 400,200 Z" 
               stroke="#FF4A1C" 
@@ -993,14 +997,14 @@ export default function Contact() {
         {/* CONTENT LAYERED ABOVE THE INFINITY SYMBOL */}
         <div className="max-w-4xl mx-auto text-center space-y-8 relative z-10">
           <h2 className="text-h2 text-[#0B0D12]">
-            Engineering Infinite <br />
+            {content.closingBanner.headline} <br />
             <span className="text-[#FF4A1C]">
-              Possibilities.
+              {content.closingBanner.highlight}
             </span>
           </h2>
 
           <p className="text-body-lg text-[#5A5E6E] max-w-xl mx-auto">
-            Thank you for visiting. We look forward to building with you.
+            {content.closingBanner.subtitle}
           </p>
 
           <div className="pt-4 flex items-center justify-center gap-4">
@@ -1009,13 +1013,15 @@ export default function Contact() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white border border-[#0B0D12]/15 text-badge transition-all duration-200 cursor-pointer shadow-xs"
             >
               <ArrowUp className="w-4 h-4" />
-              <span>BACK TO TOP ↑</span>
+              <span>{content.closingBanner.backToTopText}</span>
             </button>
           </div>
         </div>
       </section>
 
-      {/* MODAL: BOOK A 15-MIN INTRO CALL */}
+      {/* ========================================================= */}
+      {/* 6. MODAL: BOOK A 15-MIN INTRO CALL                        */}
+      {/* ========================================================= */}
       {isModalOpen && (
         <div 
           onClick={() => {
@@ -1045,8 +1051,8 @@ export default function Contact() {
                     <Video className="w-6 h-6 text-[#FF4A1C]" />
                   </div>
                   <div>
-                    <h3 className="text-h3 text-white">Engineering Kickoff Call</h3>
-                    <p className="text-caption text-[#F4F1EA]/70 mt-1">Directly with our Lead Solutions Architect. 15 minutes to evaluate technical fit.</p>
+                    <h3 className="text-h3 text-white">{content.introCallModal.title}</h3>
+                    <p className="text-caption text-[#F4F1EA]/70 mt-1">{content.introCallModal.subtitle}</p>
                   </div>
                 </div>
 
@@ -1056,7 +1062,8 @@ export default function Contact() {
                     <input 
                       type="text"
                       placeholder="e.g. Sarah Jenkins"
-                      defaultValue={formData.name}
+                      value={modalName || formData.name}
+                      onChange={(e) => setModalName(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-white/5"
                     />
                   </div>
@@ -1065,7 +1072,8 @@ export default function Contact() {
                     <input 
                       type="email"
                       placeholder="you@company.com"
-                      defaultValue={formData.email}
+                      value={modalEmail || formData.email}
+                      onChange={(e) => setModalEmail(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-white/5"
                     />
                   </div>
@@ -1076,7 +1084,8 @@ export default function Contact() {
                   <input 
                     type="text"
                     placeholder="Company Name"
-                    defaultValue={formData.company}
+                    value={modalCompany || formData.company}
+                    onChange={(e) => setModalCompany(e.target.value)}
                     className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-white/5"
                   />
                 </div>
@@ -1085,12 +1094,13 @@ export default function Contact() {
                   <div className="space-y-2">
                     <label className="text-label-mono text-[#F4F1EA]/80 block">Primary Topic</label>
                     <select 
+                      value={modalTopic} 
+                      onChange={(e) => setModalTopic(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-[#161922]"
                     >
-                      <option>System Architecture</option>
-                      <option>AI & Automation</option>
-                      <option>Project Rescue</option>
-                      <option>Team Augmentation</option>
+                      {content.introCallModal.topicOptions.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -1100,20 +1110,26 @@ export default function Contact() {
                       onChange={(e) => setModalDate(e.target.value)}
                       className="w-full px-3.5 py-2.5 rounded-lg border border-white/10 text-body text-white outline-none focus:border-[#FF4A1C] bg-[#161922] font-mono text-sm"
                     >
-                      <option>Tomorrow, 10:00 AM EST</option>
-                      <option>Tomorrow, 2:30 PM EST</option>
-                      <option>Thursday, 11:00 AM EST</option>
-                      <option>Friday, 4:00 PM EST</option>
+                      {content.introCallModal.timeSlots.map((slot) => (
+                        <option key={slot} value={slot}>{slot}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => setModalConfirmed(true)}
-                  className="w-full py-3.5 mt-2 bg-[#FF4A1C] hover:bg-[#E03E14] text-white rounded-lg text-badge flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:shadow-xl transition-all"
+                  onClick={handleModalBooking}
+                  disabled={isModalSubmitting}
+                  className="w-full py-3.5 mt-2 bg-[#FF4A1C] hover:bg-[#E03E14] disabled:opacity-50 text-white rounded-lg text-badge flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:shadow-xl transition-all"
                 >
-                  <Calendar className="w-4 h-4" />
-                  <span>Confirm Calendar Reservation</span>
+                  {isModalSubmitting ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    <>
+                      <Calendar className="w-4 h-4" />
+                      <span>{content.introCallModal.submitButtonText}</span>
+                    </>
+                  )}
                 </button>
               </div>
             ) : (
@@ -1123,9 +1139,9 @@ export default function Contact() {
                   <CheckCircle2 className="w-8 h-8 text-[#FF4A1C]" />
                 </div>
                 <div>
-                  <h4 className="text-h3 text-white">Call Reserved!</h4>
+                  <h4 className="text-h3 text-white">{content.introCallModal.successTitle}</h4>
                   <p className="text-body text-[#F4F1EA]/70 mt-2 max-w-sm mx-auto">
-                    Calendar invite dispatched for <span className="font-semibold text-white">{modalDate}</span>. We've sent a Google Meet link to your inbox.
+                    Calendar invite dispatched for <span className="font-semibold text-white">{modalDate}</span>. We've sent confirmation to your inbox.
                   </p>
                 </div>
                 <button

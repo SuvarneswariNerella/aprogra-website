@@ -1,0 +1,31 @@
+{
+  "collectionName": "components_about_pillar_items",
+  "info": {
+    "displayName": "Pillar Item",
+    "icon": "layers",
+    "description": "Architectural pillar item for About Hero"
+  },
+  "options": {},
+  "attributes": {
+    "orderNumber": {
+      "type": "string",
+      "default": "01"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "default": "Layers"
+    },
+    "accentColor": {
+      "type": "string",
+      "default": "#FF4A1C"
+    }
+  }
+}

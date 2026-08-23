@@ -1,0 +1,79 @@
+{
+  "collectionName": "components_sections_brief_sections",
+  "info": {
+    "displayName": "Brief Section",
+    "icon": "write"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "formHeading": {
+      "type": "string"
+    },
+    "formSubheading": {
+      "type": "text"
+    },
+    "fieldNameLabel": {
+      "type": "string"
+    },
+    "fieldNamePlaceholder": {
+      "type": "string"
+    },
+    "fieldEmailLabel": {
+      "type": "string"
+    },
+    "fieldEmailPlaceholder": {
+      "type": "string"
+    },
+    "fieldCompanyLabel": {
+      "type": "string"
+    },
+    "fieldCompanyPlaceholder": {
+      "type": "string"
+    },
+    "capabilitiesQuestion": {
+      "type": "string"
+    },
+    "capabilitiesList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.choice-item"
+    },
+    "budgetQuestion": {
+      "type": "string"
+    },
+    "budgetRangesList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.choice-item"
+    },
+    "timelineQuestion": {
+      "type": "string"
+    },
+    "timelineRangesList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.choice-item"
+    },
+    "messageQuestion": {
+      "type": "string"
+    },
+    "messagePlaceholder": {
+      "type": "text"
+    },
+    "submitButtonText": {
+      "type": "string"
+    },
+    "successTitle": {
+      "type": "string"
+    }
+  }
+}

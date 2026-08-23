@@ -35,8 +35,51 @@ import {
 
 import Testimonials from '@/components/home/Testimonials';
 import StartProjectCta from '@/components/home/StartProjectCta';
+import { useProduct } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const ICON_MAP: Record<string, any> = {
+  BookOpen,
+  Users,
+  UserCheck,
+  Clock,
+  Calendar,
+  CreditCard,
+  Bus,
+  Building2,
+  HeartHandshake,
+  Bot,
+  Smartphone,
+  FileText,
+  BarChart3,
+  CalendarCheck,
+  GraduationCap,
+  Sparkles,
+  Layers,
+  ShieldCheck,
+  Activity,
+  Award,
+  Lock,
+};
+
+function getModuleIcon(iconName?: string) {
+  if (!iconName) return Layers;
+  if (ICON_MAP[iconName]) return ICON_MAP[iconName];
+  const normalized = iconName.toLowerCase();
+  if (normalized.includes('report') || normalized.includes('chart') || normalized.includes('analytic')) return BarChart3;
+  if (normalized.includes('user') || normalized.includes('admiss')) return Users;
+  if (normalized.includes('attend') || normalized.includes('clock') || normalized.includes('time')) return Clock;
+  if (normalized.includes('exam') || normalized.includes('book') || normalized.includes('acad')) return BookOpen;
+  if (normalized.includes('fee') || normalized.includes('pay') || normalized.includes('card')) return CreditCard;
+  if (normalized.includes('bus') || normalized.includes('transport') || normalized.includes('gps')) return Bus;
+  if (normalized.includes('app') || normalized.includes('phone') || normalized.includes('mobile')) return Smartphone;
+  if (normalized.includes('hr') || normalized.includes('staff') || normalized.includes('pay')) return FileText;
+  if (normalized.includes('daycare') || normalized.includes('child') || normalized.includes('care')) return HeartHandshake;
+  if (normalized.includes('ai') || normalized.includes('bot') || normalized.includes('saraswati')) return Bot;
+  if (normalized.includes('appointment') || normalized.includes('calendar')) return CalendarCheck;
+  return Layers;
+}
 
 // ----------------------------------------------------
 // MODULE CATEGORIES DATA
@@ -421,7 +464,46 @@ export default function SchoolERP() {
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
   };
 
-  const currentCategoryObj = ERP_CATEGORIES.find(c => c.id === activeCategory) || ERP_CATEGORIES[0];
+  const { product } = useProduct('school-erp');
+
+  const dynamicCategories: ERPModuleCategory[] = (product?.features && product.features.length > 0)
+    ? product.features.map((f, index) => {
+        const IconComponent = getModuleIcon(f.icon);
+        const highlightLines = f.highlights ? f.highlights.split('\n').map(l => l.trim()).filter(Boolean) : [];
+        const featureList = highlightLines.length > 0
+          ? highlightLines.map((line) => {
+              const [first, ...rest] = line.split(':');
+              if (rest.length > 0) {
+                return { title: first.trim(), desc: rest.join(':').trim() };
+              }
+              return { title: line, desc: f.description || '' };
+            })
+          : [
+              { title: f.title, desc: f.description || '' }
+            ];
+
+        return {
+          id: String(f.id || `module-${index}`),
+          name: f.title,
+          badge: f.tag || 'Enterprise Module',
+          icon: IconComponent,
+          tagline: f.description || f.title,
+          description: f.description || '',
+          accentColor: 'from-[#3B4FCF] to-[#8B5CF6]',
+          highlightMetric: f.metricValue || '100%',
+          metricLabel: f.metricLabel || 'Automated',
+          features: featureList,
+        };
+      })
+    : ERP_CATEGORIES;
+
+  useEffect(() => {
+    if (dynamicCategories.length > 0 && !dynamicCategories.some(c => c.id === activeCategory)) {
+      setActiveCategory(dynamicCategories[0].id);
+    }
+  }, [dynamicCategories, activeCategory]);
+
+  const currentCategoryObj = dynamicCategories.find(c => c.id === activeCategory) || dynamicCategories[0] || ERP_CATEGORIES[0];
 
   return (
     <div ref={pageRef} className="w-full relative bg-[#F4F1EA] text-[#0B0D12] overflow-hidden">
@@ -464,7 +546,7 @@ export default function SchoolERP() {
               href="#module-breakdown"
               className="px-7 py-4 rounded bg-white border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-badge transition-all shadow-sm"
             >
-              Explore 8 Core Modules
+              Explore {dynamicCategories.length} Core Modules
             </a>
           </div>
 
@@ -507,7 +589,7 @@ export default function SchoolERP() {
               Comprehensive Feature Architecture
             </span>
             <h2 className="erp-module-anim text-h2 text-[#0B0D12]">
-              8 Specialized Modules for Every Department
+              {dynamicCategories.length} Specialized Modules for Every Department
             </h2>
             <p className="erp-module-anim text-body text-[#0B0D12]/70">
               Click through the modules below to explore how SmartSchool ERP transforms every aspect of campus management.
@@ -516,7 +598,7 @@ export default function SchoolERP() {
 
           {/* CATEGORY TABS SELECTOR */}
           <div className="erp-module-anim flex flex-wrap gap-2 justify-center">
-            {ERP_CATEGORIES.map((cat) => {
+            {dynamicCategories.map((cat) => {
               const IconComp = cat.icon;
               const isActive = activeCategory === cat.id;
 

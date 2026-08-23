@@ -1,0 +1,57 @@
+{
+  "collectionName": "components_about_hero_sections",
+  "info": {
+    "displayName": "Hero Section",
+    "icon": "layout",
+    "description": "About page hero section"
+  },
+  "options": {},
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "default": "Full-Stack Engineering & AI Studio"
+    },
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "subheadline": {
+      "type": "text",
+      "required": true
+    },
+    "primaryCtaLabel": {
+      "type": "string",
+      "default": "Start Your Brief"
+    },
+    "primaryCtaUrl": {
+      "type": "string",
+      "default": "/contact"
+    },
+    "secondaryCtaLabel": {
+      "type": "string",
+      "default": "Explore Our Story"
+    },
+    "secondaryCtaUrl": {
+      "type": "string",
+      "default": "#story"
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "pillars": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.pillar-item"
+    },
+    "kpiStats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.stat-badge"
+    }
+  }
+}

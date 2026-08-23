@@ -1,0 +1,55 @@
+{
+  "kind": "collectionType",
+  "collectionName": "contact_channels",
+  "info": {
+    "singularName": "contact-channel",
+    "pluralName": "contact-channels",
+    "displayName": "Contact Channel / Location",
+    "description": "Direct communication channels, offices, and regional tech hubs"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "order": {
+      "type": "integer",
+      "default": 1
+    },
+    "type": {
+      "type": "enumeration",
+      "enum": ["email", "phone", "office", "hub", "other"],
+      "default": "email"
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "primaryValue": {
+      "type": "string",
+      "required": true
+    },
+    "subtext": {
+      "type": "text"
+    },
+    "buttonText": {
+      "type": "string"
+    },
+    "buttonUrl": {
+      "type": "string"
+    },
+    "iconName": {
+      "type": "string",
+      "default": "mail"
+    },
+    "iconMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images", "files"]
+    },
+    "iconUrl": {
+      "type": "string"
+    }
+  }
+}

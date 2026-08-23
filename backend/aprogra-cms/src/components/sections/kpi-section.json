@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_sections_kpi_sections",
+  "info": {
+    "displayName": "KPI Section",
+    "icon": "grid"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

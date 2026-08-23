@@ -1,19 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-export interface ServiceItem {
-  id: string;
-  tag: string;
-  title: string;
-  subheading: string;
-  description: string;
-  deliverables: string[];
-  metrics: { label: string; value: string }[];
-  accentGradient: string;
-  accentColor: string;
-  illustrationType: 'web' | 'ai' | 'saas' | 'design' | 'cloud';
-}
+import { ServiceItem, getStrapiMediaUrl } from '@/lib/strapi';
 
 interface EditorialServiceSectionProps {
   service: ServiceItem;
@@ -22,6 +10,8 @@ interface EditorialServiceSectionProps {
 }
 
 export default function EditorialServiceSection({ service, index, isReversed }: EditorialServiceSectionProps) {
+  const iconUrl = getStrapiMediaUrl(service.iconMedia);
+
   return (
     <section
       id={`service-${service.id}`}
@@ -34,10 +24,18 @@ export default function EditorialServiceSection({ service, index, isReversed }: 
           {/* Card Top Category Ribbon */}
           <div className="flex items-center justify-between pb-4 mb-6 border-b border-[#0B0D12]/8 text-xs font-mono">
             <div className="flex items-center gap-2.5">
-              <span 
-                className="w-2 h-2 rounded-full" 
-                style={{ backgroundColor: service.accentColor }} 
-              />
+              {iconUrl ? (
+                <img 
+                  src={iconUrl} 
+                  alt={service.title} 
+                  className="w-4 h-4 object-contain shrink-0" 
+                />
+              ) : (
+                <span 
+                  className="w-2 h-2 rounded-full" 
+                  style={{ backgroundColor: service.accentColor }} 
+                />
+              )}
               <span className="px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[11px] font-mono font-medium text-[#0B0D12]">
                 {service.tag}
               </span>
@@ -66,24 +64,27 @@ export default function EditorialServiceSection({ service, index, isReversed }: 
 
               {/* Crisp Description */}
               <p className="text-xs sm:text-sm text-[#5A5E6E] leading-relaxed max-w-md">
-                {service.description}
+                {service.shortDescription || (service as any).description}
               </p>
 
               {/* Deliverable Tags */}
               <div className="space-y-1.5 pt-1">
                 <div className="flex flex-wrap gap-1.5">
-                  {service.deliverables.map((item) => (
-                    <span
-                      key={item}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#0B0D12]/8 text-[11px] font-mono text-[#0B0D12] hover:border-[#0B0D12]/20 transition-colors"
-                    >
-                      <span 
-                        className="w-1.5 h-1.5 rounded-full shrink-0" 
-                        style={{ backgroundColor: service.accentColor }} 
-                      />
-                      {item}
-                    </span>
-                  ))}
+                  {service.deliverables.map((item: any, dIdx: number) => {
+                    const deliverableText = typeof item === 'string' ? item : item.item;
+                    return (
+                      <span
+                        key={dIdx}
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#0B0D12]/8 text-[11px] font-mono text-[#0B0D12] hover:border-[#0B0D12]/20 transition-colors"
+                      >
+                        <span 
+                          className="w-1.5 h-1.5 rounded-full shrink-0" 
+                          style={{ backgroundColor: service.accentColor }} 
+                        />
+                        {deliverableText}
+                      </span>
+                    );
+                  })}
                 </div>
               </div>
 

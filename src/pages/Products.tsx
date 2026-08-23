@@ -42,8 +42,60 @@ import Testimonials from '@/components/home/Testimonials';
 import AboutContact from '@/components/about/AboutContact';
 import { SchoolModulesSection } from '@/components/products/SchoolModulesSection';
 import { OmniChatModulesSection } from '@/components/products/OmniChatModulesSection';
+import { useProduct } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const ICON_MAP: Record<string, any> = {
+  BookOpen: FileText,
+  Users,
+  UserCheck,
+  Clock,
+  Calendar,
+  CreditCard,
+  Bus,
+  HeartHandshake,
+  Bot,
+  Smartphone,
+  FileText,
+  BarChart3,
+  CalendarCheck,
+  GraduationCap,
+  Sparkles,
+  Layers,
+  ShieldCheck,
+  Activity,
+  Award,
+  Lock,
+  MessageSquare,
+  MessageCircle,
+  Send,
+  Workflow: Sparkles,
+  Zap,
+  Headphones,
+};
+
+function getModuleIcon(iconName?: string) {
+  if (!iconName) return Layers;
+  if (ICON_MAP[iconName]) return ICON_MAP[iconName];
+  const normalized = iconName.toLowerCase();
+  if (normalized.includes('whatsapp')) return MessageCircle;
+  if (normalized.includes('instagram') || normalized.includes('social') || normalized.includes('dm')) return Sparkles;
+  if (normalized.includes('telegram')) return Send;
+  if (normalized.includes('messenger') || normalized.includes('chat') || normalized.includes('inbox')) return MessageSquare;
+  if (normalized.includes('report') || normalized.includes('chart') || normalized.includes('analytic')) return BarChart3;
+  if (normalized.includes('user') || normalized.includes('admiss')) return Users;
+  if (normalized.includes('attend') || normalized.includes('clock') || normalized.includes('time')) return Clock;
+  if (normalized.includes('exam') || normalized.includes('book') || normalized.includes('acad')) return FileText;
+  if (normalized.includes('fee') || normalized.includes('pay') || normalized.includes('card')) return CreditCard;
+  if (normalized.includes('bus') || normalized.includes('transport') || normalized.includes('gps')) return Bus;
+  if (normalized.includes('app') || normalized.includes('phone') || normalized.includes('mobile')) return Smartphone;
+  if (normalized.includes('hr') || normalized.includes('staff') || normalized.includes('pay')) return FileText;
+  if (normalized.includes('daycare') || normalized.includes('child') || normalized.includes('care')) return HeartHandshake;
+  if (normalized.includes('ai') || normalized.includes('bot') || normalized.includes('saraswati')) return Bot;
+  if (normalized.includes('appointment') || normalized.includes('calendar')) return CalendarCheck;
+  return Layers;
+}
 
 // ----------------------------------------------------
 // SCHOOL ERP FEATURES (ALL 11 MODULES) — ENTERPRISE SUITE
@@ -321,6 +373,31 @@ export default function Products() {
   const pageRef = useRef<HTMLDivElement>(null);
   const [isLoadingGrid, setIsLoadingGrid] = useState(true);
 
+  const { product: schoolProduct } = useProduct('school-erp');
+  const { product: omnichatProduct } = useProduct('omnichat');
+
+  const schoolModules = (schoolProduct?.features && schoolProduct.features.length > 0)
+    ? schoolProduct.features.map((f) => ({
+        icon: getModuleIcon(f.icon),
+        title: f.title,
+        desc: f.description,
+        kpi: f.metricLabel ? `${f.metricLabel} · ${f.metricValue || '100%'}` : (f.metricValue || 'Enterprise Grade'),
+        tag: f.tag || 'Module',
+        highlights: f.highlights ? f.highlights.split('\n').map(l => l.trim()).filter(Boolean) : [f.description]
+      }))
+    : SCHOOL_FEATURES;
+
+  const omnichatModules = (omnichatProduct?.features && omnichatProduct.features.length > 0)
+    ? omnichatProduct.features.map((f) => ({
+        icon: getModuleIcon(f.icon),
+        title: f.title,
+        desc: f.description,
+        kpi: f.metricLabel ? `${f.metricLabel} · ${f.metricValue || '100%'}` : (f.metricValue || 'Official Channel'),
+        tag: f.tag || 'Channel',
+        highlights: f.highlights ? f.highlights.split('\n').map(l => l.trim()).filter(Boolean) : [f.description]
+      }))
+    : OMNICHAT_FEATURES;
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoadingGrid(false);
@@ -337,17 +414,17 @@ export default function Products() {
       <ProductsHero />
 
       {/* ---------------------------------------------------- */}
-      {/* 2. SCHOOL ERP & 11 CORE MODULES — UNIFIED SECTION   */}
+      {/* 2. SCHOOL ERP & DYNAMIC CORE MODULES — UNIFIED SECTION */}
       {/* ---------------------------------------------------- */}
       <SchoolModulesSection 
-        modules={SCHOOL_FEATURES} 
+        modules={schoolModules} 
       />
 
       {/* ---------------------------------------------------- */}
-      {/* 3. OMNICHAT & 6 MULTI-CHANNEL CAPABILITIES — UNIFIED */}
+      {/* 3. OMNICHAT & DYNAMIC MULTI-CHANNEL CAPABILITIES     */}
       {/* ---------------------------------------------------- */}
       <OmniChatModulesSection 
-        modules={OMNICHAT_FEATURES} 
+        modules={omnichatModules} 
       />
 
       {/* ---------------------------------------------------- */}

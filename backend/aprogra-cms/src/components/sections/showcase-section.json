@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_sections_showcase_sections",
+  "info": {
+    "displayName": "Showcase Section",
+    "icon": "landscape"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "02 / CAPABILITIES & ARCHITECTURE"
+    },
+    "subBadge": {
+      "type": "string",
+      "default": "HORIZONTAL REVEAL"
+    },
+    "title": {
+      "type": "string",
+      "default": "Core Engineering Disciplines",
+      "required": true
+    },
+    "scrollText": {
+      "type": "string",
+      "default": "SCROLL DOWN TO REVEAL DISCIPLINES"
+    }
+  }
+}

@@ -155,7 +155,7 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/community" className="hover:text-[#FF4A1C] transition-colors inline-flex items-center gap-1 group">
+                <Link to="/blog" className="hover:text-[#FF4A1C] transition-colors inline-flex items-center gap-1 group">
                   <span className="group-hover:translate-x-0.5 transition-transform">Engineering Journal</span>
                 </Link>
               </li>

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_product_pricing_features",
+  "info": {
+    "displayName": "Pricing Feature",
+    "icon": "check",
+    "description": "Single line item or entitlement included in a pricing plan"
+  },
+  "options": {},
+  "attributes": {
+    "text": {
+      "type": "string",
+      "required": true,
+      "description": "Entitlement description (e.g. Up to 2,500 Active Students, Live GPS Bus Tracking)"
+    },
+    "included": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this feature is included (true) or excluded/strikethrough (false)"
+    }
+  }
+}

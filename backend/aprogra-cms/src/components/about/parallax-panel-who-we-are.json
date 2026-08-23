@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_about_parallax_panel_who_we_ares",
+  "info": {
+    "displayName": "Parallax Panel: Who We Are",
+    "icon": "user",
+    "description": "Panel 01 Who We Are for Parallax Stack"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Who We Are"
+    },
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "highlightRows": {
+      "type": "component",
+      "repeatable": true,
+      "component": "about.panel-highlight"
+    }
+  }
+}

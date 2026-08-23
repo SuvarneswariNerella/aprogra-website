@@ -4,16 +4,17 @@ import { Link } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '@/components/animations/ScrollReveal';
-import { ServiceItem } from './EditorialServiceSection';
+import { ServiceItem, ServicesShowcaseSection, getStrapiMediaUrl } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
 interface HorizontalServiceShowcaseProps {
   services: ServiceItem[];
+  showcase?: ServicesShowcaseSection;
   onActiveChange?: (index: number) => void;
 }
 
-export default function HorizontalServiceShowcase({ services, onActiveChange }: HorizontalServiceShowcaseProps) {
+export default function HorizontalServiceShowcase({ services, showcase, onActiveChange }: HorizontalServiceShowcaseProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -42,7 +43,7 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
           scrollTrigger: {
             trigger: container,
             start: 'top top',
-            end: () => `+=${track.scrollWidth - window.innerWidth + 600}`,
+            end: () => `+=${Math.max(window.innerHeight, track.scrollWidth - window.innerWidth + 80)}`,
             pin: true,
             scrub: 0.8,
             invalidateOnRefresh: true,
@@ -115,15 +116,15 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
             <ScrollReveal>
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[10px] font-mono font-medium text-[#0B0D12]">
-                  02 / CAPABILITIES &amp; ARCHITECTURE
+                  {showcase?.badge || '02 / CAPABILITIES & ARCHITECTURE'}
                 </span>
                 <span className="h-px w-3 bg-[#0B0D12]/20" />
                 <span className="text-[10px] font-mono text-[#5A5E6E]">
-                  HORIZONTAL REVEAL
+                  {showcase?.subBadge || 'HORIZONTAL REVEAL'}
                 </span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-[#0B0D12]">
-                Core Engineering Disciplines
+                {showcase?.title || 'Core Engineering Disciplines'}
               </h2>
             </ScrollReveal>
 
@@ -200,12 +201,20 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
                   {/* Card Top Ribbon */}
                   <div className="flex items-center justify-between pb-3.5 mb-5 border-b border-[#0B0D12]/8 text-xs font-mono">
                     <div className="flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full transition-transform duration-300 ${
-                          isCurrent ? 'scale-125 animate-pulse' : ''
-                        }`}
-                        style={{ backgroundColor: service.accentColor }}
-                      />
+                      {service.iconMedia ? (
+                        <img 
+                          src={getStrapiMediaUrl(service.iconMedia)} 
+                          alt={service.title} 
+                          className="w-4 h-4 object-contain shrink-0" 
+                        />
+                      ) : (
+                        <span
+                          className={`w-2 h-2 rounded-full transition-transform duration-300 ${
+                            isCurrent ? 'scale-125 animate-pulse' : ''
+                          }`}
+                          style={{ backgroundColor: service.accentColor }}
+                        />
+                      )}
                       <span className="px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[11px] font-medium text-[#0B0D12]">
                         {service.tag}
                       </span>
@@ -228,24 +237,27 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
                       </h3>
 
                       <p className="text-xs sm:text-sm text-[#5A5E6E] leading-relaxed">
-                        {service.description}
+                        {service.shortDescription || (service as any).description}
                       </p>
 
                       {/* Deliverables tags */}
                       <div className="space-y-1 pt-0.5">
                         <div className="flex flex-wrap gap-1.5">
-                          {service.deliverables.map((item) => (
-                            <span
-                              key={item}
-                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#0B0D12]/8 text-[11px] font-mono text-[#0B0D12] hover:border-[#0B0D12]/20 transition-colors"
-                            >
+                          {service.deliverables.map((item: any, dIdx: number) => {
+                            const deliverableText = typeof item === 'string' ? item : item.item;
+                            return (
                               <span
-                                className="w-1.5 h-1.5 rounded-full shrink-0"
-                                style={{ backgroundColor: service.accentColor }}
-                              />
-                              {item}
-                            </span>
-                          ))}
+                                key={dIdx}
+                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] border border-[#0B0D12]/8 text-[11px] font-mono text-[#0B0D12] hover:border-[#0B0D12]/20 transition-colors"
+                              >
+                                <span
+                                  className="w-1.5 h-1.5 rounded-full shrink-0"
+                                  style={{ backgroundColor: service.accentColor }}
+                                />
+                                {deliverableText}
+                              </span>
+                            );
+                          })}
                         </div>
                       </div>
 
@@ -269,10 +281,10 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
                       {/* Contact Action */}
                       <div className="pt-1">
                         <Link
-                          to="/contact"
+                          to={service.cta?.url || `/services/architecture/${service.slug || service.id}`}
                           className="inline-flex items-center gap-1.5 text-xs font-mono font-semibold text-[#0B0D12] hover:text-[#FF4A1C] transition-colors group"
                         >
-                          <span>Engineer this capability</span>
+                          <span>{service.cta?.label || "Engineer this capability"}</span>
                           <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-[#FF4A1C]" />
                         </Link>
                       </div>
@@ -435,7 +447,7 @@ export default function HorizontalServiceShowcase({ services, onActiveChange }: 
           <div className="flex items-center justify-between gap-4 text-xs font-mono text-[#5A5E6E]">
             <div className="flex items-center gap-2">
               <Compass className="w-3.5 h-3.5 text-[#FF4A1C]" />
-              <span className="text-[11px]">SCROLL DOWN TO REVEAL DISCIPLINES</span>
+              <span className="text-[11px]">{showcase?.scrollText || 'SCROLL DOWN TO REVEAL DISCIPLINES'}</span>
             </div>
             
             {/* Smooth Track Indicator */}

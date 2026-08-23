@@ -1,0 +1,36 @@
+{
+  "collectionName": "components_shared_seos",
+  "info": {
+    "displayName": "SEO",
+    "icon": "globe",
+    "description": "Metadata for search engines and social sharing"
+  },
+  "options": {},
+  "attributes": {
+    "metaTitle": {
+      "type": "string",
+      "required": true,
+      "maxLength": 60,
+      "description": "Browser tab and search engine result title"
+    },
+    "metaDescription": {
+      "type": "text",
+      "required": true,
+      "maxLength": 160,
+      "description": "Snippet appearing below search result title"
+    },
+    "shareImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ],
+      "description": "Open Graph image for Facebook/Twitter/LinkedIn sharing"
+    },
+    "keywords": {
+      "type": "string",
+      "description": "Comma-separated meta keywords"
+    }
+  }
+}

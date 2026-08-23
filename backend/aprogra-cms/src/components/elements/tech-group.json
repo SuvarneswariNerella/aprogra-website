@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_elements_tech_groups",
+  "info": {
+    "displayName": "Tech Group",
+    "icon": "layer"
+  },
+  "options": {},
+  "attributes": {
+    "category": {
+      "type": "string",
+      "required": true
+    },
+    "items": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.tech-item"
+    }
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "kind": "collectionType",
+  "collectionName": "blog_posts",
+  "info": {
+    "singularName": "blog-post",
+    "pluralName": "blog-posts",
+    "displayName": "Blog Post",
+    "description": "Technical articles, engineering insights, and architecture deep dives with a rich document editor"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "title",
+      "required": true
+    },
+    "excerpt": {
+      "type": "text"
+    },
+    "content": {
+      "type": "blocks"
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "AI & Automation",
+        "Engineering & Architecture",
+        "Product & Design",
+        "Case Studies",
+        "Cloud & DevOps",
+        "General"
+      ],
+      "default": "AI & Automation"
+    },
+    "authorName": {
+      "type": "string",
+      "default": "Aprogra Engineering"
+    },
+    "authorRole": {
+      "type": "string",
+      "default": "Lead Architect"
+    },
+    "authorAvatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "publishedDate": {
+      "type": "string"
+    },
+    "readTime": {
+      "type": "string",
+      "default": "5 min read"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "likesCount": {
+      "type": "integer",
+      "default": 0
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_sections_closing_banner_sections",
+  "info": {
+    "displayName": "Closing Banner Section",
+    "icon": "shield"
+  },
+  "options": {},
+  "attributes": {
+    "headline": {
+      "type": "string"
+    },
+    "highlight": {
+      "type": "string"
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "backToTopText": {
+      "type": "string"
+    }
+  }
+}

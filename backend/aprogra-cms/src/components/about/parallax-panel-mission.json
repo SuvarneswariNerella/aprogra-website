@@ -1,0 +1,35 @@
+{
+  "collectionName": "components_about_parallax_panel_missions",
+  "info": {
+    "displayName": "Parallax Panel: Mission",
+    "icon": "bullseye",
+    "description": "Panel 02 Our Mission for Parallax Stack"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Our Mission"
+    },
+    "headline": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "missionQuote": {
+      "type": "text",
+      "required": true
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

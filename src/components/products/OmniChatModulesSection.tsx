@@ -48,6 +48,60 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
     // Calculate total scroll distance: 540px per module transition
     const scrollDistance = (modules.length - 1) * 540;
 
+    const applyCardStyles = (rawIdx: number) => {
+      modules.forEach((_, idx) => {
+        const cardEl = cardRefs.current[idx];
+        if (!cardEl) return;
+
+        const diff = rawIdx - idx;
+
+        if (diff < -1) {
+          // UPCOMING CARDS: waiting below, hidden cleanly without overflowing container
+          gsap.set(cardEl, {
+            y: 40,
+            scale: 0.96,
+            opacity: 0,
+            zIndex: 1,
+            pointerEvents: "none"
+          });
+        } else if (diff >= -1 && diff < 0) {
+          // ENTERING CARD: transitioning smoothly onto top of stack
+          const t = diff + 1; // 0 to 1
+          const y = (1 - t) * 35;
+          const scale = 0.97 + t * 0.03;
+          const opacity = Math.min(t * 1.5, 1);
+          const zIndex = 40 + Math.round(t * 10);
+
+          gsap.set(cardEl, {
+            y: y,
+            scale: scale,
+            opacity: opacity,
+            zIndex: zIndex,
+            pointerEvents: t > 0.7 ? "auto" : "none"
+          });
+        } else {
+          // ACTIVE & PAST CARDS: stacked tightly and cleanly behind with active card having highest zIndex
+          const stackOffset = Math.min(diff, 3);
+          const y = -7 * stackOffset;
+          const scale = 1 - 0.015 * stackOffset;
+          const zIndex = Math.max(2, 50 - Math.round(diff * 2));
+          // Maintain crisp solid opacity
+          const opacity = stackOffset > 2 ? Math.max(1 - (diff - 2) * 0.3, 0) : 1;
+
+          gsap.set(cardEl, {
+            y: y,
+            scale: scale,
+            opacity: opacity,
+            zIndex: zIndex,
+            pointerEvents: diff < 0.4 ? "auto" : "none"
+          });
+        }
+      });
+    };
+
+    // Apply initial styles immediately so card 0 is on top from frame 1
+    applyCardStyles(0);
+
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
         trigger: trigger,
@@ -67,54 +121,7 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
           setActiveIndex(currentIdx);
 
           // Animate cards sequentially based on scroll progress
-          modules.forEach((_, idx) => {
-            const cardEl = cardRefs.current[idx];
-            if (!cardEl) return;
-
-            const diff = rawIdx - idx;
-
-            if (diff < -1) {
-              // UPCOMING CARDS: waiting below, hidden cleanly without overflowing container
-              gsap.set(cardEl, {
-                y: 40,
-                scale: 0.96,
-                opacity: 0,
-                zIndex: 1,
-                pointerEvents: "none"
-              });
-            } else if (diff >= -1 && diff < 0) {
-              // ENTERING CARD: transitioning smoothly onto top of stack
-              const t = diff + 1; // 0 to 1
-              const y = (1 - t) * 35;
-              const scale = 0.97 + t * 0.03;
-              const opacity = Math.min(t * 1.5, 1);
-              const zIndex = 30 + idx;
-
-              gsap.set(cardEl, {
-                y: y,
-                scale: scale,
-                opacity: opacity,
-                zIndex: zIndex,
-                pointerEvents: t > 0.7 ? "auto" : "none"
-              });
-            } else {
-              // ACTIVE & PAST CARDS: stacked tightly and cleanly behind without colliding with header
-              const stackOffset = Math.min(diff, 3);
-              const y = -7 * stackOffset;
-              const scale = 1 - 0.015 * stackOffset;
-              const zIndex = 10 + idx;
-              // Maintain crisp solid opacity
-              const opacity = stackOffset > 2 ? Math.max(1 - (diff - 2) * 0.3, 0) : 1;
-
-              gsap.set(cardEl, {
-                y: y,
-                scale: scale,
-                opacity: opacity,
-                zIndex: zIndex,
-                pointerEvents: diff < 0.4 ? "auto" : "none"
-              });
-            }
-          });
+          applyCardStyles(rawIdx);
         }
       });
     }, triggerRef);
@@ -181,7 +188,7 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-[#0B0D12] leading-tight tracking-tight">
                 OmniChat <br />
                 <span className="text-[#FF4A1C] font-bold text-xl sm:text-2xl lg:text-3xl block mt-0.5">
-                  6 Multi-Channel &amp; Automation Capabilities
+                  {modules.length} Multi-Channel &amp; Automation Capabilities
                 </span>
               </h2>
               
@@ -289,7 +296,7 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
               {/* Stack Badge */}
               <div className="flex items-center gap-1.5 bg-white px-3 py-1.5 rounded-xl border border-[#0B0D12]/12 shadow-2xs">
                 <Layers className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span className="text-xs font-mono font-bold text-[#0B0D12]">6 Capabilities Stack</span>
+                <span className="text-xs font-mono font-bold text-[#0B0D12]">{modules.length} Capabilities Stack</span>
               </div>
 
               {/* Clickable Step Pills */}
@@ -353,6 +360,10 @@ export const OmniChatModulesSection: React.FC<OmniChatModulesSectionProps> = ({
                         maxWidth: '672px',
                         borderRadius: '16px',
                         top: 0,
+                        zIndex: index === 0 ? 50 : 1,
+                        opacity: index === 0 ? 1 : 0,
+                        transform: index === 0 ? 'translateY(0px) scale(1)' : 'translateY(40px) scale(0.96)',
+                        pointerEvents: index === 0 ? 'auto' : 'none',
                         willChange: 'transform, opacity'
                       }}
                       className="select-none"

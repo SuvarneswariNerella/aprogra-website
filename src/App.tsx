@@ -29,6 +29,7 @@ export default function App() {
           <Route path="products/omnichat" element={<OmniChatProduct />} />
           <Route path="services" element={<Services />} />
           <Route path="services/architecture/:id" element={<ServiceArchitecture />} />
+          <Route path="blog" element={<Community />} />
           <Route path="community" element={<Community />} />
           <Route path="contact" element={<Contact />} />
           <Route path="careers" element={<Careers />} />

@@ -1,0 +1,166 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": "Enterprise product offering (e.g. School ERP, OmniChat)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "maxLength": 100,
+      "description": "Product brand name (e.g. Aprogra School ERP, OmniChat AI)"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "name",
+      "required": true,
+      "description": "URL slug driving frontend routing (/products/:slug)"
+    },
+    "tagline": {
+      "type": "string",
+      "maxLength": 160,
+      "description": "One-line marketing summary used in headers and previews"
+    },
+    "shortDescription": {
+      "type": "text",
+      "description": "Concise summary rendered on the Products Hub switcher card"
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ],
+      "description": "Product brand logo or emblem"
+    },
+    "accentColorPrimary": {
+      "type": "string",
+      "default": "#FF4A1C",
+      "description": "Primary brand accent color hex (e.g. #FF4A1C or #3B4FCF)"
+    },
+    "accentColorSecondary": {
+      "type": "string",
+      "default": "#3B4FCF",
+      "description": "Secondary brand accent color hex (e.g. #EC4899 or #8B5CF6)"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order in lists, hub switchers, and menus"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": [
+        "active",
+        "beta",
+        "coming-soon"
+      ],
+      "default": "active",
+      "description": "Operational state of the product"
+    },
+    "isFeaturedOnHub": {
+      "type": "boolean",
+      "default": true,
+      "description": "Showcase prominently in the Products Hub hero switcher"
+    },
+    "heroTitle": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Primary headline in product page hero"
+    },
+    "heroSubtitle": {
+      "type": "text",
+      "description": "Detailed value proposition below the hero headline"
+    },
+    "heroBadgeText": {
+      "type": "string",
+      "maxLength": 60,
+      "description": "Top chip badge (e.g. Next-Gen Campus Operating System, Official Meta Cloud Partner)"
+    },
+    "heroTelemetryPills": {
+      "type": "component",
+      "repeatable": true,
+      "component": "product.hero-pill",
+      "description": "Real-time telemetry / status pills rendered across the hero canvas"
+    },
+    "heroMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "videos"
+      ],
+      "description": "Hero visual or interactive mockup asset"
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "product.feature-item",
+      "description": "Full module suite, channel capabilities, and technical features"
+    },
+    "screenshots": {
+      "type": "component",
+      "repeatable": true,
+      "component": "product.screenshot",
+      "description": "Interactive screenshot / UI gallery showcasing product surfaces"
+    },
+    "pricingTiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "product.pricing-tier",
+      "description": "Commercial pricing plans and license packages"
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "product.faq-item",
+      "description": "Technical and commercial FAQs"
+    },
+    "kpiStats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.stat-badge",
+      "description": "High-impact KPI metrics (e.g. 99.8% Accuracy, 3.8x Lift)"
+    },
+    "primaryCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.cta",
+      "description": "Main conversion action button"
+    },
+    "secondaryCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.cta",
+      "description": "Secondary conversion action button"
+    },
+    "relatedTestimonials": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::testimonial.testimonial",
+      "mappedBy": "relatedProducts"
+    },
+    "hubPages": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::product-page.product-page",
+      "mappedBy": "heroSwitcherProducts"
+    },
+    "seo": {
+      "type": "component",
+      "repeatable": false,
+      "component": "shared.seo",
+      "description": "Search engine and social metadata"
+    }
+  }
+}

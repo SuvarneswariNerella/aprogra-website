@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Star, Quote, ChevronLeft, ChevronRight, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useTestimonials } from '@/lib/strapi';
 
 interface Testimonial {
   id: string;
@@ -14,54 +15,19 @@ interface Testimonial {
   projectTag: string;
 }
 
-const TESTIMONIALS: Testimonial[] = [
-  {
-    id: '1',
-    name: 'Marcus Vance',
-    role: 'Chief Technology Officer',
-    company: 'SaaSify Platforms',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-    content: 'Aprogra delivered our micro-services backend ahead of schedule with zero architectural debt. Their engineers operated like a natural extension of our staff, bringing exceptional clarity to our multi-region Kubernetes strategy.',
-    rating: 5,
-    highlight: 'Zero architectural debt & ahead of schedule',
-    projectTag: 'Cloud Architecture & Kubernetes'
-  },
-  {
-    id: '2',
-    name: 'Elena Rostova',
-    role: 'Founder & CEO',
-    company: 'Horizon AI',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-    content: 'The agentic AI pipelines built by Aprogra automated 70% of our internal data triage workflows. Their mastery of Gemini 1.5, tool calling, and structured JSON outputs gave us a massive competitive edge.',
-    rating: 5,
-    highlight: 'Automated 70% of internal triage workflows',
-    projectTag: 'Agentic AI & Function Calling'
-  },
-  {
-    id: '3',
-    name: 'Devon Hayes',
-    role: 'VP of Engineering',
-    company: 'CloudScale Inc',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
-    content: 'From initial brief to production launch in just 6 weeks. The team’s velocity, clean React code, and proactive communication set a new benchmark for software engineering partnerships.',
-    rating: 5,
-    highlight: 'Production launch in 6 weeks',
-    projectTag: 'Full-Stack React & Node.js'
-  },
-  {
-    id: '4',
-    name: 'Priya Patel',
-    role: 'Head of Digital Products',
-    company: 'FinTech One',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
-    content: 'Their design system and Tailwind CSS component library made our web app lightning fast, accessible, and effortlessly maintainable across our 20+ engineering squads.',
-    rating: 5,
-    highlight: 'Lightning fast & accessible design system',
-    projectTag: 'Design System & UX/UI'
-  }
-];
-
 export default function AboutTestimonials() {
+  const { testimonials: apiTestimonials } = useTestimonials();
+  const TESTIMONIALS: Testimonial[] = apiTestimonials.map(t => ({
+    id: t.id,
+    name: t.authorName,
+    role: t.authorRole,
+    company: t.authorCompany,
+    avatar: t.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    content: t.quote,
+    rating: t.rating,
+    highlight: t.highlight,
+    projectTag: t.projectTag
+  }));
   const [activeIndex, setActiveIndex] = useState(0);
 
   const nextTestimonial = () => {

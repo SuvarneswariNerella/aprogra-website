@@ -7,118 +7,36 @@ import {
   Cpu, 
   Layers, 
   PenTool, 
-  Cloud,
-  Sparkles
+  Cloud, 
+  Sparkles,
+  Zap
 } from 'lucide-react';
 import CardFlip from '@/components/ui/flip-card';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { ServicesKpiSection, ServiceItem, DEFAULT_SERVICES_PAGE_CONTENT, DEFAULT_SERVICES_LIST, getStrapiMediaUrl } from '@/lib/strapi';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export interface KpiServiceItem {
-  id: string;
-  number: string;
-  tag: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  features: string[];
-  icon: React.ElementType;
-  accentColor: string;
-  targetId: string;
+const ICON_MAP: Record<string, React.ElementType> = {
+  web: Code2,
+  ai: Cpu,
+  saas: Layers,
+  design: PenTool,
+  cloud: Cloud,
+  other: Zap,
+};
+
+interface ServicesKpiGridProps {
+  kpi?: ServicesKpiSection;
+  services?: ServiceItem[];
 }
 
-export const KPI_SERVICES: KpiServiceItem[] = [
-  {
-    id: 'web-app',
-    number: '01 /',
-    tag: '01 / WEB & MOBILE',
-    title: 'Web & Mobile Engineering',
-    subtitle: 'Sub-45ms Edge & Native Mobile Systems',
-    description: 'Sub-second edge web applications and cross-platform native mobile experiences engineered for instantaneous response.',
-    features: [
-      'Next.js 15 & React 19',
-      'React Native & Flutter',
-      'Sub-45ms TTFB Edge',
-      'CRDT & SQLite Offline Sync',
-    ],
-    icon: Code2,
-    accentColor: '#3B82F6',
-    targetId: 'web-app',
-  },
-  {
-    id: 'ai-agents',
-    number: '02 /',
-    tag: '02 / AI & AGENTIC',
-    title: 'AI & Agentic Solutions',
-    subtitle: 'Autonomous Cognitive Workflows',
-    description: 'Moving beyond generic chat wrappers into verifiable tool-calling pipelines, structured schema outputs, and local SLM inference.',
-    features: [
-      'Multi-Agent Loops',
-      'Dense & Sparse RAG',
-      'Air-Gapped SLMs',
-      'Guardrails & Eval Suites',
-    ],
-    icon: Cpu,
-    accentColor: '#8B5CF6',
-    targetId: 'ai-agents',
-  },
-  {
-    id: 'saas-product',
-    number: '03 /',
-    tag: '03 / PRODUCT & SAAS',
-    title: 'Product & SaaS Engines',
-    subtitle: 'Multi-Tenant Cloud Architecture',
-    description: 'Full-lifecycle software engineering from raw data schema to scalable multi-tenant execution with automated Stripe metering.',
-    features: [
-      'Multi-Tenant Row Security',
-      'Automated Metering & Billing',
-      'Microservice Pipelines',
-      'PostgreSQL & Distributed DB',
-    ],
-    icon: Layers,
-    accentColor: '#06B6D4',
-    targetId: 'saas-product',
-  },
-  {
-    id: 'design-systems',
-    number: '04 /',
-    tag: '04 / UI/UX & DESIGN',
-    title: 'UI/UX & Design Systems',
-    subtitle: 'Systematic Visual Foundations',
-    description: 'Tokenized, multi-platform component ecosystems with mathematical typography scaling and fluid kinetic micro-interactions.',
-    features: [
-      'Figma Token CI/CD',
-      'Headless A11y Kits',
-      'Fluid Micro-Interactions',
-      'WCAG AA Standard',
-    ],
-    icon: PenTool,
-    accentColor: '#F43F5E',
-    targetId: 'design-systems',
-  },
-  {
-    id: 'cloud-devops',
-    number: '05 /',
-    tag: '05 / CLOUD & DEVOPS',
-    title: 'Cloud & DevOps Infra',
-    subtitle: 'Zero-Trust Sovereign Operations',
-    description: 'Resilient cloud infrastructure with declarative Terraform IaC, self-healing Kubernetes clusters, and blue-green deployments.',
-    features: [
-      'Terraform Declarative IaC',
-      'Kubernetes Clusters',
-      'Zero-Downtime CI/CD',
-      'Zero-Trust Edge Security',
-    ],
-    icon: Cloud,
-    accentColor: '#10B981',
-    targetId: 'cloud-devops',
-  },
-];
-
-export default function ServicesKpiGrid() {
+export default function ServicesKpiGrid({
+  kpi = DEFAULT_SERVICES_PAGE_CONTENT.kpi,
+  services = DEFAULT_SERVICES_LIST,
+}: ServicesKpiGridProps) {
   const containerRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -165,12 +83,40 @@ export default function ServicesKpiGrid() {
     }, container);
 
     return () => ctx.revert();
-  }, []);
+  }, [services]);
 
-  const handleCardAction = (targetId: string) => (e: React.MouseEvent) => {
+  const handleCardAction = (targetId: string, customUrl?: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    navigate(`/services/architecture/${targetId}`);
+    if (customUrl && customUrl.startsWith('http')) {
+      window.open(customUrl, '_blank', 'noopener,noreferrer');
+    } else if (customUrl) {
+      navigate(customUrl);
+    } else {
+      navigate(`/services/architecture/${targetId}`);
+    }
+  };
+
+  /**
+   * Calculates symmetric column spans across any number of cards
+   */
+  const getColSpanClass = (index: number, total: number) => {
+    if (total === 5) {
+      return index < 3
+        ? 'lg:col-span-2'
+        : index === 3
+        ? 'lg:col-span-2 lg:col-start-2'
+        : 'lg:col-span-2';
+    }
+    if (total % 3 === 1 && index === total - 1) {
+      // 1 leftover card centered on the last row
+      return 'lg:col-span-2 lg:col-start-3';
+    }
+    if (total % 3 === 2 && index === total - 2) {
+      // 2 leftover cards centered on the last row
+      return 'lg:col-span-2 lg:col-start-2';
+    }
+    return 'lg:col-span-2';
   };
 
   return (
@@ -185,50 +131,47 @@ export default function ServicesKpiGrid() {
         <ScrollReveal className="max-w-3xl mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-2xs mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-            <span>DISCIPLINE MATRIX</span>
+            <span>{kpi.badge || 'PRODUCTION ARCHITECTURE'}</span>
           </div>
 
           <h2 className="text-h2 text-[#0B0D12]">
-            5 core capabilities engineered for high velocity.
+            {kpi.title || `${services.length} Core Engineering Disciplines`}
           </h2>
           <p className="mt-4 text-body-lg text-[#5A5E6E]">
-            Hover or tap any card to reveal core deliverables and inspect verified architecture schematics.
+            {kpi.subtitle || 'Hover over or tap any card to inspect stack deliverables, verified performance metrics, and system capabilities.'}
           </p>
         </ScrollReveal>
 
-        {/* 5-Card Symmetrical Grid (3 on Top Row, 2 Centered on Bottom Row for Desktop) */}
+        {/* Dynamic Responsive Multi-Card Symmetrical Grid */}
         <div
           ref={gridRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8 items-stretch justify-items-center"
         >
-          {KPI_SERVICES.map((item, index) => {
-            // Layout alignment:
-            // Desktop: Top 3 cards span 2 cols each (cols 1-2, 3-4, 5-6)
-            // Bottom 2 cards span 2 cols each, with the 4th card starting at col 2 to center both!
-            const colSpanClass =
-              index < 3
-                ? 'lg:col-span-2'
-                : index === 3
-                ? 'lg:col-span-2 lg:col-start-2'
-                : 'lg:col-span-2';
+          {services.map((item, index) => {
+            const colSpanClass = getColSpanClass(index, services.length);
+            const IconComponent = ICON_MAP[item.illustrationType] || Sparkles;
+            const iconMediaUrl = getStrapiMediaUrl(item.iconMedia);
+            const coverImageUrl = getStrapiMediaUrl(item.coverImage) || (typeof item.coverImage === 'string' ? item.coverImage : undefined);
 
             return (
               <div
-                key={item.id}
+                key={item.slug || item.id || index}
                 className={`kpi-card-wrapper w-full flex justify-center ${colSpanClass}`}
               >
                 <CardFlip
                   title={item.title}
-                  subtitle={item.subtitle}
-                  description={item.description}
-                  features={item.features}
+                  subtitle={item.subheading || 'Enterprise Scale'}
+                  description={item.shortDescription}
+                  features={item.deliverables ? item.deliverables.map((d: any) => typeof d === 'string' ? d : d.item) : []}
                   color={item.accentColor}
-                  number={item.number}
-                  tag={item.tag}
-                  icon={item.icon}
-                  actionText="Inspect Architecture"
-                  onActionClick={handleCardAction(item.targetId)}
-                  className="w-full max-w-[340px] h-[390px]"
+                  number={`0${index + 1} /`}
+                  tag={item.tag || `0${index + 1} / SERVICE`}
+                  icon={IconComponent}
+                  iconMediaUrl={iconMediaUrl}
+                  coverImageUrl={coverImageUrl}
+                  actionText={item.cta?.label || 'Inspect Architecture'}
+                  onActionClick={handleCardAction(item.slug || item.id, item.cta?.url)}
+                  className="w-full max-w-[340px] h-[400px]"
                 />
               </div>
             );

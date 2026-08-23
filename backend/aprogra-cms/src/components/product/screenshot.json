@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_product_screenshots",
+  "info": {
+    "displayName": "Product Screenshot",
+    "icon": "picture",
+    "description": "High-fidelity UI mockups or portal screenshots"
+  },
+  "options": {},
+  "attributes": {
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ],
+      "description": "Screenshot graphic or mockup image file"
+    },
+    "caption": {
+      "type": "text",
+      "description": "Explanatory caption detailing what this screen showcases"
+    },
+    "category": {
+      "type": "string",
+      "description": "Portal category (e.g. Admin Portal, Mobile App, Transport App, Daycare Module)"
+    },
+    "order": {
+      "type": "integer",
+      "default": 0,
+      "description": "Display order in the UI gallery"
+    }
+  }
+}
