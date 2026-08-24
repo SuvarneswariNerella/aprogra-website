@@ -5,7 +5,7 @@
     "singularName": "service",
     "pluralName": "services",
     "displayName": "Service & Feature Discipline",
-    "description": "Dynamic engineering disciplines, flip cards, and feature showcase tabs on the Services page"
+    "description": "Dynamic engineering disciplines, tabs, and feature showcase on the Services page"
   },
   "options": {
     "draftAndPublish": true
@@ -29,6 +29,9 @@
       "type": "string",
       "default": "Core Engineering"
     },
+    "subheading": {
+      "type": "string"
+    },
     "shortSummary": {
       "type": "text"
     },
@@ -36,8 +39,29 @@
       "type": "text"
     },
     "icon": {
-      "type": "string",
+      "type": "enumeration",
+      "enum": [
+        "web",
+        "ai",
+        "saas",
+        "design",
+        "cloud",
+        "mobile",
+        "security",
+        "database",
+        "sparkles"
+      ],
       "default": "web"
+    },
+    "iconMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "accentColor": {
+      "type": "string",
+      "default": "#3B82F6"
     },
     "image": {
       "type": "media",
@@ -59,10 +83,14 @@
       "type": "string"
     },
     "deliverables": {
-      "type": "json"
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.deliverable-item"
     },
     "tags": {
-      "type": "json"
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.tech-tag"
     },
     "customUrl": {
       "type": "string"

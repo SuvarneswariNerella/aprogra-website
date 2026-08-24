@@ -173,6 +173,9 @@ export default function ServicesKpiGrid({
               ? item.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''))
               : [];
 
+            const IconComponent = ICON_MAP[item.icon || ''] || ICON_MAP.web || Sparkles;
+            const iconMediaUrl = getStrapiMediaUrl(item.iconMedia);
+
             return (
               <div
                 key={item.id || index}
@@ -186,7 +189,8 @@ export default function ServicesKpiGrid({
                   color={item.color || '#3B82F6'}
                   number={`0${index + 1} /`}
                   tag={item.tag || `0${index + 1} / SERVICE`}
-                  icon={Sparkles}
+                  icon={IconComponent}
+                  iconMediaUrl={iconMediaUrl}
                   coverImageUrl={coverImageUrl}
                   actionText={item.actionText || 'Inspect Architecture'}
                   onActionClick={handleCardAction(item.actionUrl)}

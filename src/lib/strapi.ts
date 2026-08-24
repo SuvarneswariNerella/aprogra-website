@@ -1532,6 +1532,8 @@ export interface ServiceFlipCardItem {
   subtitle?: string;
   description: string;
   tag?: string;
+  icon?: string;
+  iconMedia?: StrapiMedia | string | null;
   color?: string;
   cardOrder: number;
   deliverables: string[];
@@ -1830,12 +1832,12 @@ function normalizeService(raw: any): ServiceItem {
 
   let deliverables: string[] = [];
   if (Array.isArray(data.deliverables)) {
-    deliverables = data.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''));
+    deliverables = data.deliverables.map((d: any) => (typeof d === 'string' ? d : d.title || d.item || ''));
   }
 
   let tags: string[] = [];
   if (Array.isArray(data.tags)) {
-    tags = data.tags.map((t: any) => (typeof t === 'string' ? t : t.name || ''));
+    tags = data.tags.map((t: any) => (typeof t === 'string' ? t : t.name || t.title || ''));
   }
 
   const defaultAccentColors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#EC4899', '#10B981', '#F59E0B'];
@@ -1981,7 +1983,7 @@ function normalizeServiceFlipCard(raw: any, index: number): ServiceFlipCardItem 
 
   let deliverables: string[] = [];
   if (Array.isArray(data.deliverables)) {
-    deliverables = data.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''));
+    deliverables = data.deliverables.map((d: any) => (typeof d === 'string' ? d : d.title || d.item || ''));
   }
 
   const defaultColors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#EC4899', '#10B981', '#F59E0B'];
@@ -1994,6 +1996,8 @@ function normalizeServiceFlipCard(raw: any, index: number): ServiceFlipCardItem 
     subtitle: data.subtitle || 'Enterprise Scale',
     description: data.description || '',
     tag: data.tag || `0${order} / SERVICE`,
+    icon: data.icon || 'web',
+    iconMedia: data.iconMedia,
     color: color,
     cardOrder: order,
     deliverables: deliverables.length > 0 ? deliverables : [

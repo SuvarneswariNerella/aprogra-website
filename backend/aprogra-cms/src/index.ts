@@ -335,20 +335,27 @@ const DEFAULT_SERVICES_SEED_DATA = [
     tabLabel: 'Web',
     title: 'Modern Web & Distributed Frontends',
     category: 'Full-Stack Architecture',
+    subheading: 'Edge-First Platforms',
     shortSummary: 'Edge-rendered Next.js 15, sub-second LCP, distributed state, and atomic design systems.',
     description: 'We build ultra-fast, accessible web platforms utilizing modern server components, streaming SSR, and edge execution to deliver sub-second Core Web Vitals at global scale.',
     icon: 'web',
+    accentColor: '#3B82F6',
     imageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 1,
     kpiNumber: '< 0.8s',
     kpiLabel: 'LCP Load Speed',
     deliverables: [
-      'Next.js 15 App Router & React Server Components',
-      'Local-First SQLite & CRDT State Sync',
-      'Sub-second LCP & Edge SSR Telemetry',
-      'Custom Design Tokens & W3C Styling'
+      { title: 'Next.js 15 App Router & React Server Components' },
+      { title: 'Local-First SQLite & CRDT State Sync' },
+      { title: 'Sub-second LCP & Edge SSR Telemetry' },
+      { title: 'Custom Design Tokens & W3C Styling' }
     ],
-    tags: ['Next.js 15', 'TypeScript', 'Tailwind v4', 'LibSQL'],
+    tags: [
+      { name: 'Next.js 15' },
+      { name: 'TypeScript' },
+      { name: 'Tailwind v4' },
+      { name: 'LibSQL' }
+    ],
     customUrl: '/services/architecture/web-engineering',
   },
   {
@@ -356,20 +363,27 @@ const DEFAULT_SERVICES_SEED_DATA = [
     tabLabel: 'AI',
     title: 'Agentic AI & Autonomous Reasoning',
     category: 'Applied AI & LLMs',
+    subheading: 'Autonomous Workflows',
     shortSummary: 'Multi-agent orchestration, function calling, vector embeddings, and self-correcting pipelines.',
     description: 'We develop domain-specific autonomous agent pipelines capable of multi-step task execution, automated data triage, and human-in-the-loop escalation with deterministic safeguards.',
     icon: 'ai',
+    accentColor: '#8B5CF6',
     imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 2,
     kpiNumber: '70%',
     kpiLabel: 'Triage Automation',
     deliverables: [
-      'Autonomous Multi-Agent Task Orchestration',
-      'Deterministic Function Calling & Schema Validation',
-      'Hybrid Vector Search & RAG Retrieval Engines',
-      'Sub-Second LLM Streaming & Real-Time Sync'
+      { title: 'Autonomous Multi-Agent Task Orchestration' },
+      { title: 'Deterministic Function Calling & Schema Validation' },
+      { title: 'Hybrid Vector Search & RAG Retrieval Engines' },
+      { title: 'Sub-Second LLM Streaming & Real-Time Sync' }
     ],
-    tags: ['Gemini 1.5', 'LangChain', 'pgvector', 'Agent Swarms'],
+    tags: [
+      { name: 'Gemini 1.5' },
+      { name: 'LangChain' },
+      { name: 'pgvector' },
+      { name: 'Agent Swarms' }
+    ],
     customUrl: '/services/architecture/agentic-ai',
   },
   {
@@ -377,20 +391,27 @@ const DEFAULT_SERVICES_SEED_DATA = [
     tabLabel: 'SaaS',
     title: 'Enterprise Multi-Tenant SaaS',
     category: 'Systems Architecture',
+    subheading: 'Multi-Tenant Systems',
     shortSummary: 'Postgres Row-Level Security, isolated tenant clusters, and high-concurrency billing engines.',
     description: 'Architecting robust, scalable SaaS foundations with hardened multi-tenancy, granular RBAC/ABAC permissions, automated tenant provisioning, and idempotent payment pipelines.',
     icon: 'saas',
+    accentColor: '#06B6D4',
     imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 3,
     kpiNumber: '10k+',
     kpiLabel: 'Tenants / Cluster',
     deliverables: [
-      'PostgreSQL Row-Level Security (RLS) Isolation',
-      'Dynamic Subdomain & Custom Domain Routing',
-      'Granular RBAC, ABAC & SAML/SSO Enterprise Auth',
-      'Idempotent Stripe Billing & Usage Metering'
+      { title: 'PostgreSQL Row-Level Security (RLS) Isolation' },
+      { title: 'Dynamic Subdomain & Custom Domain Routing' },
+      { title: 'Granular RBAC, ABAC & SAML/SSO Enterprise Auth' },
+      { title: 'Idempotent Stripe Billing & Usage Metering' }
     ],
-    tags: ['Multi-Tenancy', 'PostgreSQL RLS', 'Stripe API', 'Redis'],
+    tags: [
+      { name: 'Multi-Tenancy' },
+      { name: 'PostgreSQL RLS' },
+      { name: 'Stripe API' },
+      { name: 'Redis' }
+    ],
     customUrl: '/services/architecture/saas-platforms',
   },
   {
@@ -398,20 +419,27 @@ const DEFAULT_SERVICES_SEED_DATA = [
     tabLabel: 'Design',
     title: 'Design Systems & UI Engineering',
     category: 'Product Design',
+    subheading: 'Design to Code',
     shortSummary: 'Figma-to-code token pipelines, WCAG AAA accessibility, fluid typography, and motion choreography.',
     description: 'We construct living, unified design token architectures that bridge Figma variables with production code, ensuring uncompromising visual harmony and fluid micro-interactions.',
     icon: 'design',
+    accentColor: '#EC4899',
     imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 4,
     kpiNumber: '500+',
     kpiLabel: 'Design Tokens',
     deliverables: [
-      'Figma Tokens to CSS Variable Pipelines',
-      'WCAG 2.2 AAA Accessible Component Systems',
-      'Mathematical Fluid Typography & Dynamic Spacing',
-      'Physics-Based GSAP & Motion Choreography'
+      { title: 'Figma Tokens to CSS Variable Pipelines' },
+      { title: 'WCAG 2.2 AAA Accessible Component Systems' },
+      { title: 'Mathematical Fluid Typography & Dynamic Spacing' },
+      { title: 'Physics-Based GSAP & Motion Choreography' }
     ],
-    tags: ['Figma Tokens', 'Tailwind CSS', 'GSAP', 'Accessibility'],
+    tags: [
+      { name: 'Figma Tokens' },
+      { name: 'Tailwind CSS' },
+      { name: 'GSAP' },
+      { name: 'Accessibility' }
+    ],
     customUrl: '/services/architecture/design-systems',
   },
   {
@@ -419,20 +447,27 @@ const DEFAULT_SERVICES_SEED_DATA = [
     tabLabel: 'Cloud',
     title: 'Cloud Infrastructure & High Concurrency',
     category: 'DevOps & SRE',
+    subheading: 'Zero-Trust Ops',
     shortSummary: 'Zero-downtime Kubernetes deployments, distributed caching, and automated CI/CD pipelines.',
     description: 'Engineering fault-tolerant cloud backbones with automated multi-region scaling, blue-green zero-downtime deployments, distributed caching, and 24/7 observability.',
     icon: 'cloud',
+    accentColor: '#10B981',
     imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 5,
     kpiNumber: '99.99%',
     kpiLabel: 'System Uptime',
     deliverables: [
-      'Kubernetes Multi-Cluster Orchestration',
-      'Zero-Downtime Blue/Green Database Migrations',
-      'Distributed Edge Caching & Traefik Load Balancing',
-      'Automated Terraform & GitHub Actions CI/CD'
+      { title: 'Kubernetes Multi-Cluster Orchestration' },
+      { title: 'Zero-Downtime Blue/Green Database Migrations' },
+      { title: 'Distributed Edge Caching & Traefik Load Balancing' },
+      { title: 'Automated Terraform & GitHub Actions CI/CD' }
     ],
-    tags: ['Kubernetes', 'Docker', 'Terraform', 'Prometheus'],
+    tags: [
+      { name: 'Kubernetes' },
+      { name: 'Docker' },
+      { name: 'Terraform' },
+      { name: 'Prometheus' }
+    ],
     customUrl: '/services/architecture/cloud-devops',
   },
   {
@@ -440,20 +475,27 @@ const DEFAULT_SERVICES_SEED_DATA = [
     tabLabel: 'Mobile',
     title: 'Cross-Platform Mobile Apps',
     category: 'Mobile Systems',
+    subheading: 'Offline-First Sync',
     shortSummary: 'High-performance React Native & Flutter applications with offline-first synchronization.',
     description: 'We engineer fluid, native-feeling mobile applications with local-first database replication, push notification pipelines, and background telemetry.',
     icon: 'mobile',
+    accentColor: '#F59E0B',
     imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 6,
     kpiNumber: '60 FPS',
     kpiLabel: 'Native Fluidity',
     deliverables: [
-      'React Native & Flutter Native Engine Optimization',
-      'Offline-First Local Database & Background Sync',
-      'Biometric Authentication & Secure Enclave Storage',
-      'Automated App Store & Play Store CI/CD Fastlane'
+      { title: 'React Native & Flutter Native Engine Optimization' },
+      { title: 'Offline-First Local Database & Background Sync' },
+      { title: 'Biometric Authentication & Secure Enclave Storage' },
+      { title: 'Automated App Store & Play Store CI/CD Fastlane' }
     ],
-    tags: ['React Native', 'Flutter', 'SQLite Mobile', 'Fastlane'],
+    tags: [
+      { name: 'React Native' },
+      { name: 'Flutter' },
+      { name: 'SQLite Mobile' },
+      { name: 'Fastlane' }
+    ],
     customUrl: '/services/architecture/mobile-engineering',
   }
 ];
@@ -464,14 +506,15 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
     subtitle: 'Sub-45ms Edge Response',
     description: 'High-speed web platforms and native mobile apps with offline-first synchronization.',
     tag: '01 / WEB & MOBILE',
+    icon: 'web',
     color: '#3B82F6',
     cardOrder: 1,
     coverImageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
     deliverables: [
-      'Next.js & React 19',
-      'React Native & Expo',
-      'Real-Time WebSockets',
-      'CRDT & SQLite Offline Sync'
+      { title: 'Next.js & React 19' },
+      { title: 'React Native & Expo' },
+      { title: 'Real-Time WebSockets' },
+      { title: 'CRDT & SQLite Offline Sync' }
     ],
     actionText: 'Inspect Architecture',
     actionUrl: '/services/architecture/web-engineering',
@@ -481,14 +524,15 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
     subtitle: 'Autonomous Workflows',
     description: 'Multi-agent execution loops with structured schema generation and air-gapped SLMs.',
     tag: '02 / AI & AGENTIC',
+    icon: 'ai',
     color: '#8B5CF6',
     cardOrder: 2,
     coverImageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
     deliverables: [
-      'Multi-Agent Loops',
-      'Dense Vector RAG',
-      'Air-Gapped SLMs',
-      'Guardrails & Eval Suites'
+      { title: 'Multi-Agent Loops' },
+      { title: 'Dense Vector RAG' },
+      { title: 'Air-Gapped SLMs' },
+      { title: 'Guardrails & Eval Suites' }
     ],
     actionText: 'Inspect Architecture',
     actionUrl: '/services/architecture/agentic-ai',
@@ -498,14 +542,15 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
     subtitle: 'Multi-Tenant Systems',
     description: 'Multi-tenant platforms with row-level security, event-driven pipelines, and automated metering.',
     tag: '03 / SAAS & APIS',
+    icon: 'saas',
     color: '#06B6D4',
     cardOrder: 3,
     coverImageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
     deliverables: [
-      'Row-Level Security',
-      'Stripe Metering',
-      'GraphQL & gRPC',
-      'PostgreSQL & Distributed DB'
+      { title: 'Row-Level Security' },
+      { title: 'Stripe Metering' },
+      { title: 'GraphQL & gRPC' },
+      { title: 'PostgreSQL & Distributed DB' }
     ],
     actionText: 'Inspect Architecture',
     actionUrl: '/services/architecture/saas-platforms',
@@ -515,14 +560,15 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
     subtitle: 'Design to Code',
     description: 'Living component tokens, fluid typography scales, and WCAG AA accessibility built for engineering teams.',
     tag: '04 / DESIGN SYSTEMS',
+    icon: 'design',
     color: '#EC4899',
     cardOrder: 4,
     coverImageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
     deliverables: [
-      'Fluid Typographic Scales',
-      'Design Token Engine',
-      'WCAG AAA Contrast',
-      'Motion & GSAP Easing'
+      { title: 'Fluid Typographic Scales' },
+      { title: 'Design Token Engine' },
+      { title: 'WCAG AAA Contrast' },
+      { title: 'Motion & GSAP Easing' }
     ],
     actionText: 'Inspect Architecture',
     actionUrl: '/services/architecture/design-systems',
@@ -532,14 +578,15 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
     subtitle: 'Zero-Trust Ops',
     description: 'Resilient cloud infrastructure with declarative IaC, self-healing Kubernetes, and zero-downtime CI.',
     tag: '05 / CLOUD & DEVOPS',
+    icon: 'cloud',
     color: '#10B981',
     cardOrder: 5,
     coverImageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
     deliverables: [
-      'Terraform & Pulumi',
-      'Self-Healing K8s',
-      'Zero-Downtime CI',
-      'Distributed Telemetry'
+      { title: 'Terraform & Pulumi' },
+      { title: 'Self-Healing K8s' },
+      { title: 'Zero-Downtime CI' },
+      { title: 'Distributed Telemetry' }
     ],
     actionText: 'Inspect Architecture',
     actionUrl: '/services/architecture/cloud-devops',
@@ -702,6 +749,19 @@ export default {
             status: 'published',
           });
           strapi.log.info(`[Bootstrap] Created Service Discipline: "${s.title}" (Tab: ${s.tabLabel}, Order: ${s.cardOrder})`);
+        } else if (!existingService.deliverables || existingService.deliverables.length === 0) {
+          await strapiAny.documents('api::service.service').update({
+            documentId: existingService.documentId,
+            data: {
+              deliverables: s.deliverables,
+              tags: s.tags,
+              icon: s.icon,
+              subheading: s.subheading,
+              accentColor: s.accentColor,
+            },
+            status: 'published',
+          });
+          strapi.log.info(`[Bootstrap] Updated Service Discipline Deliverables: "${s.title}"`);
         }
       }
 
@@ -716,6 +776,18 @@ export default {
             status: 'published',
           });
           strapi.log.info(`[Bootstrap] Created Service Flip Card: "${fc.title}" (Order: ${fc.cardOrder})`);
+        } else if (!existingFlipCard.deliverables || existingFlipCard.deliverables.length === 0) {
+          await strapiAny.documents('api::service-flip-card.service-flip-card').update({
+            documentId: existingFlipCard.documentId,
+            data: {
+              deliverables: fc.deliverables,
+              icon: fc.icon,
+              color: fc.color,
+              subtitle: fc.subtitle,
+            },
+            status: 'published',
+          });
+          strapi.log.info(`[Bootstrap] Updated Service Flip Card Deliverables: "${fc.title}"`);
         }
       }
 

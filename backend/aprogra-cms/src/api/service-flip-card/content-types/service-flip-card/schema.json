@@ -25,6 +25,27 @@
     "tag": {
       "type": "string"
     },
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "web",
+        "ai",
+        "saas",
+        "design",
+        "cloud",
+        "mobile",
+        "security",
+        "database",
+        "sparkles"
+      ],
+      "default": "web"
+    },
+    "iconMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
     "color": {
       "type": "string",
       "default": "#3B82F6"
@@ -34,7 +55,9 @@
       "default": 1
     },
     "deliverables": {
-      "type": "json"
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.deliverable-item"
     },
     "coverImage": {
       "type": "media",

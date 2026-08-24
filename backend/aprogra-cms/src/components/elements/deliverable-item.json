@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_elements_deliverable_items",
+  "info": {
+    "displayName": "Deliverable Item",
+    "icon": "bulletList",
+    "description": "Single deliverable bullet point"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

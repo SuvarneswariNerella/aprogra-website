@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_elements_tech_tags",
+  "info": {
+    "displayName": "Tech Tag",
+    "icon": "tag",
+    "description": "Tech stack tag"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
