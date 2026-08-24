@@ -1,0 +1,53 @@
+{
+  "kind": "collectionType",
+  "collectionName": "testimonials",
+  "info": {
+    "singularName": "testimonial",
+    "pluralName": "testimonials",
+    "displayName": "Testimonial",
+    "description": "Global Testimonial and Client Review entity used across Homepage, Products, Services, and About pages"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "authorName": {
+      "type": "string",
+      "required": true
+    },
+    "authorRole": {
+      "type": "string"
+    },
+    "authorCompany": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "avatarUrl": {
+      "type": "string"
+    },
+    "quote": {
+      "type": "text",
+      "required": true
+    },
+    "rating": {
+      "type": "integer",
+      "default": 5
+    },
+    "highlight": {
+      "type": "string"
+    },
+    "projectTag": {
+      "type": "string"
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

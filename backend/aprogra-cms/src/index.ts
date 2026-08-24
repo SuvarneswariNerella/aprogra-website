@@ -110,16 +110,7 @@ const DEFAULT_BLOG_POSTS_SEED_DATA = [
     content: [
       {
         type: 'paragraph',
-        children: [{ type: 'text', text: 'Agentic AI workflows represent a fundamental shift in modern software development: moving from simple prompt-and-response paradigms toward truly autonomous, multi-step task execution. By combining typed tool schemas with deterministic runtime guards, engineering teams can build resilient production agents that plan, iterate, and correct their own errors in real time.' }]
-      },
-      {
-        type: 'heading',
-        level: 2,
-        children: [{ type: 'text', text: 'Architectural Foundations: Decoupling Reasoners from Execution' }]
-      },
-      {
-        type: 'paragraph',
-        children: [{ type: 'text', text: 'A common failure mode in early AI implementations is tightly coupling the reasoning loop directly to business logic execution. In a resilient architecture, the LLM reasoning agent emits strictly typed tool payloads that pass through schema validation and security filters before touching external databases or services.' }]
+        children: [{ type: 'text', text: 'Agentic AI workflows represent a fundamental shift in modern software development: moving from simple prompt-and-response paradigms toward truly autonomous, multi-step task execution.' }]
       }
     ],
   },
@@ -135,7 +126,7 @@ const DEFAULT_BLOG_POSTS_SEED_DATA = [
     content: [
       {
         type: 'paragraph',
-        children: [{ type: 'text', text: 'Achieving sub-millisecond edge response times requires moving computation and data as close to the client as physically possible. By pairing Next.js edge route handlers with distributed SQLite replicas, user mutations can be committed locally and propagated across regions via CRDT consensus.' }]
+        children: [{ type: 'text', text: 'Achieving sub-millisecond edge response times requires moving computation and data as close to the client as physically possible.' }]
       }
     ],
   },
@@ -151,7 +142,7 @@ const DEFAULT_BLOG_POSTS_SEED_DATA = [
     content: [
       {
         type: 'paragraph',
-        children: [{ type: 'text', text: 'Design systems often break down when bridging the gap between static Figma artboards and dynamic multi-screen viewport rendering. Fluid typography and clamp-based spacing variables eliminate breakpoint thrashing.' }]
+        children: [{ type: 'text', text: 'Design systems often break down when bridging the gap between static Figma artboards and dynamic multi-screen viewport rendering.' }]
       }
     ],
   },
@@ -167,7 +158,7 @@ const DEFAULT_BLOG_POSTS_SEED_DATA = [
     content: [
       {
         type: 'paragraph',
-        children: [{ type: 'text', text: 'Altering high-volume production tables without locks requires a dual-write and shadow validation migration pattern. This guide details how we maintain continuous 99.99% availability throughout non-blocking schema refactors.' }]
+        children: [{ type: 'text', text: 'Altering high-volume production tables without locks requires a dual-write and shadow validation migration pattern.' }]
       }
     ],
   },
@@ -183,7 +174,7 @@ const DEFAULT_BLOG_POSTS_SEED_DATA = [
     content: [
       {
         type: 'paragraph',
-        children: [{ type: 'text', text: 'Security and data isolation are paramount for enterprise multi-tenant systems. Postgres Row-Level Security (RLS) offers an optimal balance between resource utilization, schema maintenance velocity, and bank-grade tenant partitioning.' }]
+        children: [{ type: 'text', text: 'Security and data isolation are paramount for enterprise multi-tenant systems.' }]
       }
     ],
   },
@@ -199,9 +190,67 @@ const DEFAULT_BLOG_POSTS_SEED_DATA = [
     content: [
       {
         type: 'paragraph',
-        children: [{ type: 'text', text: 'Decoupling monolithic web portals into self-contained domain applications allowed dedicated engineering pods to deploy independently without cross-team deployment locks or regression bottlenecks.' }]
+        children: [{ type: 'text', text: 'Decoupling monolithic web portals into self-contained domain applications allowed dedicated engineering pods to deploy independently.' }]
       }
     ],
+  },
+];
+
+const DEFAULT_TESTIMONIALS_SEED_DATA = [
+  {
+    authorName: 'Marcus Vance',
+    authorRole: 'Chief Technology Officer',
+    authorCompany: 'SaaSify Platforms',
+    quote: 'Aprogra delivered our micro-services backend ahead of schedule with zero architectural debt. Their engineers operated like a natural extension of our staff.',
+    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    rating: 5,
+    highlight: 'Zero architectural debt & ahead of schedule',
+    projectTag: 'Cloud Architecture & Kubernetes',
+    order: 1,
+  },
+  {
+    authorName: 'Elena Rostova',
+    authorRole: 'Founder & CEO',
+    authorCompany: 'Horizon AI',
+    quote: 'The agentic AI pipelines built by Aprogra automated 70% of our internal data triage workflows. Their mastery of Gemini 1.5 gave us a massive competitive edge.',
+    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    rating: 5,
+    highlight: 'Automated 70% of internal triage workflows',
+    projectTag: 'Agentic AI & Function Calling',
+    order: 2,
+  },
+  {
+    authorName: 'Devon Hayes',
+    authorRole: 'VP of Engineering',
+    authorCompany: 'CloudScale Inc',
+    quote: 'From initial brief to production launch in just 6 weeks. The team’s velocity, clean React code, and proactive communication set a new benchmark.',
+    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
+    rating: 5,
+    highlight: 'Production launch in 6 weeks',
+    projectTag: 'Full-Stack React & Node.js',
+    order: 3,
+  },
+  {
+    authorName: 'Priya Patel',
+    authorRole: 'Head of Digital Products',
+    authorCompany: 'FinTech One',
+    quote: 'Their design system and Tailwind CSS component library made our web app lightning fast, accessible, and effortlessly maintainable.',
+    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+    rating: 5,
+    highlight: 'Lightning fast & accessible design system',
+    projectTag: 'Design System & UX/UI',
+    order: 4,
+  },
+  {
+    authorName: 'Ravi K.',
+    authorRole: 'Director',
+    authorCompany: 'SmartSchool',
+    quote: 'AProgra delivered our entire school ERP from scratch in 4 months. The quality was exceptional and the team felt like our own.',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    rating: 5,
+    highlight: 'School ERP in 4 months',
+    projectTag: 'Enterprise Software',
+    order: 5,
   },
 ];
 
@@ -223,6 +272,8 @@ export default {
           'api::category.category.findOne',
           'api::blog-post.blog-post.find',
           'api::blog-post.blog-post.findOne',
+          'api::testimonial.testimonial.find',
+          'api::testimonial.testimonial.findOne',
         ];
 
         for (const action of actions) {
@@ -289,6 +340,20 @@ export default {
             status: 'published',
           });
           strapi.log.info(`[Bootstrap] Created Blog Post: "${post.title}" (featured: ${post.featured})`);
+        }
+      }
+
+      // 5. Initialize or sync Global Testimonials
+      for (const t of DEFAULT_TESTIMONIALS_SEED_DATA) {
+        const existingTestimonial = await strapiAny.documents('api::testimonial.testimonial').findFirst({
+          filters: { authorName: t.authorName },
+        });
+        if (!existingTestimonial) {
+          await strapiAny.documents('api::testimonial.testimonial').create({
+            data: t,
+            status: 'published',
+          });
+          strapi.log.info(`[Bootstrap] Created Global Testimonial: "${t.authorName}" (${t.authorCompany})`);
         }
       }
 

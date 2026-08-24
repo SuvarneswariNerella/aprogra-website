@@ -2510,16 +2510,16 @@ function normalizeTestimonial(raw: any): TestimonialItem {
     authorRole: data.authorRole || '',
     authorCompany: data.authorCompany || '',
     quote: data.quote || '',
-    rating: data.rating || 5,
+    rating: typeof data.rating === 'number' ? data.rating : 5,
     highlight: data.highlight || '',
     projectTag: data.projectTag || '',
-    avatarUrl: getStrapiMediaUrl(data.avatar) || undefined,
+    avatarUrl: getStrapiMediaUrl(data.avatar) || data.avatarUrl || undefined,
   };
 }
 
 export async function fetchTestimonials(): Promise<TestimonialItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>('testimonials?populate=*');
+    const raw = await fetchFromStrapi<any>('testimonials?populate=*&sort=order:asc');
     if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_TESTIMONIALS_LIST;
     return raw.map(normalizeTestimonial);
   } catch (error) {

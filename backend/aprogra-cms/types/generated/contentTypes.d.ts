@@ -583,6 +583,44 @@ export interface ApiGlobalConfigGlobalConfig extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
+  collectionName: 'testimonials';
+  info: {
+    description: 'Global Testimonial and Client Review entity used across Homepage, Products, Services, and About pages';
+    displayName: 'Testimonial';
+    pluralName: 'testimonials';
+    singularName: 'testimonial';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    authorCompany: Schema.Attribute.String;
+    authorName: Schema.Attribute.String & Schema.Attribute.Required;
+    authorRole: Schema.Attribute.String;
+    avatar: Schema.Attribute.Media<'images'>;
+    avatarUrl: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    highlight: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::testimonial.testimonial'
+    > &
+      Schema.Attribute.Private;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    projectTag: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    quote: Schema.Attribute.Text & Schema.Attribute.Required;
+    rating: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<5>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1098,6 +1136,7 @@ declare module '@strapi/strapi' {
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::category.category': ApiCategoryCategory;
       'api::global-config.global-config': ApiGlobalConfigGlobalConfig;
+      'api::testimonial.testimonial': ApiTestimonialTestimonial;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;
