@@ -1730,20 +1730,50 @@ function normalizeService(raw: any): ServiceItem {
     tags = data.tags.map((t: any) => (typeof t === 'string' ? t : t.name || ''));
   }
 
+  const defaultAccentColors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#EC4899', '#10B981', '#F59E0B'];
+  const orderNum = typeof data.cardOrder === 'number' ? data.cardOrder : (typeof data.order === 'number' ? data.order : 1);
+  const accentColor = data.accentColor || defaultAccentColors[(orderNum - 1) % defaultAccentColors.length];
+  const tag = data.tag || `0${orderNum} / ${data.category?.toUpperCase() || 'ENGINEERING'}`;
+  const subheading = data.subheading || data.category || 'Production Scale';
+
+  let metrics: Metric[] = [];
+  if (Array.isArray(data.metrics) && data.metrics.length > 0) {
+    metrics = data.metrics.map((m: any) => ({ label: m.label || '', value: m.value || '' }));
+  } else if (data.kpiNumber && data.kpiLabel) {
+    metrics = [
+      { label: data.kpiLabel, value: data.kpiNumber },
+      { label: 'Uptime SLA', value: '99.99%' },
+    ];
+  } else {
+    metrics = [
+      { label: 'Latency P95', value: '< 45ms' },
+      { label: 'Availability', value: '99.99%' },
+    ];
+  }
+
+  const coverImage = getStrapiMediaUrl(data.image) || data.imageUrl || undefined;
+
   return {
     id: String(raw.documentId || raw.id || slug),
     slug: slug,
-    tabLabel: data.tabLabel || data.title || 'Discipline',
+    tabLabel: data.tabLabel || data.title?.split(' ')[0] || 'Discipline',
     title: data.title || 'Engineering Discipline',
     category: data.category || 'Core Engineering',
     shortSummary: data.shortSummary || '',
+    shortDescription: data.shortSummary || data.description || '',
     description: data.description || data.shortSummary || '',
     icon: data.icon || 'web',
+    illustrationType: data.icon || 'web',
+    accentColor: accentColor,
+    tag: tag,
+    subheading: subheading,
     image: data.image,
-    imageUrl: getStrapiMediaUrl(data.image) || data.imageUrl || undefined,
-    cardOrder: typeof data.cardOrder === 'number' ? data.cardOrder : (typeof data.order === 'number' ? data.order : 1),
-    kpiNumber: data.kpiNumber || '',
-    kpiLabel: data.kpiLabel || '',
+    coverImage: data.image,
+    imageUrl: coverImage,
+    cardOrder: orderNum,
+    kpiNumber: data.kpiNumber || metrics[0]?.value || '',
+    kpiLabel: data.kpiLabel || metrics[0]?.label || '',
+    metrics: metrics,
     deliverables: deliverables.length > 0 ? deliverables : [
       'Production Architecture & Scalable Systems',
       'Sub-Second Performance & Edge Telemetry',
@@ -1751,6 +1781,10 @@ function normalizeService(raw: any): ServiceItem {
     ],
     tags: tags.length > 0 ? tags : ['TypeScript', 'Cloud', 'Architecture'],
     customUrl: data.customUrl || `/services/architecture/${slug}`,
+    cta: {
+      label: 'Engineer this capability',
+      url: data.customUrl || `/services/architecture/${slug}`,
+    },
   };
 }
 
