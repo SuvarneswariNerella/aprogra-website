@@ -168,85 +168,53 @@ export default function Community() {
           </motion.div>
 
           {/* ======================================================= */}
-          {/* RIGHT COLUMN: Interactive Featured Deep Dive Card       */}
+          {/* RIGHT COLUMN: Featured Hero Image Showcase               */}
           {/* ======================================================= */}
-          <ScrollReveal className="lg:col-span-5 space-y-3" stagger={0.15}>
-            <div className="rounded-2xl bg-white border border-[#0B0D12]/15 p-4 sm:p-5 shadow-md space-y-3">
-              
-              {/* Header row */}
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                <span className="text-[11px] font-mono font-bold text-[#0B0D12] uppercase tracking-wider flex items-center gap-1.5">
-                  <Code className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                  <span>{spotlight.headerTitle}</span>
-                </span>
-                
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>{spotlight.editionBadge}</span>
+          <ScrollReveal className="lg:col-span-5" stagger={0.15}>
+            <div 
+              onClick={() => setActiveArticle(featuredPost || posts[0])}
+              className="relative w-full h-[300px] sm:h-[360px] lg:h-[380px] rounded-2xl overflow-hidden border border-[#0B0D12]/15 shadow-xl group cursor-pointer bg-[#0B0D12]"
+            >
+              {/* Featured Hero Image with subtle hover zoom */}
+              <img 
+                src={getStrapiMediaUrl(featuredPost?.coverImage) || (typeof featuredPost?.coverImage === 'string' ? featuredPost?.coverImage : null) || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80'}
+                alt={featuredPost?.title || 'Featured Article'}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.88] group-hover:brightness-95"
+              />
+
+              {/* Gradient Overlay for text contrast */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/95 via-[#0B0D12]/30 to-transparent pointer-events-none" />
+
+              {/* Top Pill Badges */}
+              <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[11px] font-mono font-semibold shadow-xs">
+                  <Sparkles className="w-3 h-3 text-[#FF4A1C]" />
+                  <span>FEATURED DISPATCH</span>
+                </div>
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF4A1C] text-white text-[10px] font-mono font-bold shadow-xs">
+                  {featuredPost?.readTime || '6 MIN READ'}
                 </span>
               </div>
 
-              {/* Featured Content Preview */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 text-[10px] font-mono font-bold text-[#FF4A1C]">
-                    {featuredPost?.category || spotlight.category}
-                  </span>
-                  <span className="text-[11px] font-mono text-[#5A5E6E]">
-                    {featuredPost?.readTime || spotlight.readTime}
-                  </span>
+              {/* Bottom Frosted Glass Card with Article Headline & Action */}
+              <div className="absolute bottom-3.5 left-3.5 right-3.5 p-3.5 sm:p-4 rounded-xl bg-[#0B0D12]/80 backdrop-blur-md border border-white/15 text-white space-y-1.5 group-hover:bg-[#0B0D12]/90 transition-colors">
+                <div className="flex items-center gap-2 text-[10px] font-mono text-white/70">
+                  <span className="text-[#FF4A1C] font-bold uppercase">{featuredPost?.category || 'AI & AUTOMATION'}</span>
+                  <span>•</span>
+                  <span>{featuredPost?.date || 'AUG 2026'}</span>
                 </div>
-
-                <h3 
-                  onClick={() => setActiveArticle(featuredPost || posts[0])}
-                  className="text-base sm:text-lg font-bold font-display text-[#0B0D12] hover:text-[#FF4A1C] transition-colors cursor-pointer leading-snug truncate"
-                >
+                <h3 className="text-sm sm:text-base font-bold font-display text-white line-clamp-2 leading-snug group-hover:text-[#FF4A1C] transition-colors">
                   {featuredPost?.title || spotlight.title}
                 </h3>
-
-                <p className="text-xs text-[#5A5E6E] line-clamp-2 leading-relaxed">
-                  {featuredPost?.excerpt || spotlight.excerpt}
-                </p>
-
-                {/* Key Points Micro List */}
-                <div className="space-y-1 pt-0.5">
-                  {(featuredPost?.content?.keyPoints?.length 
-                    ? featuredPost.content.keyPoints.slice(0, 2) 
-                    : [spotlight.point1, spotlight.point2]
-                  ).map((point, idx) => (
-                    <div key={idx} className="flex items-start gap-1.5 text-xs text-[#0B0D12]">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0 mt-0.5" />
-                      <span className="line-clamp-1 text-[11px] sm:text-xs">{point}</span>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between pt-1 text-[11px] font-semibold text-white/90">
+                  <span className="flex items-center gap-1.5">
+                    <User className="w-3 h-3 text-[#FF4A1C]" />
+                    <span className="truncate max-w-[140px]">{featuredPost?.author?.name || 'Alex Rivera'}</span>
+                  </span>
+                  <span className="text-[#FF4A1C] flex items-center gap-1 group-hover:translate-x-1 transition-transform font-mono text-[11px]">
+                    Read Article <ArrowRight className="w-3 h-3" />
+                  </span>
                 </div>
-              </div>
-
-              {/* Author & Action Footer */}
-              <div className="pt-2.5 border-t border-gray-100 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2 min-w-0">
-                  <img 
-                    src={getStrapiMediaUrl(spotlight.authorAvatar) || featuredPost?.author?.avatar || spotlight.authorAvatarUrl} 
-                    alt={featuredPost?.author?.name || spotlight.authorName}
-                    className="w-7 h-7 rounded-full object-cover border border-[#0B0D12]/10 shrink-0"
-                  />
-                  <div className="truncate">
-                    <div className="text-xs font-bold text-[#0B0D12] truncate">
-                      {featuredPost?.author?.name || spotlight.authorName}
-                    </div>
-                    <div className="text-[10px] text-[#5A5E6E] font-mono truncate">
-                      {featuredPost?.author?.role || spotlight.authorRole}
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setActiveArticle(featuredPost || posts[0])}
-                  className="px-3.5 py-1.5 rounded-lg bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-xs font-semibold flex items-center gap-1.5 cursor-pointer transition-colors shrink-0 shadow-2xs"
-                >
-                  <span>{spotlight.buttonText}</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
               </div>
             </div>
           </ScrollReveal>
@@ -291,78 +259,95 @@ export default function Community() {
         {/* Featured Post Card (Shows when 'All Articles' is selected or featured post matches query) */}
         {selectedCategory === 'All Articles' && !searchQuery && (
           <ScrollReveal>
-            <div className="group bg-[#0B0D12] text-[#F4F1EA] rounded-lg p-6 sm:p-10 shadow-md relative overflow-hidden border border-[#0B0D12] grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-              <div className="lg:col-span-8 space-y-4 relative z-10">
-              <div className="flex items-center gap-3">
-                <span className="px-3 py-1 rounded bg-white/10 text-white border border-white/15 text-xs font-mono font-bold uppercase tracking-wider">
-                  {featuredSection.badge}
-                </span>
-                <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
-                  <Calendar className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.date}
-                </span>
-                <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
-                  <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.readTime}
-                </span>
-              </div>
-
-              <h2 className="text-h2 text-white group-hover:text-[#FF4A1C] transition-colors">
-                {featuredPost?.title}
-              </h2>
-
-              <p className="text-body text-[#F4F1EA]/80 max-w-2xl">
-                {featuredPost?.excerpt}
-              </p>
-
-              <div className="flex flex-wrap gap-2 pt-2">
-                {(featuredPost?.tags || []).map((tag: any) => {
-                  const tagText = typeof tag === 'string' ? tag : tag.name || '';
-                  return (
-                    <span key={tagText} className="px-2.5 py-1 rounded bg-white/10 text-[#F4F1EA] text-caption font-mono border border-white/10">
-                      #{tagText}
-                    </span>
-                  );
-                })}
-              </div>
-
-              <div className="pt-4 flex items-center justify-between">
+            <div className="group bg-[#0B0D12] text-[#F4F1EA] rounded-2xl p-6 sm:p-8 lg:p-10 shadow-md relative overflow-hidden border border-[#0B0D12] grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+              
+              {/* Left Column: Article Details */}
+              <div className="lg:col-span-7 space-y-4 relative z-10">
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={featuredPost?.author?.avatar || spotlight.authorAvatarUrl} 
-                    alt={featuredPost?.author?.name}
-                    className="w-10 h-10 rounded-full object-cover border border-white/20"
-                  />
-                  <div>
-                    <div className="text-h4 text-white">{featuredPost?.author?.name}</div>
-                    <div className="text-caption text-[#FF4A1C] font-mono">{featuredPost?.author?.role}</div>
-                  </div>
+                  <span className="px-3 py-1 rounded bg-white/10 text-white border border-white/15 text-xs font-mono font-bold uppercase tracking-wider">
+                    {featuredSection.badge}
+                  </span>
+                  <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
+                    <Calendar className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.date}
+                  </span>
+                  <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
+                    <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.readTime}
+                  </span>
                 </div>
 
-                <button
+                <h2 
                   onClick={() => setActiveArticle(featuredPost || posts[0])}
-                  className="px-6 py-3 rounded-lg bg-[#FF4A1C] hover:bg-white hover:text-[#0B0D12] text-white text-badge flex items-center gap-2 cursor-pointer shadow-xs transition-all"
+                  className="text-h2 text-white group-hover:text-[#FF4A1C] transition-colors cursor-pointer"
                 >
-                  <span>READ ARTICLE</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+                  {featuredPost?.title}
+                </h2>
 
-            {/* Graphic Badge Column */}
-            <div className="lg:col-span-4 relative z-10 hidden lg:flex flex-col items-center justify-center p-8 bg-white/5 rounded-lg border border-white/10 text-center space-y-4">
-              <div className="w-16 h-16 rounded-lg bg-[#FAF8F5] text-[#0B0D12] flex items-center justify-center shadow-xs">
-                <Code className="w-8 h-8 text-[#FF4A1C]" />
+                <p className="text-body text-[#F4F1EA]/80 max-w-2xl">
+                  {featuredPost?.excerpt}
+                </p>
+
+                <div className="flex flex-wrap gap-2 pt-2">
+                  {(featuredPost?.tags || []).map((tag: any) => {
+                    const tagText = typeof tag === 'string' ? tag : tag.name || '';
+                    return (
+                      <span key={tagText} className="px-2.5 py-1 rounded bg-white/10 text-[#F4F1EA] text-caption font-mono border border-white/10">
+                        #{tagText}
+                      </span>
+                    );
+                  })}
+                </div>
+
+                <div className="pt-4 flex items-center justify-between flex-wrap gap-4">
+                  <div className="flex items-center gap-3">
+                    <img 
+                      src={featuredPost?.author?.avatar || spotlight.authorAvatarUrl} 
+                      alt={featuredPost?.author?.name}
+                      className="w-10 h-10 rounded-full object-cover border border-white/20"
+                    />
+                    <div>
+                      <div className="text-h4 text-white">{featuredPost?.author?.name}</div>
+                      <div className="text-caption text-[#FF4A1C] font-mono">{featuredPost?.author?.role}</div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveArticle(featuredPost || posts[0])}
+                    className="px-6 py-3 rounded-lg bg-[#FF4A1C] hover:bg-white hover:text-[#0B0D12] text-white text-badge flex items-center gap-2 cursor-pointer shadow-xs transition-all"
+                  >
+                    <span>READ ARTICLE</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
-              <div className="space-y-1">
-                <div className="text-xs font-mono font-bold text-white uppercase">{featuredSection.sideCardTitle}</div>
-                <div className="text-xs text-[#F4F1EA]/70 font-sans">{featuredSection.sideCardDesc}</div>
-              </div>
-              <div className="text-[10px] font-mono bg-white/10 text-white px-3 py-1 rounded border border-white/15">
-                {featuredSection.sideCardBadge}
+
+              {/* Right Column: Featured Blog Post Cover Image */}
+              <div 
+                onClick={() => setActiveArticle(featuredPost || posts[0])}
+                className="lg:col-span-5 relative z-10 w-full h-[240px] sm:h-[280px] lg:h-[320px] rounded-xl overflow-hidden border border-white/15 bg-white/5 cursor-pointer group/img shadow-md"
+              >
+                <img 
+                  src={getStrapiMediaUrl(featuredPost?.coverImage) || (typeof featuredPost?.coverImage === 'string' ? featuredPost?.coverImage : null) || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'}
+                  alt={featuredPost?.title || 'Featured Article'}
+                  className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500 ease-out brightness-90 group-hover/img:brightness-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                
+                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono font-bold shadow-xs">
+                  {featuredPost?.category || 'AI & AUTOMATION'}
+                </div>
+
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-mono bg-black/70 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
+                  <span className="text-white/80 flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.readTime || '6 min read'}
+                  </span>
+                  <span className="text-[#FF4A1C] font-bold flex items-center gap-1 group-hover/img:translate-x-1 transition-transform">
+                    Explore Article <ArrowRight className="w-3.5 h-3.5" />
+                  </span>
+                </div>
               </div>
             </div>
-          </div>
-        </ScrollReveal>
-      )}
+          </ScrollReveal>
+        )}
 
         {/* Blog Posts Grid */}
         <ScrollReveal className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.1}>
