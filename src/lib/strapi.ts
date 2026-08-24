@@ -1526,6 +1526,114 @@ export interface ServiceItem {
   cta?: CtaButton;
 }
 
+export interface ServiceFlipCardItem {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description: string;
+  tag?: string;
+  color?: string;
+  cardOrder: number;
+  deliverables: string[];
+  coverImage?: StrapiMedia | string | null;
+  coverImageUrl?: string;
+  actionText?: string;
+  actionUrl?: string;
+}
+
+export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
+  {
+    id: 'web-mobile',
+    title: 'Web & Mobile Systems',
+    subtitle: 'Sub-45ms Edge Response',
+    description: 'High-speed web platforms and native mobile apps with offline-first synchronization.',
+    tag: '01 / WEB & MOBILE',
+    color: '#3B82F6',
+    cardOrder: 1,
+    coverImageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+    deliverables: [
+      'Next.js & React 19',
+      'React Native & Expo',
+      'Real-Time WebSockets',
+      'CRDT & SQLite Offline Sync',
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/web-engineering',
+  },
+  {
+    id: 'ai-agents',
+    title: 'AI Agents & Neural RAG',
+    subtitle: 'Autonomous Workflows',
+    description: 'Multi-agent execution loops with structured schema generation and air-gapped SLMs.',
+    tag: '02 / AI & AGENTIC',
+    color: '#8B5CF6',
+    cardOrder: 2,
+    coverImageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Multi-Agent Loops',
+      'Dense Vector RAG',
+      'Air-Gapped SLMs',
+      'Guardrails & Eval Suites',
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/agentic-ai',
+  },
+  {
+    id: 'saas-apis',
+    title: 'Cloud-Native SaaS & APIs',
+    subtitle: 'Multi-Tenant Systems',
+    description: 'Multi-tenant platforms with row-level security, event-driven pipelines, and automated metering.',
+    tag: '03 / SAAS & APIS',
+    color: '#06B6D4',
+    cardOrder: 3,
+    coverImageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Row-Level Security',
+      'Stripe Metering',
+      'GraphQL & gRPC',
+      'PostgreSQL & Distributed DB',
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/saas-platforms',
+  },
+  {
+    id: 'design-systems',
+    title: 'Mathematical Design Systems',
+    subtitle: 'Design to Code',
+    description: 'Living component tokens, fluid typography scales, and WCAG AA accessibility built for engineering teams.',
+    tag: '04 / DESIGN SYSTEMS',
+    color: '#EC4899',
+    cardOrder: 4,
+    coverImageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Fluid Typographic Scales',
+      'Design Token Engine',
+      'WCAG AAA Contrast',
+      'Motion & GSAP Easing',
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/design-systems',
+  },
+  {
+    id: 'cloud-devops',
+    title: 'Edge & GitOps Infrastructure',
+    subtitle: 'Zero-Trust Ops',
+    description: 'Resilient cloud infrastructure with declarative IaC, self-healing Kubernetes, and zero-downtime CI.',
+    tag: '05 / CLOUD & DEVOPS',
+    color: '#10B981',
+    cardOrder: 5,
+    coverImageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Terraform & Pulumi',
+      'Self-Healing K8s',
+      'Zero-Downtime CI',
+      'Distributed Telemetry',
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/cloud-devops',
+  },
+];
+
 export const DEFAULT_SERVICES_PAGE_CONTENT: ServicesPageContent = {
   hero: {
     badge: 'CORE ENGINEERING & AI CAPABILITIES',
@@ -1862,6 +1970,90 @@ export async function fetchServicesList(): Promise<ServiceItem[]> {
     console.warn('[Strapi] Could not load services list, using defaults:', error);
     return DEFAULT_SERVICES_LIST;
   }
+}
+
+/**
+ * Normalizes raw service flip card entry from Strapi
+ */
+function normalizeServiceFlipCard(raw: any, index: number): ServiceFlipCardItem {
+  const data = raw.attributes || raw;
+  const id = String(raw.documentId || raw.id || `flip-card-${index + 1}`);
+
+  let deliverables: string[] = [];
+  if (Array.isArray(data.deliverables)) {
+    deliverables = data.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''));
+  }
+
+  const defaultColors = ['#3B82F6', '#8B5CF6', '#06B6D4', '#EC4899', '#10B981', '#F59E0B'];
+  const order = typeof data.cardOrder === 'number' ? data.cardOrder : index + 1;
+  const color = data.color || defaultColors[(order - 1) % defaultColors.length];
+
+  return {
+    id: id,
+    title: data.title || 'Engineering Discipline',
+    subtitle: data.subtitle || 'Enterprise Scale',
+    description: data.description || '',
+    tag: data.tag || `0${order} / SERVICE`,
+    color: color,
+    cardOrder: order,
+    deliverables: deliverables.length > 0 ? deliverables : [
+      'Next.js 15 & React 19',
+      'Production Architecture',
+      'Real-Time Telemetry',
+      'Zero-Downtime Deployment',
+    ],
+    coverImage: data.coverImage,
+    coverImageUrl: getStrapiMediaUrl(data.coverImage) || data.coverImageUrl || undefined,
+    actionText: data.actionText || 'Inspect Architecture',
+    actionUrl: data.actionUrl || `/services`,
+  };
+}
+
+/**
+ * Fetches all separate Service Flip Cards from Strapi
+ */
+export async function fetchServiceFlipCards(): Promise<ServiceFlipCardItem[]> {
+  try {
+    const raw = await fetchFromStrapi<any>('service-flip-cards?populate=*&sort=cardOrder:asc');
+    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_SERVICE_FLIP_CARDS;
+
+    return raw.map(normalizeServiceFlipCard);
+  } catch (error) {
+    console.warn('[Strapi] Could not load service-flip-cards, using defaults:', error);
+    return DEFAULT_SERVICE_FLIP_CARDS;
+  }
+}
+
+/**
+ * React Hook for Service Flip Cards
+ */
+export function useServiceFlipCards() {
+  const [flipCards, setFlipCards] = useState<ServiceFlipCardItem[]>(DEFAULT_SERVICE_FLIP_CARDS);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchServiceFlipCards()
+      .then((data) => {
+        if (isMounted) {
+          if (data && data.length > 0) setFlipCards(data);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { flipCards, isLoading, error };
 }
 
 export async function fetchServiceBySlug(slug: string): Promise<ServiceItem | null> {

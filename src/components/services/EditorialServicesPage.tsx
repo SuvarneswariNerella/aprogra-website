@@ -88,7 +88,6 @@ export default function EditorialServicesPage() {
       {/* 3. CARDS SECTION: Top heading + Dynamic Flip Cards Grid */}
       <ServicesKpiGrid 
         cards={pageContent.cards}
-        services={services}
       />
 
       {/* 4. FEATURES SECTION: Top Navigation Tabs + Dynamic Left-Content Right-Image Cards */}

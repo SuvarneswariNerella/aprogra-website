@@ -1,0 +1,56 @@
+{
+  "kind": "collectionType",
+  "collectionName": "service_flip_cards",
+  "info": {
+    "singularName": "service-flip-card",
+    "pluralName": "service-flip-cards",
+    "displayName": "Service Flip Card",
+    "description": "Individual flip cards for the Engineering Disciplines flip-card grid"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "tag": {
+      "type": "string"
+    },
+    "color": {
+      "type": "string",
+      "default": "#3B82F6"
+    },
+    "cardOrder": {
+      "type": "integer",
+      "default": 1
+    },
+    "deliverables": {
+      "type": "json"
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "coverImageUrl": {
+      "type": "string"
+    },
+    "actionText": {
+      "type": "string",
+      "default": "Inspect Architecture"
+    },
+    "actionUrl": {
+      "type": "string"
+    }
+  }
+}

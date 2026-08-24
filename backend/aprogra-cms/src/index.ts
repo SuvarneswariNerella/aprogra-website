@@ -458,6 +458,94 @@ const DEFAULT_SERVICES_SEED_DATA = [
   }
 ];
 
+const DEFAULT_FLIP_CARDS_SEED_DATA = [
+  {
+    title: 'Web & Mobile Systems',
+    subtitle: 'Sub-45ms Edge Response',
+    description: 'High-speed web platforms and native mobile apps with offline-first synchronization.',
+    tag: '01 / WEB & MOBILE',
+    color: '#3B82F6',
+    cardOrder: 1,
+    coverImageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+    deliverables: [
+      'Next.js & React 19',
+      'React Native & Expo',
+      'Real-Time WebSockets',
+      'CRDT & SQLite Offline Sync'
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/web-engineering',
+  },
+  {
+    title: 'AI Agents & Neural RAG',
+    subtitle: 'Autonomous Workflows',
+    description: 'Multi-agent execution loops with structured schema generation and air-gapped SLMs.',
+    tag: '02 / AI & AGENTIC',
+    color: '#8B5CF6',
+    cardOrder: 2,
+    coverImageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Multi-Agent Loops',
+      'Dense Vector RAG',
+      'Air-Gapped SLMs',
+      'Guardrails & Eval Suites'
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/agentic-ai',
+  },
+  {
+    title: 'Cloud-Native SaaS & APIs',
+    subtitle: 'Multi-Tenant Systems',
+    description: 'Multi-tenant platforms with row-level security, event-driven pipelines, and automated metering.',
+    tag: '03 / SAAS & APIS',
+    color: '#06B6D4',
+    cardOrder: 3,
+    coverImageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Row-Level Security',
+      'Stripe Metering',
+      'GraphQL & gRPC',
+      'PostgreSQL & Distributed DB'
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/saas-platforms',
+  },
+  {
+    title: 'Mathematical Design Systems',
+    subtitle: 'Design to Code',
+    description: 'Living component tokens, fluid typography scales, and WCAG AA accessibility built for engineering teams.',
+    tag: '04 / DESIGN SYSTEMS',
+    color: '#EC4899',
+    cardOrder: 4,
+    coverImageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Fluid Typographic Scales',
+      'Design Token Engine',
+      'WCAG AAA Contrast',
+      'Motion & GSAP Easing'
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/design-systems',
+  },
+  {
+    title: 'Edge & GitOps Infrastructure',
+    subtitle: 'Zero-Trust Ops',
+    description: 'Resilient cloud infrastructure with declarative IaC, self-healing Kubernetes, and zero-downtime CI.',
+    tag: '05 / CLOUD & DEVOPS',
+    color: '#10B981',
+    cardOrder: 5,
+    coverImageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+    deliverables: [
+      'Terraform & Pulumi',
+      'Self-Healing K8s',
+      'Zero-Downtime CI',
+      'Distributed Telemetry'
+    ],
+    actionText: 'Inspect Architecture',
+    actionUrl: '/services/architecture/cloud-devops',
+  },
+];
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
@@ -484,6 +572,8 @@ export default {
           'api::services-page.services-page.find',
           'api::service.service.find',
           'api::service.service.findOne',
+          'api::service-flip-card.service-flip-card.find',
+          'api::service-flip-card.service-flip-card.findOne',
         ];
 
         for (const action of actions) {
@@ -525,11 +615,11 @@ export default {
             data: cat,
             status: 'published',
           });
-          strapi.log.info(`[Bootstrap] Created Blog Category: ${cat.name}`);
+          strapi.log.info(`[Bootstrap] Created Blog Category: "${cat.name}"`);
         }
       }
 
-      // 3. Blog Page Single Type
+      // 3. Blog Page Settings Single Type
       const existingBlogPage = await strapiAny.documents('api::blog-page.blog-page').findFirst();
       if (!existingBlogPage) {
         await strapiAny.documents('api::blog-page.blog-page').create({
@@ -549,11 +639,11 @@ export default {
             data: post,
             status: 'published',
           });
-          strapi.log.info(`[Bootstrap] Created Blog Post: "${post.title}" (featured: ${post.featured})`);
+          strapi.log.info(`[Bootstrap] Created Blog Post: "${post.title}"`);
         }
       }
 
-      // 5. Global Testimonials
+      // 5. Testimonials
       for (const t of DEFAULT_TESTIMONIALS_SEED_DATA) {
         const existingTestimonial = await strapiAny.documents('api::testimonial.testimonial').findFirst({
           filters: { authorName: t.authorName },
@@ -563,11 +653,11 @@ export default {
             data: t,
             status: 'published',
           });
-          strapi.log.info(`[Bootstrap] Created Global Testimonial: "${t.authorName}" (${t.authorCompany})`);
+          strapi.log.info(`[Bootstrap] Created Testimonial: "${t.authorName}" (${t.authorCompany})`);
         }
       }
 
-      // 6. Global Brands Section Settings
+      // 6. Brands Section Settings Single Type
       const existingBrandsSection = await strapiAny.documents('api::brands-section.brands-section').findFirst();
       if (!existingBrandsSection) {
         await strapiAny.documents('api::brands-section.brands-section').create({
@@ -601,7 +691,7 @@ export default {
         strapi.log.info('[Bootstrap] Created and published Services Page Settings in Strapi.');
       }
 
-      // 9. Services & Feature Disciplines Collection Type
+      // 9. Services & Feature Disciplines Collection Type (Horizontal Showcase)
       for (const s of DEFAULT_SERVICES_SEED_DATA) {
         const existingService = await strapiAny.documents('api::service.service').findFirst({
           filters: { slug: s.slug },
@@ -612,6 +702,20 @@ export default {
             status: 'published',
           });
           strapi.log.info(`[Bootstrap] Created Service Discipline: "${s.title}" (Tab: ${s.tabLabel}, Order: ${s.cardOrder})`);
+        }
+      }
+
+      // 10. Service Flip Cards Collection Type (Separate Flip Cards Grid)
+      for (const fc of DEFAULT_FLIP_CARDS_SEED_DATA) {
+        const existingFlipCard = await strapiAny.documents('api::service-flip-card.service-flip-card').findFirst({
+          filters: { title: fc.title },
+        });
+        if (!existingFlipCard) {
+          await strapiAny.documents('api::service-flip-card.service-flip-card').create({
+            data: fc,
+            status: 'published',
+          });
+          strapi.log.info(`[Bootstrap] Created Service Flip Card: "${fc.title}" (Order: ${fc.cardOrder})`);
         }
       }
 

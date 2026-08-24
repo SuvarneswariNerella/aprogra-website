@@ -14,7 +14,14 @@ import {
 } from 'lucide-react';
 import CardFlip from '@/components/ui/flip-card';
 import ScrollReveal from '@/components/animations/ScrollReveal';
-import { ServicesCardsSection, ServiceItem, DEFAULT_SERVICES_PAGE_CONTENT, DEFAULT_SERVICES_LIST, getStrapiMediaUrl } from '@/lib/strapi';
+import { 
+  ServicesCardsSection, 
+  ServiceFlipCardItem, 
+  DEFAULT_SERVICES_PAGE_CONTENT, 
+  DEFAULT_SERVICE_FLIP_CARDS, 
+  useServiceFlipCards,
+  getStrapiMediaUrl 
+} from '@/lib/strapi';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -34,13 +41,16 @@ const ICON_MAP: Record<string, React.ElementType> = {
 
 interface ServicesKpiGridProps {
   cards?: ServicesCardsSection;
-  services?: ServiceItem[];
+  flipCards?: ServiceFlipCardItem[];
 }
 
 export default function ServicesKpiGrid({
   cards = DEFAULT_SERVICES_PAGE_CONTENT.cards,
-  services = DEFAULT_SERVICES_LIST,
+  flipCards: propFlipCards,
 }: ServicesKpiGridProps) {
+  const { flipCards: hookFlipCards } = useServiceFlipCards();
+  const flipCards = propFlipCards && propFlipCards.length > 0 ? propFlipCards : hookFlipCards;
+
   const containerRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -87,17 +97,17 @@ export default function ServicesKpiGrid({
     }, container);
 
     return () => ctx.revert();
-  }, [services]);
+  }, [flipCards]);
 
-  const handleCardAction = (targetId: string, customUrl?: string) => (e: React.MouseEvent) => {
+  const handleCardAction = (targetUrl?: string) => (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (customUrl && customUrl.startsWith('http')) {
-      window.open(customUrl, '_blank', 'noopener,noreferrer');
-    } else if (customUrl) {
-      navigate(customUrl);
+    if (targetUrl && targetUrl.startsWith('http')) {
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    } else if (targetUrl) {
+      navigate(targetUrl);
     } else {
-      navigate(`/services/architecture/${targetId}`);
+      navigate('/services');
     }
   };
 
@@ -139,7 +149,7 @@ export default function ServicesKpiGrid({
           </div>
 
           <h2 className="text-3xl sm:text-4xl font-bold font-display tracking-tight text-[#0B0D12]">
-            {cards.headline || `${services.length} Core Engineering Disciplines`}{' '}
+            {cards.headline || `${flipCards.length} Core Engineering Disciplines`}{' '}
             {cards.highlight && <span className="text-[#FF4A1C]">{cards.highlight}</span>}
           </h2>
           <p className="mt-4 text-sm sm:text-base md:text-lg text-[#5A5E6E] font-normal leading-relaxed">
@@ -152,14 +162,12 @@ export default function ServicesKpiGrid({
           ref={gridRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8 items-stretch justify-items-center"
         >
-          {services.map((item, index) => {
-            const colSpanClass = getColSpanClass(index, services.length);
-            const IconComponent = ICON_MAP[item.illustrationType || item.icon] || ICON_MAP.web;
-            const iconMediaUrl = getStrapiMediaUrl(item.iconMedia);
+          {flipCards.map((item, index) => {
+            const colSpanClass = getColSpanClass(index, flipCards.length);
             const coverImageUrl =
               (item.coverImage ? getStrapiMediaUrl(item.coverImage) : null) ||
-              item.imageUrl ||
-              (typeof item.image === 'string' ? item.image : undefined);
+              item.coverImageUrl ||
+              DEFAULT_SERVICE_FLIP_CARDS[index % DEFAULT_SERVICE_FLIP_CARDS.length]?.coverImageUrl;
 
             const deliverableItems = Array.isArray(item.deliverables)
               ? item.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''))
@@ -167,22 +175,21 @@ export default function ServicesKpiGrid({
 
             return (
               <div
-                key={item.slug || item.id || index}
+                key={item.id || index}
                 className={`kpi-card-wrapper w-full flex justify-center ${colSpanClass}`}
               >
                 <CardFlip
                   title={item.title}
-                  subtitle={item.subheading || item.shortSummary || 'Enterprise Scale'}
-                  description={item.description || item.shortDescription || item.shortSummary}
+                  subtitle={item.subtitle || 'Enterprise Scale'}
+                  description={item.description}
                   features={deliverableItems.length > 0 ? deliverableItems : ['Production Architecture', 'Edge Telemetry', 'Cloud Ops']}
-                  color={item.accentColor || '#3B82F6'}
+                  color={item.color || '#3B82F6'}
                   number={`0${index + 1} /`}
-                  tag={item.tag || `0${index + 1} / ${item.category?.toUpperCase() || 'SERVICE'}`}
-                  icon={IconComponent}
-                  iconMediaUrl={iconMediaUrl}
+                  tag={item.tag || `0${index + 1} / SERVICE`}
+                  icon={Sparkles}
                   coverImageUrl={coverImageUrl}
-                  actionText={item.cta?.label || 'Inspect Architecture'}
-                  onActionClick={handleCardAction(item.slug || item.id, item.customUrl || item.cta?.url)}
+                  actionText={item.actionText || 'Inspect Architecture'}
+                  onActionClick={handleCardAction(item.actionUrl)}
                   className="w-full max-w-[340px] h-[400px]"
                 />
               </div>
