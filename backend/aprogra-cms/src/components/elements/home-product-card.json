@@ -1,0 +1,68 @@
+{
+  "collectionName": "components_elements_home_product_cards",
+  "info": {
+    "displayName": "Home Product Card",
+    "icon": "apps",
+    "description": "Stacked card for Products We Own section"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "required": true,
+      "default": "NOTIFICATION 01 / 02 • SCHOOL ERP"
+    },
+    "versionStatus": {
+      "type": "string",
+      "default": "v3.2 OPERATIONAL"
+    },
+    "category": {
+      "type": "string",
+      "default": "EdTech Platform"
+    },
+    "categorySubtext": {
+      "type": "string",
+      "default": "Multi-Campus Ready"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "specs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "productUrl": {
+      "type": "string",
+      "default": "/products"
+    },
+    "productUrlText": {
+      "type": "string",
+      "default": "View Product Details"
+    },
+    "demoUrl": {
+      "type": "string",
+      "default": "/contact"
+    },
+    "demoUrlText": {
+      "type": "string",
+      "default": "Request Demo →"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "imageUrl": {
+      "type": "string"
+    }
+  }
+}

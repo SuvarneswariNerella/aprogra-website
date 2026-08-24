@@ -1,0 +1,52 @@
+{
+  "collectionName": "components_sections_about_parallax_panels",
+  "info": {
+    "displayName": "About Parallax Panel",
+    "icon": "stack",
+    "description": "A single repeatable parallax panel for the About page story section (Who We Are, Mission, Vision, etc.)"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["who_we_are", "mission", "vision", "custom"],
+      "default": "custom",
+      "required": true
+    },
+    "badge": {
+      "type": "string",
+      "default": "Who We Are"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Not just another dev shop."
+    },
+    "description": {
+      "type": "text",
+      "default": "Exceptional software demands exceptional people working in exceptional ways."
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "missionQuote": {
+      "type": "text"
+    },
+    "visionBadgeYear": {
+      "type": "string",
+      "default": "2030 Vision"
+    },
+    "highlightRows": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.panel-highlight"
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

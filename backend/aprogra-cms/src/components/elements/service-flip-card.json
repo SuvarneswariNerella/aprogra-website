@@ -1,0 +1,74 @@
+{
+  "collectionName": "components_elements_service_flip_cards",
+  "info": {
+    "displayName": "Service Flip Card",
+    "icon": "grid",
+    "description": "3D Flip Card for the Services page discipline grid"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "tag": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "web",
+        "ai",
+        "saas",
+        "design",
+        "cloud",
+        "mobile",
+        "security",
+        "database",
+        "sparkles"
+      ],
+      "default": "web"
+    },
+    "iconMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "color": {
+      "type": "string",
+      "default": "#3B82F6"
+    },
+    "cardOrder": {
+      "type": "integer",
+      "default": 1
+    },
+    "deliverables": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.deliverable-item"
+    },
+    "coverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "coverImageUrl": {
+      "type": "string"
+    },
+    "actionText": {
+      "type": "string",
+      "default": "Inspect Architecture"
+    },
+    "actionUrl": {
+      "type": "string"
+    }
+  }
+}

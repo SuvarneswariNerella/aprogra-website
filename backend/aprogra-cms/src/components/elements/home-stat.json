@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_home_stats",
+  "info": {
+    "displayName": "Home Stat",
+    "icon": "bulletList",
+    "description": "A single stat for the home page counters"
+  },
+  "options": {},
+  "attributes": {
+    "target": {
+      "type": "integer",
+      "required": true
+    },
+    "suffix": {
+      "type": "string",
+      "default": "+"
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

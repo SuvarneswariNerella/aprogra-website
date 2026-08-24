@@ -1,0 +1,93 @@
+{
+  "collectionName": "components_elements_service_showcase_items",
+  "info": {
+    "displayName": "Service Showcase Item",
+    "icon": "compass",
+    "description": "Horizontal showcase and architecture deep-dive discipline item"
+  },
+  "options": {},
+  "attributes": {
+    "slug": {
+      "type": "string",
+      "required": true
+    },
+    "tabLabel": {
+      "type": "string",
+      "default": "Discipline"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "category": {
+      "type": "string",
+      "default": "Core Engineering"
+    },
+    "subheading": {
+      "type": "string"
+    },
+    "shortSummary": {
+      "type": "text"
+    },
+    "description": {
+      "type": "text"
+    },
+    "icon": {
+      "type": "enumeration",
+      "enum": [
+        "web",
+        "ai",
+        "saas",
+        "design",
+        "cloud",
+        "mobile",
+        "security",
+        "database",
+        "sparkles"
+      ],
+      "default": "web"
+    },
+    "iconMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "accentColor": {
+      "type": "string",
+      "default": "#3B82F6"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "cardOrder": {
+      "type": "integer",
+      "default": 1
+    },
+    "kpiNumber": {
+      "type": "string"
+    },
+    "kpiLabel": {
+      "type": "string"
+    },
+    "deliverables": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.deliverable-item"
+    },
+    "tags": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.tech-tag"
+    },
+    "customUrl": {
+      "type": "string"
+    }
+  }
+}

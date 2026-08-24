@@ -3,15 +3,14 @@ import { ArrowUpRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { CountingNumber } from '@/components/ui/counting-number';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { HomeStatsSection } from '@/lib/strapi';
 
-const stats = [
-  { target: 60, suffix: "+", label: "Enterprise Partners" },
-  { target: 40, suffix: "+", label: "Production Systems" },
-  { target: 12, suffix: "+", label: "Sovereign Regions" },
-  { target: 7, suffix: "+", label: "Years of Craft" },
-];
+export default function StatsCounters({ statsSection }: { statsSection?: HomeStatsSection }) {
+  const badgeText = statsSection?.badgeText || "PROVEN PERFORMANCE & GLOBAL FOOTPRINT";
+  const titleHtml = statsSection?.title?.replace('Mathematical Precision.', '<span class="text-[#FF4A1C]">Mathematical Precision.</span>') || 
+                    "Engineered with <span class=\"text-[#FF4A1C]\">Mathematical Precision.</span>";
+  const statsList = statsSection?.stats || [];
 
-export default function StatsCounters() {
   return (
     <section 
       id="proven-performance-section"
@@ -26,12 +25,10 @@ export default function StatsCounters() {
           <div className="space-y-2.5 max-w-2xl">
             <div className="inline-flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
-              <span className="text-badge text-[#0B0D12]/70">PROVEN PERFORMANCE & GLOBAL FOOTPRINT</span>
+              <span className="text-badge text-[#0B0D12]/70 uppercase">{badgeText}</span>
             </div>
             
-            <h2 className="text-h2 text-[#0B0D12]">
-              Engineered with <span className="text-[#FF4A1C]">Mathematical Precision.</span>
-            </h2>
+            <h2 className="text-h2 text-[#0B0D12]" dangerouslySetInnerHTML={{ __html: titleHtml }} />
           </div>
 
           <Link 
@@ -48,8 +45,8 @@ export default function StatsCounters() {
         {/* ======================================================== */}
         <div className="w-full rounded-2xl bg-white/70 backdrop-blur-xs border border-[#0B0D12]/10 p-8 sm:p-12 shadow-2xs">
           <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#0B0D12]/10">
-            {stats.map((stat, idx) => (
-              <div key={stat.label} className={`text-center ${idx !== 0 ? 'pt-6 sm:pt-0 sm:px-6' : 'sm:pr-6'}`}>
+            {statsList.map((stat, idx) => (
+              <div key={stat.id || stat.label} className={`text-center ${idx !== 0 ? 'pt-6 sm:pt-0 sm:px-6' : 'sm:pr-6'}`}>
                 <div className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-[#0B0D12] flex items-baseline justify-center">
                   <CountingNumber target={stat.target} transition={{ duration: 2.2, ease: "easeOut", type: "tween" }} />
                   <span className="text-[#FF4A1C] ml-0.5">{stat.suffix}</span>

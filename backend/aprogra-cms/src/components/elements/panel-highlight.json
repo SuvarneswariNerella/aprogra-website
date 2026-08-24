@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_elements_panel_highlights",
+  "info": {
+    "displayName": "Panel Highlight",
+    "icon": "bulletList",
+    "description": "Highlight row for parallax panels (Who We Are / Vision)"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

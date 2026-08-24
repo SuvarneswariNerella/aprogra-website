@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, useScroll, useTransform } from 'motion/react';
+import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { HomeStatement } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -94,81 +94,103 @@ function RippleCanvasLight() {
   );
 }
 
-export default function WhyAprogra() {
+export default function WhyAprogra({ whyStatements = [] }: { whyStatements?: HomeStatement[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const textContainerRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = useState(false);
+  const stmt0Ref = useRef<HTMLDivElement>(null);
+  const stmt1Ref = useRef<HTMLDivElement>(null);
+  const stmt2Ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const statements = whyStatements && whyStatements.length >= 3 
+    ? whyStatements 
+    : [
+        { id: "1", mainText: "100%", subText: "In-house Talent" },
+        { id: "2", mainText: "Infinite", subText: "Possibilities" },
+        { id: "3", mainText: "One", subText: "Partner" }
+      ];
 
-  const { scrollYProgress } = useScroll({
-    target: mounted && containerRef.current ? containerRef : undefined,
-    offset: ["start end", "end start"]
-  });
+  const stmt0 = statements[0] || { mainText: "100%", subText: "In-house Talent" };
+  const stmt1 = statements[1] || { mainText: "Infinite", subText: "Possibilities" };
+  const stmt2 = statements[2] || { mainText: "One", subText: "Partner" };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const totalScroll = 2400;
+
+      // Initial explicit setup: Statement 0 is visible & centered, 1 & 2 are hidden below
+      gsap.set(stmt0Ref.current, { y: 0, opacity: 1, scale: 1, filter: "blur(0px)" });
+      gsap.set(stmt1Ref.current, { y: 60, opacity: 0, scale: 0.9, filter: "blur(10px)" });
+      gsap.set(stmt2Ref.current, { y: 60, opacity: 0, scale: 0.9, filter: "blur(10px)" });
+      gsap.set(lineRef.current, { scaleY: 0 });
+
       const tl = gsap.timeline({
         scrollTrigger: {
-          trigger: containerRef.current,
+          trigger: container,
           start: 'top top',
-          end: '+=300%',
+          end: `+=${totalScroll}`,
           pin: true,
           scrub: 1,
+          anticipatePin: 1,
         }
       });
 
-      const elements = gsap.utils.toArray('.statement-group') as Element[];
-      const totalSteps = elements.length - 1;
-      
-      // Progress line
-      tl.to(lineRef.current, { scaleY: 1, ease: 'none', duration: totalSteps }, 0);
+      // Progress line on the left scales from top to bottom over the entire sequence
+      tl.to(lineRef.current, { scaleY: 1, ease: 'none', duration: 6 }, 0);
 
-      // Setup initial states
-      elements.forEach((el, i) => {
-        gsap.set(el, { 
-          y: i * 200, 
-          opacity: i === 0 ? 1 : 0.2, 
-          scale: i === 0 ? 1 : 0.8, 
-          filter: i === 0 ? 'blur(0px)' : 'blur(8px)' 
-        });
-      });
+      // --- PHASE 1 (t = 0 to 1.0): HOLD STATEMENT 0 (100% In-house Talent) ---
+      // User clearly reads "100% In-house Talent"
 
-      for (let step = 0; step < totalSteps; step++) {
-        const startTime = step;
-        
-        for (let i = 0; i < elements.length; i++) {
-          const relativePos = i - (step + 1);
-          
-          let y = relativePos * 200;
-          let opacity = 0.25;
-          let scale = 0.8;
-          let blur = 8;
+      // --- PHASE 2 (t = 1.0 to 2.2): TRANSITION STATEMENT 0 -> STATEMENT 1 ---
+      tl.to(stmt0Ref.current, {
+        y: -60,
+        opacity: 0,
+        scale: 0.9,
+        filter: "blur(10px)",
+        duration: 1.2,
+        ease: "power2.inOut"
+      }, 1.0)
+      .to(stmt1Ref.current, {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: 1.2,
+        ease: "power2.inOut"
+      }, 1.0);
 
-          if (relativePos === 0) {
-            opacity = 1;
-            scale = 1;
-            blur = 0;
-          } else if (Math.abs(relativePos) > 1) {
-            opacity = 0;
-            scale = 0.6;
-            blur = 16;
-            y = relativePos * 200; 
-          }
+      // --- PHASE 3 (t = 2.2 to 3.4): HOLD STATEMENT 1 (Infinite Possibilities) ---
+      // User clearly reads "Infinite Possibilities"
 
-          tl.to(elements[i], {
-            y: y,
-            opacity: opacity,
-            scale: scale,
-            filter: `blur(${blur}px)`,
-            duration: 1,
-            ease: 'power2.inOut'
-          }, startTime);
-        }
-      }
+      // --- PHASE 4 (t = 3.4 to 4.6): TRANSITION STATEMENT 1 -> STATEMENT 2 ---
+      tl.to(stmt1Ref.current, {
+        y: -60,
+        opacity: 0,
+        scale: 0.9,
+        filter: "blur(10px)",
+        duration: 1.2,
+        ease: "power2.inOut"
+      }, 3.4)
+      .to(stmt2Ref.current, {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        filter: "blur(0px)",
+        duration: 1.2,
+        ease: "power2.inOut"
+      }, 3.4);
+
+      // --- PHASE 5 (t = 4.6 to 5.8): HOLD STATEMENT 2 (One Partner) ---
+      // User clearly reads "One Partner"
+
+      // --- EXIT POLISH (t = 5.8 to 6.0) ---
+      tl.to(container, {
+        scale: 0.98,
+        opacity: 0.9,
+        duration: 0.2
+      }, 5.8);
 
     }, containerRef);
 
@@ -181,7 +203,6 @@ export default function WhyAprogra() {
       data-snap-section
       data-no-snap="true"
       data-interactive-section="true"
-      
       className="h-screen min-h-screen w-full bg-[#F4F1EA] text-[#0B0D12] flex items-center justify-center overflow-hidden relative border-b border-[#0B0D12]/10"
     >
       {/* Canvas Ripples */}
@@ -193,32 +214,35 @@ export default function WhyAprogra() {
       </div>
       
       {/* Text Container */}
-      <div ref={textContainerRef} className="w-full max-w-5xl mx-auto px-6 relative z-10 h-full flex items-center justify-center">
+      <div className="w-full max-w-5xl mx-auto px-6 relative z-10 h-full flex items-center justify-center">
         
-        <div className="statement-group absolute w-full text-center flex flex-col items-center">
+        {/* STATEMENT 0 */}
+        <div ref={stmt0Ref} className="absolute w-full text-center flex flex-col items-center pointer-events-none">
           <h2 className="main-text text-6xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-extrabold tracking-tighter text-[#0B0D12] leading-none font-display">
-            100%
+            {stmt0.mainText}
           </h2>
           <p className="sub-text mt-4 md:mt-8 text-lg sm:text-2xl md:text-3xl font-bold text-[#FF4A1C] tracking-wider uppercase font-mono">
-            In-house Talent
+            {stmt0.subText}
           </p>
         </div>
 
-        <div className="statement-group absolute w-full text-center flex flex-col items-center">
+        {/* STATEMENT 1 */}
+        <div ref={stmt1Ref} className="absolute w-full text-center flex flex-col items-center pointer-events-none">
           <h2 className="main-text text-6xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-extrabold tracking-tighter text-[#0B0D12] leading-none font-display">
-            Infinite
+            {stmt1.mainText}
           </h2>
           <p className="sub-text mt-4 md:mt-8 text-lg sm:text-2xl md:text-3xl font-bold text-[#FF4A1C] tracking-wider uppercase font-mono">
-            Possibilities
+            {stmt1.subText}
           </p>
         </div>
 
-        <div className="statement-group absolute w-full text-center flex flex-col items-center">
+        {/* STATEMENT 2 */}
+        <div ref={stmt2Ref} className="absolute w-full text-center flex flex-col items-center pointer-events-none">
           <h2 className="main-text text-6xl sm:text-7xl md:text-8xl lg:text-[9.5rem] font-extrabold tracking-tighter text-[#0B0D12] leading-none font-display">
-            One
+            {stmt2.mainText}
           </h2>
           <p className="sub-text mt-4 md:mt-8 text-lg sm:text-2xl md:text-3xl font-bold text-[#FF4A1C] tracking-wider uppercase font-mono">
-            Partner
+            {stmt2.subText}
           </p>
         </div>
 

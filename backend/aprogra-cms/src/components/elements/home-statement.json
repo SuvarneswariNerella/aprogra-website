@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_elements_home_statements",
+  "info": {
+    "displayName": "Home Statement",
+    "icon": "cursor",
+    "description": "Large typography scrolling statement"
+  },
+  "options": {},
+  "attributes": {
+    "mainText": {
+      "type": "string",
+      "required": true
+    },
+    "subText": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

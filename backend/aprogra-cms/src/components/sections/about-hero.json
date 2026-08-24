@@ -1,0 +1,51 @@
+{
+  "collectionName": "components_sections_about_heroes",
+  "info": {
+    "displayName": "About Hero Section",
+    "icon": "layout",
+    "description": "Hero section of the About page"
+  },
+  "options": {},
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "default": "Full-Stack Engineering & AI Studio"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Architecting the Future of High-Scale Software & Autonomous Intelligence"
+    },
+    "subheadline": {
+      "type": "text",
+      "default": "We combine senior-only engineering pods with proprietary SaaS engines to build mission-critical web platforms, AI agents, and enterprise design systems for ambitious global businesses."
+    },
+    "primaryCtaLabel": {
+      "type": "string",
+      "default": "Start Your Brief"
+    },
+    "primaryCtaUrl": {
+      "type": "string",
+      "default": "/contact"
+    },
+    "secondaryCtaLabel": {
+      "type": "string",
+      "default": "Explore Our Story"
+    },
+    "secondaryCtaUrl": {
+      "type": "string",
+      "default": "#story"
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "kpiStats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.kpi-stat"
+    }
+  }
+}

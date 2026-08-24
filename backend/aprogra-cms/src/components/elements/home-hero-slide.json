@@ -1,0 +1,50 @@
+{
+  "collectionName": "components_elements_home_hero_slides",
+  "info": {
+    "displayName": "Home Hero Slide",
+    "icon": "picture",
+    "description": "A scroll phase slide for the Home Hero section"
+  },
+  "options": {},
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "required": true,
+      "default": "Modern Software & AI"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "subtitle": {
+      "type": "text"
+    },
+    "primaryValue": {
+      "type": "string",
+      "description": "Optional large numeric/primary text value (e.g. 40+)"
+    },
+    "tags": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "imageUrl": {
+      "type": "string",
+      "description": "Fallback URL if media is not provided"
+    },
+    "imageLabel": {
+      "type": "string"
+    },
+    "imageSublabel": {
+      "type": "string"
+    }
+  }
+}

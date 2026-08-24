@@ -1,0 +1,45 @@
+{
+  "collectionName": "components_sections_about_story_slides",
+  "info": {
+    "displayName": "About Story Slide",
+    "icon": "stack",
+    "description": "Repeatable alternating story slide for About Us page (Who We Are, Mission, Vision, etc.)"
+  },
+  "options": {},
+  "attributes": {
+    "orderNumber": {
+      "type": "string",
+      "default": "01"
+    },
+    "badge": {
+      "type": "string",
+      "default": "Who We Are"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Not just another dev shop."
+    },
+    "description": {
+      "type": "text",
+      "default": "AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do."
+    },
+    "quote": {
+      "type": "text"
+    },
+    "highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.panel-highlight"
+    },
+    "imageUrl": {
+      "type": "string"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

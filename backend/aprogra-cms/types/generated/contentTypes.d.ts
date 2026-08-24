@@ -443,6 +443,41 @@ export interface AdminUser extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiAboutPageAboutPage extends Struct.SingleTypeSchema {
+  collectionName: 'about_pages';
+  info: {
+    description: 'Comprehensive settings for the About page including hero and contact CTA';
+    displayName: 'About Us Page';
+    pluralName: 'about-pages';
+    singularName: 'about-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contactCta: Schema.Attribute.Component<'sections.about-contact-cta', false>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faqSection: Schema.Attribute.Component<'sections.about-faq-section', false>;
+    hero: Schema.Attribute.Component<'sections.about-hero', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::about-page.about-page'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    storySlides: Schema.Attribute.Component<'sections.about-story-slide', true>;
+    title: Schema.Attribute.String &
+      Schema.Attribute.Private &
+      Schema.Attribute.DefaultTo<'About Us Page'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiBlogPageBlogPage extends Struct.SingleTypeSchema {
   collectionName: 'blog_pages';
   info: {
@@ -629,6 +664,100 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiContactInquiryContactInquiry
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'contact_inquiries';
+  info: {
+    description: 'Incoming project briefs, client inquiries, and scheduled intro calls';
+    displayName: 'Contact Inquiries & Briefs';
+    pluralName: 'contact-inquiries';
+    singularName: 'contact-inquiry';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    budget: Schema.Attribute.String;
+    capabilities: Schema.Attribute.JSON;
+    company: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.String & Schema.Attribute.Required;
+    inquiryType: Schema.Attribute.Enumeration<['brief', 'call_booking']> &
+      Schema.Attribute.DefaultTo<'brief'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-inquiry.contact-inquiry'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    preferredTime: Schema.Attribute.String;
+    preferredTopic: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    status: Schema.Attribute.Enumeration<
+      ['new', 'reviewed', 'contacted', 'closed']
+    > &
+      Schema.Attribute.DefaultTo<'new'>;
+    timeline: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
+  collectionName: 'contact_pages';
+  info: {
+    description: 'Comprehensive settings for the Contact page, interactive project brief form, roadmap, channels, and modal';
+    displayName: 'Contact Page Settings';
+    pluralName: 'contact-pages';
+    singularName: 'contact-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    brief: Schema.Attribute.Component<'sections.contact-brief', false>;
+    channels: Schema.Attribute.Component<'elements.contact-channel', true>;
+    closingBannerHeadline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Engineering Infinite'>;
+    closingBannerHighlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Possibilities.'>;
+    closingBannerSubtitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Thank you for visiting. We look forward to building with you.'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    directChannelsBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'03 / IMMEDIATE CHANNELS'>;
+    directChannelsSubtitle: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Prefer direct communication? Reach out through any of our primary channels below.'>;
+    directChannelsTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Direct Access to Our Technical Leadership'>;
+    hero: Schema.Attribute.Component<'sections.contact-hero', false>;
+    introCallModal: Schema.Attribute.Component<'sections.contact-modal', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::contact-page.contact-page'
+    > &
+      Schema.Attribute.Private;
+    metaDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Connect directly with Aprogra lead architects for enterprise custom software, agentic AI, and scalable cloud systems.'>;
+    metaTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Contact Lead Architects | Aprogra'>;
+    preview: Schema.Attribute.Component<'sections.contact-preview', false>;
+    publishedAt: Schema.Attribute.DateTime;
+    roadmap: Schema.Attribute.Component<'sections.contact-roadmap', false>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiGlobalConfigGlobalConfig extends Struct.SingleTypeSchema {
   collectionName: 'global_configs';
   info: {
@@ -661,48 +790,47 @@ export interface ApiGlobalConfigGlobalConfig extends Struct.SingleTypeSchema {
   };
 }
 
-export interface ApiServiceService extends Struct.CollectionTypeSchema {
-  collectionName: 'services';
+export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
+  collectionName: 'home_pages';
   info: {
-    description: 'Dynamic engineering disciplines, flip cards, and feature showcase tabs on the Services page';
-    displayName: 'Service & Feature Discipline';
-    pluralName: 'services';
-    singularName: 'service';
+    description: 'Content for the main homepage';
+    displayName: 'Home Page';
+    pluralName: 'home-pages';
+    singularName: 'home-page';
   };
   options: {
-    draftAndPublish: true;
+    draftAndPublish: false;
   };
   attributes: {
-    cardOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
-    category: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Core Engineering'>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
-    customUrl: Schema.Attribute.String;
-    deliverables: Schema.Attribute.JSON;
-    description: Schema.Attribute.Text;
-    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'web'>;
-    image: Schema.Attribute.Media<'images'>;
-    imageUrl: Schema.Attribute.String;
-    kpiLabel: Schema.Attribute.String;
-    kpiNumber: Schema.Attribute.String;
+    heroSlides: Schema.Attribute.Component<'elements.home-hero-slide', true>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
-      'api::service.service'
+      'api::home-page.home-page'
     > &
       Schema.Attribute.Private;
+    productsCards: Schema.Attribute.Component<
+      'elements.home-product-card',
+      true
+    >;
     publishedAt: Schema.Attribute.DateTime;
-    shortSummary: Schema.Attribute.Text;
-    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
-    tabLabel: Schema.Attribute.String &
-      Schema.Attribute.DefaultTo<'Discipline'>;
-    tags: Schema.Attribute.JSON;
-    title: Schema.Attribute.String & Schema.Attribute.Required;
+    servicesSlides: Schema.Attribute.Component<
+      'elements.home-service-slide',
+      true
+    >;
+    statsSection: Schema.Attribute.Component<
+      'sections.home-stats-section',
+      false
+    >;
+    storyPhases: Schema.Attribute.Component<'elements.home-story-phase', true>;
+    title: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Home Page'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
+    whyStatements: Schema.Attribute.Component<'elements.home-statement', true>;
   };
 }
 
@@ -730,6 +858,7 @@ export interface ApiServicesPageServicesPage extends Struct.SingleTypeSchema {
       'sections.services-features-section',
       false
     >;
+    flipCards: Schema.Attribute.Component<'elements.service-flip-card', true>;
     hero: Schema.Attribute.Component<'sections.services-hero-section', false>;
     locale: Schema.Attribute.String & Schema.Attribute.Private;
     localizations: Schema.Attribute.Relation<
@@ -742,6 +871,47 @@ export interface ApiServicesPageServicesPage extends Struct.SingleTypeSchema {
     metaTitle: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra'>;
     publishedAt: Schema.Attribute.DateTime;
+    services: Schema.Attribute.Component<
+      'elements.service-showcase-item',
+      true
+    >;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiTeamMemberTeamMember extends Struct.CollectionTypeSchema {
+  collectionName: 'team_members';
+  info: {
+    description: 'Team member profile for the About page meet-the-team section';
+    displayName: 'Team Member';
+    pluralName: 'team-members';
+    singularName: 'team-member';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    bio: Schema.Attribute.Text & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    githubUrl: Schema.Attribute.String;
+    linkedinUrl: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::team-member.team-member'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    photo: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    role: Schema.Attribute.String & Schema.Attribute.Required;
+    skills: Schema.Attribute.Component<'elements.team-skill', true>;
+    twitterUrl: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1297,14 +1467,18 @@ declare module '@strapi/strapi' {
       'admin::transfer-token': AdminTransferToken;
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
+      'api::about-page.about-page': ApiAboutPageAboutPage;
       'api::blog-page.blog-page': ApiBlogPageBlogPage;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::brand.brand': ApiBrandBrand;
       'api::brands-section.brands-section': ApiBrandsSectionBrandsSection;
       'api::category.category': ApiCategoryCategory;
+      'api::contact-inquiry.contact-inquiry': ApiContactInquiryContactInquiry;
+      'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::global-config.global-config': ApiGlobalConfigGlobalConfig;
-      'api::service.service': ApiServiceService;
+      'api::home-page.home-page': ApiHomePageHomePage;
       'api::services-page.services-page': ApiServicesPageServicesPage;
+      'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

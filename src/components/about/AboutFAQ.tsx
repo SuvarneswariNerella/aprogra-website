@@ -1,10 +1,17 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, HelpCircle } from 'lucide-react';
-import { useAboutFaqs, AboutFaqItem } from '@/lib/strapi';
+import { AboutFaqSectionData, DEFAULT_ABOUT_PAGE_DATA } from '@/lib/strapi';
 
-export default function AboutFAQ() {
-  const { faqs } = useAboutFaqs();
+interface AboutFAQProps {
+  faqSection?: AboutFaqSectionData;
+}
+
+export default function AboutFAQ({
+  faqSection = DEFAULT_ABOUT_PAGE_DATA.faqSection,
+}: AboutFAQProps) {
+  const data = faqSection || DEFAULT_ABOUT_PAGE_DATA.faqSection;
+  const faqs = data.faqs && data.faqs.length > 0 ? data.faqs : DEFAULT_ABOUT_PAGE_DATA.faqSection.faqs;
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleIndex = (idx: number) => {
@@ -23,16 +30,20 @@ export default function AboutFAQ() {
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="space-y-3 text-left"
         >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-xs">
-            <HelpCircle className="w-3.5 h-3.5 text-[#FF4A1C]" />
-            <span>Got Questions?</span>
-          </div>
+          {data.badge && (
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-badge shadow-xs">
+              <HelpCircle className="w-3.5 h-3.5 text-[#FF4A1C]" />
+              <span>{data.badge}</span>
+            </div>
+          )}
           <h2 className="text-h2 text-[#0B0D12]">
-            Questions We Actually Get Asked
+            {data.headline || 'Questions We Actually Get Asked'}
           </h2>
-          <p className="text-body-lg text-[#5A5E6E]">
-            And honest answers to all of them.
-          </p>
+          {data.description && (
+            <p className="text-body-lg text-[#5A5E6E]">
+              {data.description}
+            </p>
+          )}
         </motion.div>
 
         {/* Accordion List */}
@@ -103,3 +114,4 @@ export default function AboutFAQ() {
     </section>
   );
 }
+

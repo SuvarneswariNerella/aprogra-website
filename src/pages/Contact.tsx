@@ -3,7 +3,7 @@ import {
   Sparkles, ArrowRight, ShieldCheck, Clock, UserCheck, 
   Send, CheckCircle2, Copy, Check, 
   Mail, Phone, MapPin, Globe, ExternalLink, Video, Calendar, X,
-  Lock, ArrowUp, MessageSquare, Shield, AlertCircle
+  Lock, ArrowUp, MessageSquare, Shield, AlertCircle, RefreshCw
 } from 'lucide-react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -14,7 +14,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function Contact() {
   // Dynamic Strapi CMS Content & Channels Collection Type
-  const { content, channels } = useContactPageContent();
+  const { content, channels, isLoading, source, refetch } = useContactPageContent();
 
   // Form State
   const [formData, setFormData] = useState({
@@ -287,7 +287,6 @@ export default function Contact() {
 
   return (
     <div ref={mainRef} className="w-full min-h-screen bg-[#F4F1EA] text-[#0B0D12] font-sans antialiased pt-16">
-      
       {/* ========================================================= */}
       {/* 1. HERO SECTION                                           */}
       {/* ========================================================= */}
@@ -317,6 +316,14 @@ export default function Contact() {
               </span>
               <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
               <span>{content.hero.availabilityBadge}</span>
+              <button
+                onClick={refetch}
+                disabled={isLoading}
+                className="ml-1 p-1 rounded hover:bg-[#0B0D12]/5 transition-colors cursor-pointer disabled:opacity-50"
+                title={`Refresh CMS content (source: ${source})`}
+              >
+                <RefreshCw className={`w-3 h-3 text-[#5A5E6E] ${isLoading ? 'animate-spin' : ''}`} />
+              </button>
             </div>
 
             {/* Main Headline */}

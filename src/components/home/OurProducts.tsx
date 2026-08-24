@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, GraduationCap, MessageSquare, Sparkles, Bell, Layers } from 'lucide-react';
+import { ArrowRight, GraduationCap, MessageSquare, Bell, Layers } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ScrollReveal from '@/components/animations/ScrollReveal';
+import { HomeProductCard } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function OurProducts() {
+export default function OurProducts({ productsCards = [] }: { productsCards?: HomeProductCard[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const card1Ref = useRef<HTMLDivElement>(null);
@@ -16,6 +17,36 @@ export default function OurProducts() {
   const rightContentRef = useRef<HTMLDivElement>(null);
   const [activeCardIndex, setActiveCardIndex] = useState<number>(1);
   const stInstanceRef = useRef<ScrollTrigger | null>(null);
+
+  const card1Data = productsCards[0] || {
+    badge: "NOTIFICATION 01 / 02 • SCHOOL ERP",
+    versionStatus: "v3.2 OPERATIONAL",
+    category: "EdTech Platform",
+    categorySubtext: "Multi-Campus Ready",
+    title: "SmartSchool ERP",
+    description: "The complete operational platform for modern institutions — unifying admissions, fee management, student records, and parent communication.",
+    specs: ["Role-Based Portals", "Automated Fee Invoicing", "Instant SMS/WhatsApp Alerts", "Gradebook & Report Cards"],
+    productUrl: "/products/school-erp",
+    productUrlText: "View Product Details",
+    demoUrl: "/contact",
+    demoUrlText: "Request Demo →",
+    imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"
+  };
+
+  const card2Data = productsCards[1] || {
+    badge: "NOTIFICATION 02 / 02 • OMNICHAT INBOX",
+    versionStatus: "NEW MESSAGE",
+    category: "Customer Engagement",
+    categorySubtext: "AI-Assisted Inbox",
+    title: "OmniChat",
+    description: "Unify WhatsApp, Instagram DMs, Email, and SMS into one collaborative inbox powered by autonomous AI response suggestions.",
+    specs: ["Omnichannel Inbox", "AI Smart Auto-Drafts", "Shared Team Assignments", "SLA & Analytics Tracking"],
+    productUrl: "/products/omnichat",
+    productUrlText: "View Product Details",
+    demoUrl: "/contact",
+    demoUrlText: "Request Demo →",
+    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
+  };
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -33,7 +64,7 @@ export default function OurProducts() {
         scrollTrigger: {
           trigger: section,
           start: "top top",
-          end: "+=120%", // Smooth scroll distance for sticky reveal
+          end: "+=1400", // Smooth scroll distance for sticky reveal
           pin: true,     // Pin section vertically
           scrub: 0.6,    // Smooth scrubbing
           anticipatePin: 1,
@@ -51,21 +82,25 @@ export default function OurProducts() {
       stInstanceRef.current = tl.scrollTrigger || null;
 
       // Entrance animation for Card 1
-      gsap.fromTo(leftContentRef.current,
-        { opacity: 0, x: -60 },
-        {
-          opacity: 1, x: 0, duration: 1.4, ease: "power3.out",
-          scrollTrigger: { trigger: section, start: "top 30%", once: true }
-        }
-      );
+      if (leftContentRef.current) {
+        gsap.fromTo(leftContentRef.current,
+          { opacity: 0, x: -60 },
+          {
+            opacity: 1, x: 0, duration: 1.4, ease: "power3.out",
+            scrollTrigger: { trigger: section, start: "top 30%", once: true }
+          }
+        );
+      }
 
-      gsap.fromTo(rightContentRef.current,
-        { opacity: 0, y: 60 },
-        {
-          opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.4,
-          scrollTrigger: { trigger: section, start: "top 30%", once: true }
-        }
-      );
+      if (rightContentRef.current) {
+        gsap.fromTo(rightContentRef.current,
+          { opacity: 0, y: 60 },
+          {
+            opacity: 1, y: 0, duration: 1.4, ease: "power3.out", delay: 0.4,
+            scrollTrigger: { trigger: section, start: "top 30%", once: true }
+          }
+        );
+      }
 
       // Phase 1 (0.0 -> 0.4): Card 1 remains fixed & fully visible while OmniChat remains hidden below
       tl.to(card1, {
@@ -119,10 +154,8 @@ export default function OurProducts() {
   return (
     <section 
       ref={sectionRef} 
-      
       className="relative w-full min-h-screen bg-[#F4F1EA] text-[#0B0D12] py-6 sm:py-10 px-3 sm:px-6 flex flex-col justify-between items-center overflow-hidden border-b border-[#0B0D12]/10"
     >
-      
       {/* SECTION HEADER wrapped in ScrollReveal */}
       <ScrollReveal className="text-center space-y-2 shrink-0 z-30 px-4 max-w-3xl mx-auto pt-1 sm:pt-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#0B0D12]/5 text-[#0B0D12] text-badge border border-[#0B0D12]/15">
@@ -160,12 +193,12 @@ export default function OurProducts() {
                   <Bell className="w-3.5 h-3.5" />
                 </span>
                 <span className="text-[11px] font-bold text-[#0B0D12] font-mono tracking-wider uppercase">
-                  NOTIFICATION 01 / 02 • SCHOOL ERP
+                  {card1Data.badge}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#0B0D12] bg-[#0B0D12]/5 border border-[#0B0D12]/10 px-2.5 py-0.5 rounded">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
-                <span>v3.2 OPERATIONAL</span>
+                <span>{card1Data.versionStatus}</span>
               </div>
             </div>
 
@@ -178,48 +211,50 @@ export default function OurProducts() {
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0B0D12] text-white text-caption font-medium">
                       <GraduationCap className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                      EdTech Platform
+                      {card1Data.category}
                     </span>
-                    <span className="text-caption text-[#5A5E6E] font-medium">Multi-Campus Ready</span>
+                    <span className="text-caption text-[#5A5E6E] font-medium">{card1Data.categorySubtext}</span>
                   </div>
 
                   <h3 className="text-h2 text-[#0B0D12]">
-                    SmartSchool <span className="text-[#FF4A1C]">ERP</span>
+                    {card1Data.title}
                   </h3>
 
                   <p className="text-body text-[#5A5E6E] max-w-[440px]">
-                    The complete operational platform for modern institutions — unifying admissions, fee management, student records, and parent communication.
+                    {card1Data.description}
                   </p>
 
                   {/* Clean, Compact Key Capabilities */}
-                  <div className="pt-2 flex flex-wrap gap-2">
-                    {["Role-Based Portals", "Automated Fee Invoicing", "Instant SMS/WhatsApp Alerts", "Gradebook & Report Cards"].map((spec) => (
-                      <span 
-                        key={spec}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F4F1EA] border border-[#0B0D12]/10 text-caption text-[#0B0D12]"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
-                        {spec}
-                      </span>
-                    ))}
-                  </div>
+                  {card1Data.specs && card1Data.specs.length > 0 && (
+                    <div className="pt-2 flex flex-wrap gap-2">
+                      {card1Data.specs.map((spec) => (
+                        <span 
+                          key={spec}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F4F1EA] border border-[#0B0D12]/10 text-caption text-[#0B0D12]"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Streamlined Action */}
                 <div className="pt-2 flex items-center gap-4 shrink-0">
                   <Link
-                    to="/products/school-erp"
+                    to={card1Data.productUrl || "/products"}
                     className="px-5 py-2.5 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white rounded font-medium text-xs transition-colors duration-150 flex items-center gap-2 group"
                   >
-                    <span>View Product Details</span>
+                    <span>{card1Data.productUrlText || "View Product Details"}</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
 
                   <Link
-                    to="/contact"
+                    to={card1Data.demoUrl || "/contact"}
                     className="text-xs font-semibold text-[#0B0D12] hover:text-[#FF4A1C] transition-colors"
                   >
-                    Request Demo →
+                    {card1Data.demoUrlText || "Request Demo →"}
                   </Link>
                 </div>
               </div>
@@ -228,8 +263,8 @@ export default function OurProducts() {
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
                 <div ref={rightContentRef} className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group opacity-0">
                   <img 
-                    src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80" 
-                    alt="SmartSchool ERP Platform Interface" 
+                    src={card1Data.imageUrl || "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"} 
+                    alt={card1Data.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
@@ -258,12 +293,12 @@ export default function OurProducts() {
                   <Bell className="w-3.5 h-3.5" />
                 </span>
                 <span className="text-[11px] font-bold text-[#0B0D12] font-mono tracking-wider uppercase">
-                  NOTIFICATION 02 / 02 • OMNICHAT INBOX
+                  {card2Data.badge}
                 </span>
               </div>
               <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#FF4A1C] bg-[#FF4A1C]/10 border border-[#FF4A1C]/20 px-2.5 py-0.5 rounded">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C] animate-pulse" />
-                <span>NEW MESSAGE</span>
+                <span>{card2Data.versionStatus}</span>
               </div>
             </div>
 
@@ -276,48 +311,50 @@ export default function OurProducts() {
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0B0D12] text-white text-caption font-medium">
                       <MessageSquare className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                      Customer Engagement
+                      {card2Data.category}
                     </span>
-                    <span className="text-caption text-[#5A5E6E] font-medium">AI-Assisted Inbox</span>
+                    <span className="text-caption text-[#5A5E6E] font-medium">{card2Data.categorySubtext}</span>
                   </div>
 
                   <h3 className="text-h2 text-[#0B0D12]">
-                    Omni<span className="text-[#FF4A1C]">Chat</span>
+                    {card2Data.title}
                   </h3>
 
                   <p className="text-body text-[#5A5E6E] max-w-[440px]">
-                    Unify WhatsApp, Instagram DMs, Email, and SMS into one collaborative inbox powered by autonomous AI response suggestions.
+                    {card2Data.description}
                   </p>
 
                   {/* Clean, Compact Key Capabilities */}
-                  <div className="pt-2 flex flex-wrap gap-2">
-                    {["Omnichannel Inbox", "AI Smart Auto-Drafts", "Shared Team Assignments", "SLA & Analytics Tracking"].map((spec) => (
-                      <span 
-                        key={spec}
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F4F1EA] border border-[#0B0D12]/10 text-caption text-[#0B0D12]"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
-                        {spec}
-                      </span>
-                    ))}
-                  </div>
+                  {card2Data.specs && card2Data.specs.length > 0 && (
+                    <div className="pt-2 flex flex-wrap gap-2">
+                      {card2Data.specs.map((spec) => (
+                        <span 
+                          key={spec}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#F4F1EA] border border-[#0B0D12]/10 text-caption text-[#0B0D12]"
+                        >
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
+                          {spec}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {/* Streamlined Action */}
                 <div className="pt-2 flex items-center gap-4 shrink-0">
                   <Link
-                    to="/products/omnichat"
+                    to={card2Data.productUrl || "/products"}
                     className="px-5 py-2.5 bg-[#0B0D12] hover:bg-[#FF4A1C] text-white rounded font-medium text-xs transition-colors duration-150 flex items-center gap-2 group"
                   >
-                    <span>View Product Details</span>
+                    <span>{card2Data.productUrlText || "View Product Details"}</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
 
                   <Link
-                    to="/contact"
+                    to={card2Data.demoUrl || "/contact"}
                     className="text-xs font-semibold text-[#0B0D12] hover:text-[#FF4A1C] transition-colors"
                   >
-                    Request Demo →
+                    {card2Data.demoUrlText || "Request Demo →"}
                   </Link>
                 </div>
               </div>
@@ -326,8 +363,8 @@ export default function OurProducts() {
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
                 <div className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group">
                   <img 
-                    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80" 
-                    alt="OmniChat Unified AI Inbox Interface" 
+                    src={card2Data.imageUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"} 
+                    alt={card2Data.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
@@ -352,7 +389,7 @@ export default function OurProducts() {
             }`}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${activeCardIndex === 1 ? 'bg-[#FF4A1C]' : 'bg-[#0B0D12]/40'}`} />
-            01 • SmartSchool
+            01 • {card1Data.title.split(' ')[0]}
           </button>
 
           <button
@@ -364,7 +401,7 @@ export default function OurProducts() {
             }`}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${activeCardIndex === 2 ? 'bg-[#FF4A1C]' : 'bg-[#0B0D12]/40'}`} />
-            02 • OmniChat
+            02 • {card2Data.title.split(' ')[0]}
           </button>
         </div>
       </div>
@@ -372,3 +409,4 @@ export default function OurProducts() {
     </section>
   );
 }
+

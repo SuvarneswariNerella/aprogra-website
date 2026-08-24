@@ -22,7 +22,8 @@ export default function EditorialServicesPage() {
 
   // Dynamic CMS Data from Strapi
   const { content: pageContent } = useServicesPage();
-  const { services } = useServices();
+  const { services: hookServices } = useServices();
+  const displayServices = pageContent.services && pageContent.services.length > 0 ? pageContent.services : hookServices;
 
   // Initialize Lenis smooth scroll and Global Scroll Reveal
   useEffect(() => {
@@ -65,7 +66,7 @@ export default function EditorialServicesPage() {
       gsap.ticker.remove(updateLenis);
       lenis.destroy();
     };
-  }, [services]);
+  }, [displayServices]);
 
   const closingCta = pageContent.closingCta;
 
@@ -77,7 +78,7 @@ export default function EditorialServicesPage() {
       {/* 1. Left side scroll progress line */}
       <EditorialScrollProgress 
         activeSectionIndex={activeSectionIndex}
-        totalSections={services.length}
+        totalSections={displayServices.length}
       />
 
       {/* 2. HERO SECTION: Editable left content/points + Replaceable right image */}
@@ -88,12 +89,13 @@ export default function EditorialServicesPage() {
       {/* 3. CARDS SECTION: Top heading + Dynamic Flip Cards Grid */}
       <ServicesKpiGrid 
         cards={pageContent.cards}
+        flipCards={pageContent.flipCards}
       />
 
       {/* 4. FEATURES SECTION: Top Navigation Tabs + Dynamic Left-Content Right-Image Cards */}
       <HorizontalServiceShowcase 
         features={pageContent.features}
-        services={services}
+        services={displayServices}
         onActiveChange={setActiveSectionIndex}
       />
 

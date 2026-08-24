@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_elements_about_faq_items",
+  "info": {
+    "displayName": "About FAQ Item",
+    "icon": "question",
+    "description": "Single FAQ item for the About page"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "answer": {
+      "type": "text",
+      "required": true
+    },
+    "category": {
+      "type": "string",
+      "default": "General"
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

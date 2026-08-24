@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_sections_about_visions",
+  "info": {
+    "displayName": "About Panel: Our Vision",
+    "icon": "eye",
+    "description": "Story Panel 03: Our Vision"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Our Vision"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "The engineering partner for the next generation of global tech leaders."
+    },
+    "description": {
+      "type": "text",
+      "default": "We envision a world where founders and enterprises can build, scale, and transform their digital capabilities with zero compromise on engineering standards or velocity."
+    },
+    "highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.panel-highlight"
+    }
+  }
+}

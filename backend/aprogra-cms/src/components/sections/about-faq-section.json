@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_sections_about_faq_sections",
+  "info": {
+    "displayName": "About FAQ Section",
+    "icon": "question",
+    "description": "FAQ Accordion section for About Us page"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Got Questions?"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Questions We Actually Get Asked"
+    },
+    "description": {
+      "type": "string",
+      "default": "And honest answers to all of them."
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.about-faq-item"
+    }
+  }
+}

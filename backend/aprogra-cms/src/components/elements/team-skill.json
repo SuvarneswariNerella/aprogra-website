@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_elements_team_skills",
+  "info": {
+    "displayName": "Team Skill",
+    "icon": "bulletList",
+    "description": "A single skill tag for a team member"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

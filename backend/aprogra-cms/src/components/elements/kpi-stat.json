@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_elements_kpi_stats",
+  "info": {
+    "displayName": "KPI Stat",
+    "icon": "chartBubble",
+    "description": "Hero section KPI metric stat"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "value": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

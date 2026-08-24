@@ -288,7 +288,7 @@ const DEFAULT_BRANDS_SEED_DATA = [
   { name: 'AProgra Studio', category: 'Core Ecosystem', location: 'Global', row: 2, order: 10 },
 ];
 
-const DEFAULT_SERVICES_PAGE_SEED_DATA = {
+const getServicesPageSeedData = (): any => ({
   hero: {
     badge: 'CORE ENGINEERING & AI CAPABILITIES',
     headline: 'Architecting High-Throughput Cloud &',
@@ -325,9 +325,11 @@ const DEFAULT_SERVICES_PAGE_SEED_DATA = {
     secondaryCtaText: 'Explore Our Products',
     secondaryCtaUrl: '/products',
   },
+  flipCards: DEFAULT_FLIP_CARDS_SEED_DATA,
+  services: DEFAULT_SERVICES_SEED_DATA,
   metaTitle: 'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra',
   metaDescription: 'Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations.',
-};
+});
 
 const DEFAULT_SERVICES_SEED_DATA = [
   {
@@ -776,6 +778,235 @@ const DEFAULT_CONTACT_PAGE_SEED_DATA = {
   metaDescription: 'Connect directly with Aprogra lead architects for enterprise custom software, agentic AI, and scalable cloud systems.',
 };
 
+const DEFAULT_HOME_PAGE_SEED_DATA = {
+  title: "Home Page",
+  heroSlides: [
+    {
+      badgeText: "Modern Software & AI",
+      title: "Engineering Software Without Limits.",
+      subtitle: "Full-cycle software engineering, architectural consulting, and autonomous AI systems for scale-ups and global enterprises.",
+      tags: [
+        { label: "High-Performance Computing" },
+        { label: "Enterprise AI" },
+        { label: "Cloud Native" }
+      ],
+      imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      imageLabel: "Architecture Stack",
+      imageSublabel: "Production Ready",
+    },
+    {
+      badgeText: "Production Deployments",
+      title: "Commercial SaaS & ERP Platforms",
+      primaryValue: "40+",
+      subtitle: "We don't just build MVPs. We engineer and maintain mission-critical platforms that run real businesses with 99.99% SLA guarantees.",
+      tags: [
+        { label: "Multi-Tenant SaaS" },
+        { label: "ERP Systems" },
+        { label: "High Availability" }
+      ],
+      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      imageLabel: "Global Footprint",
+      imageSublabel: "12 Countries",
+    },
+    {
+      badgeText: "Zero Outsourcing",
+      title: "Engineered In-House.",
+      subtitle: "Every line of code, every system architecture, every pixel—built entirely by our full-stack engineering pods based in our own studios.",
+      tags: [
+        { label: "100% In-House" },
+        { label: "Dedicated Pods" },
+        { label: "Direct Access" }
+      ],
+      imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+      imageLabel: "Engineering Pods",
+      imageSublabel: "25+ Specialists",
+    }
+  ],
+  statsSection: {
+    badgeText: "PROVEN PERFORMANCE & GLOBAL FOOTPRINT",
+    title: "Engineered with Mathematical Precision.",
+    stats: [
+      { target: 60, suffix: "+", label: "Enterprise Partners" },
+      { target: 40, suffix: "+", label: "Production Systems" },
+      { target: 12, suffix: "+", label: "Sovereign Regions" },
+      { target: 7, suffix: "+", label: "Years of Craft" }
+    ]
+  },
+  storyPhases: [
+    {
+      badgeText: "Our Story",
+      title: "Not just another dev shop.",
+      description: "AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.",
+      imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: false
+    },
+    {
+      badgeText: "How We Work",
+      title: "Full-stack. Full-cycle. Full-ownership.",
+      description: "From the first discovery call to post-launch support, our in-house team owns every layer. Design. Frontend. Backend. QA. DevOps. All under one roof — your one point of contact.",
+      imageUrl: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: false
+    },
+    {
+      badgeText: "Our Team",
+      title: "25+ specialists. Zero strangers.",
+      description: "Designers who code. Engineers who think about UX. PMs who understand business. Everyone at AProgra is a specialist — and everyone cares about your product like it's their own.",
+      imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: false
+    },
+    {
+      badgeText: "Our Reach",
+      title: "Built here. Shipped everywhere.",
+      description: "40+ products live in market. 60+ clients across 12 countries. From Hyderabad to Houston, our software runs real businesses.",
+      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: true
+    }
+  ],
+  whyStatements: [
+    { mainText: "100%", subText: "In-house Talent" },
+    { mainText: "Infinite", subText: "Possibilities" },
+    { mainText: "One", subText: "Partner" }
+  ],
+  servicesSlides: [
+    {
+      orderNumber: "01",
+      badgeText: "Core Service",
+      title: "Product Engineering",
+      description: "We don't just build features — we engineer products. From architecture decisions to deployment pipelines, every choice we make is deliberate, scalable, and built to last.",
+      tags: [
+        { label: "Discovery" },
+        { label: "Architecture" },
+        { label: "Development" },
+        { label: "QA" },
+        { label: "Launch" }
+      ],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      orderNumber: "02",
+      badgeText: "Mobile Systems",
+      title: "Mobile Development",
+      description: "iOS, Android, or cross-platform. We build mobile experiences that feel native, perform flawlessly, and keep users coming back. Offline-first, animation-rich, crash-free.",
+      tags: [
+        { label: "iOS & Android" },
+        { label: "React Native" },
+        { label: "Flutter" },
+        { label: "Offline-First" },
+        { label: "App Store Ops" }
+      ],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      orderNumber: "03",
+      badgeText: "Applied AI",
+      title: "AI Integration & Automation",
+      description: "From custom LLM integrations to intelligent workflow automations — we make AI work for your actual business, not just your marketing copy.",
+      tags: [
+        { label: "LLM Pipelines" },
+        { label: "RAG Systems" },
+        { label: "Agents & Swarms" },
+        { label: "Data Triage" },
+        { label: "Fine-Tuning" }
+      ],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      orderNumber: "04",
+      badgeText: "Product Design",
+      title: "UI/UX & Design Systems",
+      description: "Design that converts. Interfaces that feel effortless. We craft design systems, component libraries, and end-to-end user journeys that elevate your brand.",
+      tags: [
+        { label: "Design Systems" },
+        { label: "Component Libraries" },
+        { label: "Wireframing" },
+        { label: "Motion Design" },
+        { label: "Figma to Code" }
+      ],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      orderNumber: "05",
+      badgeText: "Cloud & SRE",
+      title: "Cloud Architecture & DevOps",
+      description: "Infrastructure that scales without drama. CI/CD pipelines that deploy with confidence. Cloud architectures engineered for 99.99% uptime and zero maintenance headaches.",
+      tags: [
+        { label: "AWS / GCP" },
+        { label: "Docker & K8s" },
+        { label: "CI/CD Pipelines" },
+        { label: "Zero-Downtime" },
+        { label: "24/7 Monitoring" }
+      ],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      orderNumber: "06",
+      badgeText: "Modernization",
+      title: "Legacy Modernization & Audits",
+      description: "Inherited a codebase that gives you nightmares? We audit, refactor, and migrate legacy systems into clean, modern architectures without disrupting your live operations.",
+      tags: [
+        { label: "Architecture Audits" },
+        { label: "Codebase Refactoring" },
+        { label: "Database Migration" },
+        { label: "Performance Tuning" },
+        { label: "Zero-Downtime" }
+      ],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1000&q=80"
+    }
+  ],
+  productsCards: [
+    {
+      badge: "NOTIFICATION 01 / 02 • SCHOOL ERP",
+      versionStatus: "v3.2 OPERATIONAL",
+      category: "EdTech Platform",
+      categorySubtext: "Multi-Campus Ready",
+      title: "SmartSchool ERP",
+      description: "The complete operational platform for modern institutions — unifying admissions, fee management, student records, and parent communication.",
+      specs: [
+        { label: "Role-Based Portals" },
+        { label: "Automated Fee Invoicing" },
+        { label: "Instant SMS/WhatsApp Alerts" },
+        { label: "Gradebook & Report Cards" }
+      ],
+      productUrl: "/products/school-erp",
+      productUrlText: "View Product Details",
+      demoUrl: "/contact",
+      demoUrlText: "Request Demo →",
+      imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      badge: "NOTIFICATION 02 / 02 • OMNICHAT INBOX",
+      versionStatus: "NEW MESSAGE",
+      category: "Customer Engagement",
+      categorySubtext: "AI-Assisted Inbox",
+      title: "OmniChat",
+      description: "Unify WhatsApp, Instagram DMs, Email, and SMS into one collaborative inbox powered by autonomous AI response suggestions.",
+      specs: [
+        { label: "Omnichannel Inbox" },
+        { label: "AI Smart Auto-Drafts" },
+        { label: "Shared Team Assignments" },
+        { label: "SLA & Analytics Tracking" }
+      ],
+      productUrl: "/products/omnichat",
+      productUrlText: "View Product Details",
+      demoUrl: "/contact",
+      demoUrlText: "Request Demo →",
+      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
+    }
+  ]
+};
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
@@ -800,13 +1031,12 @@ export default {
           'api::brand.brand.find',
           'api::brand.brand.findOne',
           'api::services-page.services-page.find',
-          'api::service.service.find',
-          'api::service.service.findOne',
-          'api::service-flip-card.service-flip-card.find',
-          'api::service-flip-card.service-flip-card.findOne',
           'api::contact-page.contact-page.find',
           'api::contact-inquiry.contact-inquiry.create',
           'api::contact-inquiry.contact-inquiry.find',
+          'api::about-page.about-page.find',
+          'api::team-member.team-member.find',
+          'api::home-page.home-page.find',
         ];
 
         for (const action of actions) {
@@ -917,67 +1147,24 @@ export default {
       // 8. Services Page Settings Single Type
       const existingServicesPage = await strapiAny.documents('api::services-page.services-page').findFirst();
       if (!existingServicesPage) {
-        await strapiAny.documents('api::services-page.services-page').create({
-          data: DEFAULT_SERVICES_PAGE_SEED_DATA,
+        await strapi.documents('api::services-page.services-page').create({
+          data: getServicesPageSeedData(),
           status: 'published',
         });
         strapi.log.info('[Bootstrap] Created and published Services Page Settings in Strapi.');
-      }
-
-      // 9. Services & Feature Disciplines Collection Type (Horizontal Showcase)
-      for (const s of DEFAULT_SERVICES_SEED_DATA) {
-        const existingService = await strapiAny.documents('api::service.service').findFirst({
-          filters: { slug: s.slug },
+      } else {
+        await strapiAny.documents('api::services-page.services-page').update({
+          documentId: existingServicesPage.documentId,
+          data: {
+            flipCards: DEFAULT_FLIP_CARDS_SEED_DATA,
+            services: DEFAULT_SERVICES_SEED_DATA,
+          },
+          status: 'published',
         });
-        if (!existingService) {
-          await strapiAny.documents('api::service.service').create({
-            data: s,
-            status: 'published',
-          });
-          strapi.log.info(`[Bootstrap] Created Service Discipline: "${s.title}" (Tab: ${s.tabLabel}, Order: ${s.cardOrder})`);
-        } else if (!existingService.deliverables || existingService.deliverables.length === 0) {
-          await strapiAny.documents('api::service.service').update({
-            documentId: existingService.documentId,
-            data: {
-              deliverables: s.deliverables,
-              tags: s.tags,
-              icon: s.icon,
-              subheading: s.subheading,
-              accentColor: s.accentColor,
-            },
-            status: 'published',
-          });
-          strapi.log.info(`[Bootstrap] Updated Service Discipline Deliverables: "${s.title}"`);
-        }
+        strapi.log.info('[Bootstrap] Updated Services Page Settings with flipCards and services in Strapi.');
       }
 
-      // 10. Service Flip Cards Collection Type (Separate Flip Cards Grid)
-      for (const fc of DEFAULT_FLIP_CARDS_SEED_DATA) {
-        const existingFlipCard = await strapiAny.documents('api::service-flip-card.service-flip-card').findFirst({
-          filters: { title: fc.title },
-        });
-        if (!existingFlipCard) {
-          await strapiAny.documents('api::service-flip-card.service-flip-card').create({
-            data: fc,
-            status: 'published',
-          });
-          strapi.log.info(`[Bootstrap] Created Service Flip Card: "${fc.title}" (Order: ${fc.cardOrder})`);
-        } else if (!existingFlipCard.deliverables || existingFlipCard.deliverables.length === 0) {
-          await strapiAny.documents('api::service-flip-card.service-flip-card').update({
-            documentId: existingFlipCard.documentId,
-            data: {
-              deliverables: fc.deliverables,
-              icon: fc.icon,
-              color: fc.color,
-              subtitle: fc.subtitle,
-            },
-            status: 'published',
-          });
-          strapi.log.info(`[Bootstrap] Updated Service Flip Card Deliverables: "${fc.title}"`);
-        }
-      }
-
-      // 11. Contact Page Settings Single Type
+      // 9. Contact Page Settings Single Type
       const existingContactPage = await strapiAny.documents('api::contact-page.contact-page').findFirst();
       if (!existingContactPage) {
         await strapiAny.documents('api::contact-page.contact-page').create({
@@ -987,8 +1174,152 @@ export default {
         strapi.log.info('[Bootstrap] Created and published Contact Page Settings in Strapi.');
       }
 
+      // 12. About Page Settings Single Type
+      const existingAboutPage = await strapiAny.documents('api::about-page.about-page').findFirst();
+      const aboutStorySlidesSeed = [
+        {
+          orderNumber: '01',
+          badge: 'Who We Are',
+          headline: 'Not just another dev shop.',
+          description: 'AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.',
+          highlights: [
+            { title: 'In-house only', description: 'Every line of code written by our team' },
+            { title: 'End-to-end ownership', description: 'Design through deployment' },
+            { title: 'Hyderabad-based', description: 'Working with clients across 12 countries' },
+          ],
+          imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
+        },
+        {
+          orderNumber: '02',
+          badge: 'Our Mission',
+          headline: 'Build software that actually matters.',
+          description: 'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.',
+          quote: '"To make world-class engineering accessible to every visionary who dares to build."',
+          highlights: [],
+          imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+        },
+        {
+          orderNumber: '03',
+          badge: 'Our Vision',
+          headline: 'The engineering partner for the next generation of global tech leaders.',
+          description: 'We envision a world where founders and enterprises can build, scale, and transform their digital capabilities with zero compromise on engineering standards or velocity.',
+          highlights: [
+            { title: 'Global Reach', description: 'Serving visionaries across 12+ countries with scale-ready architecture' },
+            { title: 'Agentic & Autonomous Speed', description: 'Integrating cutting-edge AI workflows with human craftsmanship' },
+            { title: 'Infinite Scale', description: 'Architected from day one to handle millions of active users' },
+          ],
+          imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+        },
+      ];
+
+      const aboutFaqsSeed = [
+        { question: 'How is AProgra different from a typical software agency?', answer: 'Most agencies outsource or use freelancers for parts of your project. At AProgra, every single person who touches your product is on our in-house team. No handoffs to strangers. No quality loss in translation. You get one point of contact and a team that treats your product like their own.', category: 'Company & Team', order: 1 },
+        { question: 'What types of projects do you take on?', answer: 'We work on product engineering (web, mobile, SaaS), AI and automation systems, UI/UX design, and cloud infrastructure. From early-stage MVPs to scaling enterprise platforms — if it involves building software, we can help.', category: 'Capabilities', order: 2 },
+        { question: 'How long does it take to start a project?', answer: 'After an initial discovery call, we typically scope and onboard within 1–2 weeks. For urgent projects, we’ve started within days. We don’t believe in unnecessary delays.', category: 'Engagement', order: 3 },
+        { question: 'Do you work with international clients?', answer: 'Absolutely. We’ve partnered with clients across 12 countries including the US, UK, UAE, Singapore, and Australia. We work async-first and adapt to your timezone for key meetings.', category: 'Global Delivery', order: 4 },
+        { question: 'What does your development process look like?', answer: 'We follow an iterative, milestone-driven approach: Discovery → Design → Build → Test → Launch → Support. You’re involved at every stage with regular demos, Slack updates, and transparent timelines.', category: 'Process', order: 5 },
+        { question: 'Can you take over an existing project or codebase?', answer: 'Yes — and we do it often. We conduct a thorough code audit first, document what we find, then propose a clear path forward. We’ve rescued several projects that were over-budget and behind schedule.', category: 'Engineering', order: 6 },
+        { question: 'What is your pricing model?', answer: 'We offer project-based pricing for fixed-scope work and monthly retainers for ongoing development. We’ll share a detailed quote after a discovery call. We believe in transparent pricing — no hidden fees, no scope creep surprises.', category: 'Commercial', order: 7 },
+        { question: 'How do we get started?', answer: 'Simply fill out the contact form on this page or email us at hello@aprogra.com. We’ll schedule a discovery call within 24 hours, understand your project, and come back with a clear proposal.', category: 'Onboarding', order: 8 },
+      ];
+
+      const aboutFaqSectionSeed = {
+        badge: 'Got Questions?',
+        headline: 'Questions We Actually Get Asked',
+        description: 'And honest answers to all of them.',
+        faqs: aboutFaqsSeed,
+      };
+
+      if (!existingAboutPage) {
+        await strapiAny.documents('api::about-page.about-page').create({
+          data: {
+            hero: {
+              badgeText: 'Full-Stack Engineering & AI Studio',
+              headline: 'Architecting the Future of High-Scale Software & Autonomous Intelligence',
+              subheadline: 'We combine senior-only engineering pods with proprietary SaaS engines to build mission-critical web platforms, AI agents, and enterprise design systems for ambitious global businesses.',
+              primaryCtaLabel: 'Start Your Brief',
+              primaryCtaUrl: '/contact',
+              secondaryCtaLabel: 'Explore Our Story',
+              secondaryCtaUrl: '#story',
+              pillars: [
+                { orderNumber: '01', title: 'Full-Spectrum Architecture', description: 'Zero-handoff engineering from cloud infrastructure to 60fps responsive interfaces.', icon: 'Layers', accentColor: '#FF4A1C' },
+                { orderNumber: '02', title: 'Dual-Engine Innovation', description: 'High-velocity bespoke client pods alongside our proprietary commercial SaaS products.', icon: 'Server', accentColor: '#3B82F6' },
+                { orderNumber: '03', title: 'Autonomous AI Integration', description: 'Production-ready LLM agents, vector retrieval RAG pipelines, and automated CRM workflows.', icon: 'Cpu', accentColor: '#10B981' },
+                { orderNumber: '04', title: 'Global Delivery Standards', description: 'Hyderabad engineering headquarters with 99.98% production SLA across 12+ countries.', icon: 'Globe2', accentColor: '#8B5CF6' },
+              ],
+              kpiStats: [
+                { label: 'In-House Engineers', value: '100%' },
+                { label: 'Clutch / G2 Rating', value: '4.9★' },
+                { label: 'Avg API Latency', value: '<100ms' },
+                { label: 'Production SLA', value: '99.98%' },
+              ],
+            },
+            storySlides: aboutStorySlidesSeed,
+            faqSection: aboutFaqSectionSeed,
+            contactCta: {
+              badge: "LET'S CONNECT", headline: 'Ready to Build Something Infinite?',
+              description: 'Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.',
+              email: 'hello@aprogra.com', phone: '+1 (800) 555-0199',
+              officeLocation: 'Hyderabad, India • Global Remote Pods',
+              ctaLabel: 'Submit Project Brief', ctaUrl: '/contact',
+            },
+          },
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created and published About Page Settings in Strapi.');
+      } else {
+        await strapiAny.documents('api::about-page.about-page').update({
+          documentId: existingAboutPage.documentId,
+          data: {
+            storySlides: aboutStorySlidesSeed,
+            faqSection: aboutFaqSectionSeed,
+          },
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Updated About Page Settings with storySlides & faqSection in Strapi.');
+      }
+
+      // 13. Team Members Collection Type
+      const existingTeamMember = await strapiAny.documents('api::team-member.team-member').findFirst();
+      if (!existingTeamMember) {
+        const teamMembers = [
+          { name: 'Alexandre Vane', role: 'Founder & Chief Architect', bio: 'Ex-Google Staff Architect with 12+ years building distributed cloud platforms & high-throughput APIs.', skills: [{ name: 'Cloud Arch' }, { name: 'Distributed Systems' }, { name: 'Rust & Go' }], linkedinUrl: 'https://linkedin.com', githubUrl: 'https://github.com', twitterUrl: 'https://twitter.com', order: 1 },
+          { name: 'Isabella Chen', role: 'Head of Product & Design', bio: 'Pioneer in motion graphics & spatial UI design. Transformed digital products for 30+ enterprise firms.', skills: [{ name: 'Design Systems' }, { name: 'Motion Graphics' }, { name: 'UX Strategy' }], linkedinUrl: 'https://linkedin.com', githubUrl: 'https://github.com', twitterUrl: 'https://twitter.com', order: 2 },
+          { name: 'Sophia Thorne', role: 'Director of AI Research', bio: 'Specializing in custom LLM fine-tuning, autonomous agentic workflows, and edge neural deployments.', skills: [{ name: 'LLMs & RAG' }, { name: 'Machine Learning' }, { name: 'Autonomous Agents' }], linkedinUrl: 'https://linkedin.com', githubUrl: 'https://github.com', twitterUrl: 'https://twitter.com', order: 3 },
+          { name: 'Mia Rostova', role: 'Lead Full-Stack Engineer', bio: 'Polyglot software leader specializing in React 19, TypeScript, WebAudio, and frontend state engines.', skills: [{ name: 'React / Next.js' }, { name: 'TypeScript' }, { name: 'State Engines' }], linkedinUrl: 'https://linkedin.com', githubUrl: 'https://github.com', twitterUrl: 'https://twitter.com', order: 4 },
+          { name: 'Charlotte Vance', role: 'Principal Infrastructure Lead', bio: 'Cloud-native infrastructure specialist building zero-downtime multi-region Kubernetes deployments.', skills: [{ name: 'Kubernetes' }, { name: 'AWS / GCP' }, { name: 'Terraform' }], linkedinUrl: 'https://linkedin.com', githubUrl: 'https://github.com', twitterUrl: 'https://twitter.com', order: 5 },
+        ];
+        for (const member of teamMembers) {
+          await strapiAny.documents('api::team-member.team-member').create({
+            data: member, status: 'published',
+          });
+        }
+        strapi.log.info('[Bootstrap] Created Team Members in Strapi.');
+      }
+
+      // 15. Home Page Single Type
+      const existingHomePage = await strapiAny.documents('api::home-page.home-page').findFirst();
+      if (!existingHomePage) {
+        await strapiAny.documents('api::home-page.home-page').create({
+          data: DEFAULT_HOME_PAGE_SEED_DATA,
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created and published Home Page in Strapi.');
+      } else {
+        await strapiAny.documents('api::home-page.home-page').update({
+          documentId: existingHomePage.documentId,
+          data: {
+            servicesSlides: DEFAULT_HOME_PAGE_SEED_DATA.servicesSlides,
+            productsCards: DEFAULT_HOME_PAGE_SEED_DATA.productsCards,
+          },
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Updated Home Page with ServicesSlides & ProductsCards in Strapi.');
+      }
+
     } catch (err: any) {
       strapi.log.warn('[Bootstrap] Auto-setup notice:', err?.message || err);
     }
   },
 };
+

@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_sections_about_cta_sections",
+  "info": {
+    "displayName": "About Contact CTA",
+    "icon": "phone",
+    "description": "Contact CTA section at the bottom of the About page"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "LET'S CONNECT"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Ready to Build Something Infinite?"
+    },
+    "description": {
+      "type": "text",
+      "default": "Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision."
+    },
+    "email": {
+      "type": "string",
+      "default": "hello@aprogra.com"
+    },
+    "phone": {
+      "type": "string",
+      "default": "+1 (800) 555-0199"
+    },
+    "officeLocation": {
+      "type": "string",
+      "default": "Hyderabad, India • Global Remote Pods"
+    },
+    "ctaLabel": {
+      "type": "string",
+      "default": "Submit Project Brief"
+    },
+    "ctaUrl": {
+      "type": "string",
+      "default": "/contact"
+    }
+  }
+}

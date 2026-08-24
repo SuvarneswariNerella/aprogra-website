@@ -5,8 +5,27 @@ import { useState, useEffect } from 'react';
  * Provides helper functions to query Strapi REST API endpoints, manage inquiries, and resolve media URLs.
  */
 
-const STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337').replace(/\/$/, '');
+const ENV_STRAPI_URL = (import.meta.env.VITE_STRAPI_API_URL || 'http://localhost:1337').replace(/\/$/, '');
 const STRAPI_TOKEN = (import.meta.env.VITE_STRAPI_API_TOKEN || '').trim();
+
+/**
+ * In the browser during Vite dev, prefer same-origin `/api` (proxied to Strapi).
+ * Avoids CORS and ensures the Contact page always hits the running CMS.
+ */
+function getStrapiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    const host = window.location.hostname;
+    const isLocal =
+      host === 'localhost' ||
+      host === '127.0.0.1' ||
+      ENV_STRAPI_URL.includes('localhost') ||
+      ENV_STRAPI_URL.includes('127.0.0.1');
+    if (isLocal) return ''; // → fetch('/api/...') via Vite proxy
+  }
+  return ENV_STRAPI_URL;
+}
+
+const STRAPI_URL = ENV_STRAPI_URL;
 
 export interface StrapiMeta {
   pagination?: {
@@ -27,7 +46,13 @@ export interface StrapiResponse<T> {
  */
 export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Promise<T> {
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  const url = `${STRAPI_URL}/api/${cleanEndpoint}`;
+  
+  // URL-encode square brackets to prevent HTTP 400 Bad Request rejections
+  // from strict proxies (like Vite's dev server proxy) or Strapi v5 routing
+  const encodedEndpoint = cleanEndpoint.replace(/\[/g, '%5B').replace(/\]/g, '%5D');
+  
+  const base = getStrapiBaseUrl();
+  const url = `${base}/api/${encodedEndpoint}`;
 
   try {
     const headers: HeadersInit = {
@@ -52,12 +77,17 @@ export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Pr
         }
       }
 
-      console.warn(`[Strapi] API request failed with status ${res.status}: ${res.statusText}`);
+      console.warn(`[Strapi] API request failed with status ${res.status}: ${res.statusText} (${url})`);
       if (fallbackData !== undefined) return fallbackData;
-      throw new Error(`Strapi request failed: ${res.statusText}`);
+      throw new Error(`Strapi request failed: ${res.status} ${res.statusText}`);
     }
 
     const json = await res.json();
+    if (json?.data === undefined || json?.data === null) {
+      console.warn(`[Strapi] Empty data from "${url}"`, json?.error || '');
+      if (fallbackData !== undefined) return fallbackData;
+      throw new Error('Strapi returned empty data');
+    }
     return json.data as T;
   } catch (error) {
     console.warn(`[Strapi] Failed to fetch from "${url}". Using fallback data if available.`, error);
@@ -72,11 +102,13 @@ export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Pr
  */
 export function getStrapiMediaUrl(media: any): string {
   if (!media) return '';
+
+  const base = getStrapiBaseUrl() || ENV_STRAPI_URL;
   
   if (typeof media === 'string') {
     if (!media.trim()) return '';
     if (media.startsWith('http://') || media.startsWith('https://') || media.startsWith('data:')) return media;
-    return `${STRAPI_URL}${media.startsWith('/') ? media : `/${media}`}`;
+    return `${base}${media.startsWith('/') ? media : `/${media}`}`;
   }
 
   // Strapi 5 direct object / format
@@ -90,7 +122,7 @@ export function getStrapiMediaUrl(media: any): string {
 
   if (url && typeof url === 'string') {
     if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
-    return `${STRAPI_URL}${url.startsWith('/') ? url : `/${url}`}`;
+    return `${base}${url.startsWith('/') ? url : `/${url}`}`;
   }
 
   return '';
@@ -248,7 +280,7 @@ export const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
 export async function fetchGlobalConfig(): Promise<GlobalConfig> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'global-config?populate[header][populate]=*&populate[footer][populate][columns][populate]=*&populate[footer][populate][socialLinks]=*&populate[footer][populate][legalLinks]=*'
+      'global-config?populate[header][populate][navLinks]=true&populate[header][populate][logo]=true&populate[footer][populate][columns][populate][links]=true&populate[footer][populate][socialLinks]=true&populate[footer][populate][legalLinks]=true&populate[footer][populate][logo]=true'
     );
     if (!raw) return DEFAULT_GLOBAL_CONFIG;
 
@@ -722,10 +754,29 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
  */
 export async function fetchContactPageContent(): Promise<ContactPageContent> {
   try {
+    // Strapi v5: nested repeatable components need EXPLICIT populate paths.
+    // populate=* / populate=deep do NOT return steps, capabilitiesList, etc.
     const raw = await fetchFromStrapi<any>(
-      'contact-page?populate[hero][populate]=*&populate[roadmap][populate]=*&populate[brief][populate]=*&populate[preview][populate]=*&populate[channels][populate]=*&populate[introCallModal][populate]=*'
+      'contact-page?populate[hero][populate][heroImage]=true' +
+      '&populate[roadmap][populate][steps]=true' +
+      '&populate[brief][populate][capabilitiesList]=true' +
+      '&populate[brief][populate][budgetRangesList]=true' +
+      '&populate[brief][populate][timelineRangesList]=true' +
+      '&populate[preview][populate][engagementSteps]=true' +
+      '&populate[channels]=true' +
+      '&populate[introCallModal][populate][topicOptions]=true' +
+      '&populate[introCallModal][populate][timeSlots]=true'
     );
-    if (!raw) return DEFAULT_CONTACT_PAGE_CONTENT;
+    if (!raw) {
+      console.warn('[Strapi] contact-page returned empty, using defaults');
+      return DEFAULT_CONTACT_PAGE_CONTENT;
+    }
+
+    console.info('[Strapi] contact-page loaded from CMS', {
+      documentId: raw.documentId || raw.id,
+      publishedAt: raw.publishedAt,
+      updatedAt: raw.updatedAt,
+    });
 
     const data = raw.attributes || raw;
     const hero = data.hero || {};
@@ -737,122 +788,145 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
 
     const extractChoiceNames = (list: any[] | undefined, defaultList: string[]): string[] => {
       if (!Array.isArray(list) || list.length === 0) return defaultList;
-      return list.map((item: any) => (typeof item === 'string' ? item : item.label || item.name || item.title || ''));
+      return list
+        .map((item: any) => {
+          if (typeof item === 'string') return item;
+          // Strapi v5 repeatable component (elements.option-item): { id, label }
+          return item.label || item.name || item.title || '';
+        })
+        .filter(Boolean);
     };
+
+    const pick = <T,>(value: T | null | undefined, fallback: T): T =>
+      value !== null && value !== undefined && value !== '' ? value : fallback;
 
     let channels: ContactChannelItem[] = DEFAULT_CONTACT_CHANNELS;
     if (Array.isArray(data.channels) && data.channels.length > 0) {
-      channels = data.channels.map((ch: any, idx: number) => ({
-        id: String(ch.id || ch.label || `channel-${idx + 1}`),
-        order: typeof ch.order === 'number' ? ch.order : idx + 1,
-        type: ch.type || 'email',
-        label: ch.label || '',
-        primaryValue: ch.primaryValue || '',
-        subtext: ch.subtext || '',
-        buttonText: ch.buttonText || '',
-        buttonUrl: ch.buttonUrl || undefined,
-        iconName: ch.iconName || 'mail',
-        iconMedia: ch.iconMedia,
-        iconUrl: getStrapiMediaUrl(ch.iconMedia) || ch.iconUrl || undefined,
-      }));
+      channels = data.channels
+        .map((ch: any, idx: number) => ({
+          id: String(ch.id || ch.label || `channel-${idx + 1}`),
+          order: typeof ch.order === 'number' ? ch.order : idx + 1,
+          type: (ch.type === 'custom' ? 'other' : ch.type) || 'email',
+          label: ch.label || '',
+          primaryValue: ch.primaryValue || '',
+          subtext: ch.subtext || '',
+          buttonText: ch.buttonText || '',
+          buttonUrl: ch.buttonUrl || undefined,
+          iconName: ch.iconName || 'mail',
+          iconMedia: ch.iconMedia,
+          iconUrl: getStrapiMediaUrl(ch.iconMedia) || ch.iconUrl || undefined,
+        }))
+        .sort((a: ContactChannelItem, b: ContactChannelItem) => (a.order || 0) - (b.order || 0));
     }
 
     return {
       hero: {
-        availabilityBadge: hero.availabilityBadge || DEFAULT_CONTACT_PAGE_CONTENT.hero.availabilityBadge,
-        headline: hero.headline || DEFAULT_CONTACT_PAGE_CONTENT.hero.headline,
-        highlight: hero.highlight || DEFAULT_CONTACT_PAGE_CONTENT.hero.highlight,
-        description: hero.description || DEFAULT_CONTACT_PAGE_CONTENT.hero.description,
-        primaryCtaText: hero.primaryCtaText || DEFAULT_CONTACT_PAGE_CONTENT.hero.primaryCtaText,
-        secondaryCtaText: hero.secondaryCtaText || DEFAULT_CONTACT_PAGE_CONTENT.hero.secondaryCtaText,
-        slaBadge1: hero.slaBadge1 || DEFAULT_CONTACT_PAGE_CONTENT.hero.slaBadge1,
-        slaBadge2: hero.slaBadge2 || DEFAULT_CONTACT_PAGE_CONTENT.hero.slaBadge2,
-        slaBadge3: hero.slaBadge3 || DEFAULT_CONTACT_PAGE_CONTENT.hero.slaBadge3,
-        directChannelsTitle: hero.directChannelsTitle || DEFAULT_CONTACT_PAGE_CONTENT.hero.directChannelsTitle,
-        podStatus: hero.podStatus || DEFAULT_CONTACT_PAGE_CONTENT.hero.podStatus,
-        emailLabel: hero.emailLabel || DEFAULT_CONTACT_PAGE_CONTENT.hero.emailLabel,
-        email: hero.email || DEFAULT_CONTACT_PAGE_CONTENT.hero.email,
-        emailCopyButtonText: hero.emailCopyButtonText || DEFAULT_CONTACT_PAGE_CONTENT.hero.emailCopyButtonText,
-        phoneLabel: hero.phoneLabel || DEFAULT_CONTACT_PAGE_CONTENT.hero.phoneLabel,
-        phone: hero.phone || DEFAULT_CONTACT_PAGE_CONTENT.hero.phone,
-        phoneCopyButtonText: hero.phoneCopyButtonText || DEFAULT_CONTACT_PAGE_CONTENT.hero.phoneCopyButtonText,
-        studioHqLabel: hero.studioHqLabel || DEFAULT_CONTACT_PAGE_CONTENT.hero.studioHqLabel,
-        studioHqValue: hero.studioHqValue || DEFAULT_CONTACT_PAGE_CONTENT.hero.studioHqValue,
-        bookIntroCallButtonText: hero.bookIntroCallButtonText || DEFAULT_CONTACT_PAGE_CONTENT.hero.bookIntroCallButtonText,
+        availabilityBadge: pick(hero.availabilityBadge, DEFAULT_CONTACT_PAGE_CONTENT.hero.availabilityBadge),
+        headline: pick(hero.headline, DEFAULT_CONTACT_PAGE_CONTENT.hero.headline),
+        highlight: pick(hero.highlight, DEFAULT_CONTACT_PAGE_CONTENT.hero.highlight),
+        description: pick(hero.description, DEFAULT_CONTACT_PAGE_CONTENT.hero.description),
+        primaryCtaText: pick(hero.primaryCtaText, DEFAULT_CONTACT_PAGE_CONTENT.hero.primaryCtaText),
+        secondaryCtaText: pick(hero.secondaryCtaText, DEFAULT_CONTACT_PAGE_CONTENT.hero.secondaryCtaText),
+        slaBadge1: pick(hero.slaBadge1, DEFAULT_CONTACT_PAGE_CONTENT.hero.slaBadge1),
+        slaBadge2: pick(hero.slaBadge2, DEFAULT_CONTACT_PAGE_CONTENT.hero.slaBadge2),
+        slaBadge3: pick(hero.slaBadge3, DEFAULT_CONTACT_PAGE_CONTENT.hero.slaBadge3),
+        directChannelsTitle: pick(hero.directChannelsTitle, DEFAULT_CONTACT_PAGE_CONTENT.hero.directChannelsTitle),
+        podStatus: pick(hero.podStatus, DEFAULT_CONTACT_PAGE_CONTENT.hero.podStatus),
+        emailLabel: pick(hero.emailLabel, DEFAULT_CONTACT_PAGE_CONTENT.hero.emailLabel),
+        email: pick(hero.email, DEFAULT_CONTACT_PAGE_CONTENT.hero.email),
+        emailCopyButtonText: pick(hero.emailCopyButtonText, DEFAULT_CONTACT_PAGE_CONTENT.hero.emailCopyButtonText),
+        phoneLabel: pick(hero.phoneLabel, DEFAULT_CONTACT_PAGE_CONTENT.hero.phoneLabel),
+        phone: pick(hero.phone, DEFAULT_CONTACT_PAGE_CONTENT.hero.phone),
+        phoneCopyButtonText: pick(hero.phoneCopyButtonText, DEFAULT_CONTACT_PAGE_CONTENT.hero.phoneCopyButtonText),
+        studioHqLabel: pick(hero.studioHqLabel, DEFAULT_CONTACT_PAGE_CONTENT.hero.studioHqLabel),
+        studioHqValue: pick(hero.studioHqValue, DEFAULT_CONTACT_PAGE_CONTENT.hero.studioHqValue),
+        bookIntroCallButtonText: pick(hero.bookIntroCallButtonText, DEFAULT_CONTACT_PAGE_CONTENT.hero.bookIntroCallButtonText),
         heroImage: hero.heroImage,
-        heroImageUrl: getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || DEFAULT_CONTACT_PAGE_CONTENT.hero.heroImageUrl,
+        heroImageUrl: getStrapiMediaUrl(hero.heroImage) || pick(hero.heroImageUrl, DEFAULT_CONTACT_PAGE_CONTENT.hero.heroImageUrl || ''),
       },
       roadmap: {
-        badge: roadmap.badge || DEFAULT_CONTACT_PAGE_CONTENT.roadmap.badge,
-        title: roadmap.title || DEFAULT_CONTACT_PAGE_CONTENT.roadmap.title,
+        badge: pick(roadmap.badge, DEFAULT_CONTACT_PAGE_CONTENT.roadmap.badge),
+        title: pick(roadmap.title, DEFAULT_CONTACT_PAGE_CONTENT.roadmap.title),
         steps: Array.isArray(roadmap.steps) && roadmap.steps.length > 0
-          ? roadmap.steps
+          ? roadmap.steps.map((step: any, idx: number) => ({
+              id: step.id || idx,
+              timeframe: pick(step.timeframe, ''),
+              title: pick(step.title, ''),
+              description: pick(step.description, ''),
+            }))
           : DEFAULT_CONTACT_PAGE_CONTENT.roadmap.steps,
       },
       brief: {
-        badge: brief.badge || DEFAULT_CONTACT_PAGE_CONTENT.brief.badge,
-        title: brief.title || DEFAULT_CONTACT_PAGE_CONTENT.brief.title,
-        subtitle: brief.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.brief.subtitle,
-        formHeading: brief.formHeading || DEFAULT_CONTACT_PAGE_CONTENT.brief.formHeading,
-        formSubheading: brief.formSubheading || DEFAULT_CONTACT_PAGE_CONTENT.brief.formSubheading,
-        fieldNameLabel: brief.fieldNameLabel || DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldNameLabel,
-        fieldNamePlaceholder: brief.fieldNamePlaceholder || DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldNamePlaceholder,
-        fieldEmailLabel: brief.fieldEmailLabel || DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldEmailLabel,
-        fieldEmailPlaceholder: brief.fieldEmailPlaceholder || DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldEmailPlaceholder,
-        fieldCompanyLabel: brief.fieldCompanyLabel || DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldCompanyLabel,
-        fieldCompanyPlaceholder: brief.fieldCompanyPlaceholder || DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldCompanyPlaceholder,
-        capabilitiesQuestion: brief.capabilitiesQuestion || DEFAULT_CONTACT_PAGE_CONTENT.brief.capabilitiesQuestion,
+        badge: pick(brief.badge, DEFAULT_CONTACT_PAGE_CONTENT.brief.badge),
+        title: pick(brief.title, DEFAULT_CONTACT_PAGE_CONTENT.brief.title),
+        subtitle: pick(brief.subtitle, DEFAULT_CONTACT_PAGE_CONTENT.brief.subtitle),
+        formHeading: pick(brief.formHeading, DEFAULT_CONTACT_PAGE_CONTENT.brief.formHeading),
+        formSubheading: pick(brief.formSubheading, DEFAULT_CONTACT_PAGE_CONTENT.brief.formSubheading),
+        fieldNameLabel: pick(brief.fieldNameLabel, DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldNameLabel),
+        fieldNamePlaceholder: pick(brief.fieldNamePlaceholder, DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldNamePlaceholder),
+        fieldEmailLabel: pick(brief.fieldEmailLabel, DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldEmailLabel),
+        fieldEmailPlaceholder: pick(brief.fieldEmailPlaceholder, DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldEmailPlaceholder),
+        fieldCompanyLabel: pick(brief.fieldCompanyLabel, DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldCompanyLabel),
+        fieldCompanyPlaceholder: pick(brief.fieldCompanyPlaceholder, DEFAULT_CONTACT_PAGE_CONTENT.brief.fieldCompanyPlaceholder),
+        capabilitiesQuestion: pick(brief.capabilitiesQuestion, DEFAULT_CONTACT_PAGE_CONTENT.brief.capabilitiesQuestion),
         capabilitiesList: extractChoiceNames(brief.capabilitiesList, DEFAULT_CONTACT_PAGE_CONTENT.brief.capabilitiesList),
-        budgetQuestion: brief.budgetQuestion || DEFAULT_CONTACT_PAGE_CONTENT.brief.budgetQuestion,
+        budgetQuestion: pick(brief.budgetQuestion, DEFAULT_CONTACT_PAGE_CONTENT.brief.budgetQuestion),
         budgetRangesList: extractChoiceNames(brief.budgetRangesList, DEFAULT_CONTACT_PAGE_CONTENT.brief.budgetRangesList),
-        timelineQuestion: brief.timelineQuestion || DEFAULT_CONTACT_PAGE_CONTENT.brief.timelineQuestion,
+        timelineQuestion: pick(brief.timelineQuestion, DEFAULT_CONTACT_PAGE_CONTENT.brief.timelineQuestion),
         timelineRangesList: extractChoiceNames(brief.timelineRangesList, DEFAULT_CONTACT_PAGE_CONTENT.brief.timelineRangesList),
-        messageQuestion: brief.messageQuestion || DEFAULT_CONTACT_PAGE_CONTENT.brief.messageQuestion,
-        messagePlaceholder: brief.messagePlaceholder || DEFAULT_CONTACT_PAGE_CONTENT.brief.messagePlaceholder,
-        submitButtonText: brief.submitButtonText || DEFAULT_CONTACT_PAGE_CONTENT.brief.submitButtonText,
-        successTitle: brief.successTitle || DEFAULT_CONTACT_PAGE_CONTENT.brief.successTitle,
+        messageQuestion: pick(brief.messageQuestion, DEFAULT_CONTACT_PAGE_CONTENT.brief.messageQuestion),
+        messagePlaceholder: pick(brief.messagePlaceholder, DEFAULT_CONTACT_PAGE_CONTENT.brief.messagePlaceholder),
+        submitButtonText: pick(brief.submitButtonText, DEFAULT_CONTACT_PAGE_CONTENT.brief.submitButtonText),
+        successTitle: pick(brief.successTitle, DEFAULT_CONTACT_PAGE_CONTENT.brief.successTitle),
       },
       preview: {
-        cardTitle: preview.cardTitle || DEFAULT_CONTACT_PAGE_CONTENT.preview.cardTitle,
-        cardBadge: preview.cardBadge || DEFAULT_CONTACT_PAGE_CONTENT.preview.cardBadge,
-        capabilitiesLabel: preview.capabilitiesLabel || DEFAULT_CONTACT_PAGE_CONTENT.preview.capabilitiesLabel,
-        investmentLabel: preview.investmentLabel || DEFAULT_CONTACT_PAGE_CONTENT.preview.investmentLabel,
-        timelineLabel: preview.timelineLabel || DEFAULT_CONTACT_PAGE_CONTENT.preview.timelineLabel,
-        engagementTitle: preview.engagementTitle || DEFAULT_CONTACT_PAGE_CONTENT.preview.engagementTitle,
+        cardTitle: pick(preview.cardTitle, DEFAULT_CONTACT_PAGE_CONTENT.preview.cardTitle),
+        cardBadge: pick(preview.cardBadge, DEFAULT_CONTACT_PAGE_CONTENT.preview.cardBadge),
+        capabilitiesLabel: pick(preview.capabilitiesLabel, DEFAULT_CONTACT_PAGE_CONTENT.preview.capabilitiesLabel),
+        investmentLabel: pick(preview.investmentLabel, DEFAULT_CONTACT_PAGE_CONTENT.preview.investmentLabel),
+        timelineLabel: pick(preview.timelineLabel, DEFAULT_CONTACT_PAGE_CONTENT.preview.timelineLabel),
+        engagementTitle: pick(preview.engagementTitle, DEFAULT_CONTACT_PAGE_CONTENT.preview.engagementTitle),
         engagementSteps: Array.isArray(preview.engagementSteps) && preview.engagementSteps.length > 0
-          ? preview.engagementSteps
+          ? preview.engagementSteps.map((step: any, idx: number) => ({
+              id: step.id || idx,
+              // Strapi component uses `timeframe`; UI uses `stepNumber`
+              stepNumber: pick(step.stepNumber, pick(step.timeframe, String(idx + 1))),
+              title: pick(step.title, ''),
+              description: pick(step.description, ''),
+            }))
           : DEFAULT_CONTACT_PAGE_CONTENT.preview.engagementSteps,
-        guaranteesTitle: preview.guaranteesTitle || DEFAULT_CONTACT_PAGE_CONTENT.preview.guaranteesTitle,
-        guarantee1_title: preview.guarantee1_title || DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee1_title,
-        guarantee1_desc: preview.guarantee1_desc || DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee1_desc,
-        guarantee2_title: preview.guarantee2_title || DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee2_title,
-        guarantee2_desc: preview.guarantee2_desc || DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee2_desc,
-        slaResponseText: preview.slaResponseText || DEFAULT_CONTACT_PAGE_CONTENT.preview.slaResponseText,
-        readyReviewText: preview.readyReviewText || DEFAULT_CONTACT_PAGE_CONTENT.preview.readyReviewText,
-        videoTitle: preview.videoTitle || DEFAULT_CONTACT_PAGE_CONTENT.preview.videoTitle,
-        videoDescription: preview.videoDescription || DEFAULT_CONTACT_PAGE_CONTENT.preview.videoDescription,
-        videoButtonText: preview.videoButtonText || DEFAULT_CONTACT_PAGE_CONTENT.preview.videoButtonText,
+        guaranteesTitle: pick(preview.guaranteesTitle, DEFAULT_CONTACT_PAGE_CONTENT.preview.guaranteesTitle),
+        guarantee1_title: pick(preview.guarantee1_title, DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee1_title),
+        guarantee1_desc: pick(preview.guarantee1_desc, DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee1_desc),
+        guarantee2_title: pick(preview.guarantee2_title, DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee2_title),
+        guarantee2_desc: pick(preview.guarantee2_desc, DEFAULT_CONTACT_PAGE_CONTENT.preview.guarantee2_desc),
+        slaResponseText: pick(preview.slaResponseText, DEFAULT_CONTACT_PAGE_CONTENT.preview.slaResponseText),
+        readyReviewText: pick(preview.readyReviewText, DEFAULT_CONTACT_PAGE_CONTENT.preview.readyReviewText),
+        videoTitle: pick(preview.videoTitle, DEFAULT_CONTACT_PAGE_CONTENT.preview.videoTitle),
+        videoDescription: pick(preview.videoDescription, DEFAULT_CONTACT_PAGE_CONTENT.preview.videoDescription),
+        videoButtonText: pick(preview.videoButtonText, DEFAULT_CONTACT_PAGE_CONTENT.preview.videoButtonText),
       },
       directChannelsHeader: {
-        badge: data.directChannelsBadge || directChannelsHeader.badge || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.badge,
-        title: data.directChannelsTitle || directChannelsHeader.title || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.title,
-        subtitle: data.directChannelsSubtitle || directChannelsHeader.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.subtitle,
+        // Flat root fields on contact-page single type (not a component)
+        badge: pick(data.directChannelsBadge, pick(directChannelsHeader.badge, DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.badge)),
+        title: pick(data.directChannelsTitle, pick(directChannelsHeader.title, DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.title)),
+        subtitle: pick(data.directChannelsSubtitle, pick(directChannelsHeader.subtitle, DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.subtitle)),
       },
       closingBanner: {
-        headline: data.closingBannerHeadline || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.headline,
-        highlight: data.closingBannerHighlight || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.highlight,
-        subtitle: data.closingBannerSubtitle || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.subtitle,
+        headline: pick(data.closingBannerHeadline, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.headline),
+        highlight: pick(data.closingBannerHighlight, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.highlight),
+        subtitle: pick(data.closingBannerSubtitle, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.subtitle),
         backToTopText: DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.backToTopText,
       },
       introCallModal: {
-        title: introCallModal.title || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.title,
-        subtitle: introCallModal.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.subtitle,
+        title: pick(introCallModal.title, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.title),
+        subtitle: pick(introCallModal.subtitle, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.subtitle),
         topicOptions: extractChoiceNames(introCallModal.topicOptions, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.topicOptions),
         timeSlots: extractChoiceNames(introCallModal.timeSlots, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.timeSlots),
-        submitButtonText: introCallModal.submitButtonText || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.submitButtonText,
-        successTitle: introCallModal.successTitle || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.successTitle,
+        submitButtonText: pick(introCallModal.submitButtonText, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.submitButtonText),
+        successTitle: pick(introCallModal.successTitle, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.successTitle),
       },
-      channels: channels,
+      channels,
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
     };
@@ -879,37 +953,73 @@ export async function fetchContactChannels(): Promise<ContactChannelItem[]> {
 }
 
 /**
- * React hook for consuming dynamic Contact Page content & Contact Channels
+ * React hook for consuming dynamic Contact Page content & Contact Channels.
+ * Renders defaults immediately, then always applies live CMS data when it arrives.
+ * A late successful fetch must never be blocked by a prior timeout/default.
  */
 export function useContactPageContent() {
   const [content, setContent] = useState<ContactPageContent>(DEFAULT_CONTACT_PAGE_CONTENT);
   const [channels, setChannels] = useState<ContactChannelItem[]>(DEFAULT_CONTACT_CHANNELS);
   const [isLoading, setIsLoading] = useState(true);
+  const [lastFetched, setLastFetched] = useState<Date | null>(null);
+  const [source, setSource] = useState<'defaults' | 'cms'>('defaults');
+
+  const applyPageData = (
+    pageData: ContactPageContent | null | undefined,
+    from: 'defaults' | 'cms'
+  ) => {
+    if (!pageData) return;
+    setContent(pageData);
+    if (pageData.channels && pageData.channels.length > 0) {
+      setChannels(pageData.channels);
+    }
+    setSource(from);
+    if (from === 'cms') setLastFetched(new Date());
+  };
+
+  const load = async () => {
+    setIsLoading(true);
+    try {
+      const pageData = await fetchContactPageContent();
+      applyPageData(pageData, 'cms');
+      return pageData;
+    } catch (error) {
+      console.warn('[Strapi] Failed to fetch contact page content:', error);
+      applyPageData(DEFAULT_CONTACT_PAGE_CONTENT, 'defaults');
+      return DEFAULT_CONTACT_PAGE_CONTENT;
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let isMounted = true;
-    fetchContactPageContent()
-      .then((pageData) => {
-        if (isMounted) {
-          if (pageData) {
-            setContent(pageData);
-            if (pageData.channels && pageData.channels.length > 0) {
-              setChannels(pageData.channels);
-            }
-          }
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsLoading(false);
-      });
+    let cancelled = false;
+
+    (async () => {
+      setIsLoading(true);
+      try {
+        const pageData = await fetchContactPageContent();
+        if (cancelled) return;
+        applyPageData(pageData, 'cms');
+        console.info('[Contact] CMS content applied', {
+          availabilityBadge: pageData.hero?.availabilityBadge,
+          step0: pageData.roadmap?.steps?.[0]?.timeframe,
+        });
+      } catch (error) {
+        if (cancelled) return;
+        console.warn('[Contact] CMS fetch failed, showing defaults', error);
+        applyPageData(DEFAULT_CONTACT_PAGE_CONTENT, 'defaults');
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    })();
 
     return () => {
-      isMounted = false;
+      cancelled = true;
     };
   }, []);
 
-  return { content, channels, isLoading };
+  return { content, channels, isLoading, lastFetched, source, refetch: load };
 }
 
 // ============================================================================
@@ -938,7 +1048,7 @@ export interface InquiryResponse {
  * Submits a project brief or intro call inquiry to Strapi contact-inquiries
  */
 export async function submitInquiry(payload: InquiryPayload): Promise<InquiryResponse> {
-  const url = `${STRAPI_URL}/api/contact-inquiries`;
+  const url = `${getStrapiBaseUrl()}/api/contact-inquiries`;
 
   try {
     const headers: HeadersInit = {
@@ -1228,7 +1338,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
 export async function fetchBlogPageContent(): Promise<BlogPageContent> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'blog-page?populate[hero][populate]=*'
+      'blog-page?populate[hero]=true'
     );
     if (!raw) return DEFAULT_BLOG_PAGE_CONTENT;
 
@@ -1500,7 +1610,9 @@ export interface ServicesClosingCtaSection {
 export interface ServicesPageContent {
   hero: ServicesHeroSection;
   cards: ServicesCardsSection;
+  flipCards: ServiceFlipCardItem[];
   features: ServicesFeaturesSection;
+  services: ServiceItem[];
   closingCta: ServicesClosingCtaSection;
   metaTitle?: string;
   metaDescription?: string;
@@ -1652,52 +1764,6 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
   },
 ];
 
-export const DEFAULT_SERVICES_PAGE_CONTENT: ServicesPageContent = {
-  hero: {
-    badge: 'CORE ENGINEERING & AI CAPABILITIES',
-    headline: 'Architecting High-Throughput Cloud &',
-    highlight: 'Autonomous AI Systems',
-    description:
-      'We engineer resilient multi-tenant architectures, high-performance web systems, and autonomous agent pipelines for visionary enterprises.',
-    primaryCtaText: 'Schedule Architectural Brief',
-    primaryCtaUrl: '/contact',
-    secondaryCtaText: 'Explore Capabilities',
-    secondaryCtaUrl: '#services-cards-overview',
-    point1: 'Zero Architectural Debt & 99.99% Availability',
-    point2: 'Sub-Second Edge Telemetry & Real-Time Sync',
-    point3: 'Bank-Grade SOC2 Security & Tenant Partitioning',
-    heroImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
-  },
-  cards: {
-    badge: 'CORE DISCIPLINES',
-    headline: 'Engineering Without Compromise',
-    highlight: 'Pillars of Excellence',
-    description:
-      'Hover or tap each discipline card to inspect deliverables, architecture patterns, and engineering capabilities.',
-  },
-  features: {
-    badge: 'DISCIPLINE DEEP-DIVES',
-    headline: 'Engineered for Extreme Scale',
-    highlight: 'Capabilities in Depth',
-    description:
-      'Navigate through each specialized engineering domain to explore architecture blueprints, tech stacks, and benchmarks.',
-  },
-  closingCta: {
-    badge: 'READY TO SHIP?',
-    headline: "Let's build what's next",
-    highlight: 'Together.',
-    description:
-      'Whether you need a dedicated engineering pod or an end-to-end autonomous AI system, we are ready to build.',
-    primaryCtaText: 'Schedule Architecture Review',
-    primaryCtaUrl: '/contact',
-    secondaryCtaText: 'Explore Our Products',
-    secondaryCtaUrl: '/products',
-  },
-  metaTitle: 'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra',
-  metaDescription:
-    'Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations.',
-};
-
 export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
   {
     id: 'web-engineering',
@@ -1839,6 +1905,54 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
   },
 ];
 
+export const DEFAULT_SERVICES_PAGE_CONTENT: ServicesPageContent = {
+  hero: {
+    badge: 'CORE ENGINEERING & AI CAPABILITIES',
+    headline: 'Architecting High-Throughput Cloud &',
+    highlight: 'Autonomous AI Systems',
+    description:
+      'We engineer resilient multi-tenant architectures, high-performance web systems, and autonomous agent pipelines for visionary enterprises.',
+    primaryCtaText: 'Schedule Architectural Brief',
+    primaryCtaUrl: '/contact',
+    secondaryCtaText: 'Explore Capabilities',
+    secondaryCtaUrl: '#services-cards-overview',
+    point1: 'Zero Architectural Debt & 99.99% Availability',
+    point2: 'Sub-Second Edge Telemetry & Real-Time Sync',
+    point3: 'Bank-Grade SOC2 Security & Tenant Partitioning',
+    heroImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
+  },
+  cards: {
+    badge: 'CORE DISCIPLINES',
+    headline: 'Engineering Without Compromise',
+    highlight: 'Pillars of Excellence',
+    description:
+      'Hover or tap each discipline card to inspect deliverables, architecture patterns, and engineering capabilities.',
+  },
+  features: {
+    badge: 'DISCIPLINE DEEP-DIVES',
+    headline: 'Engineered for Extreme Scale',
+    highlight: 'Capabilities in Depth',
+    description:
+      'Navigate through each specialized engineering domain to explore architecture blueprints, tech stacks, and benchmarks.',
+  },
+  closingCta: {
+    badge: 'READY TO SHIP?',
+    headline: "Let's build what's next",
+    highlight: 'Together.',
+    description:
+      'Whether you need a dedicated engineering pod or an end-to-end autonomous AI system, we are ready to build.',
+    primaryCtaText: 'Schedule Architecture Review',
+    primaryCtaUrl: '/contact',
+    secondaryCtaText: 'Explore Our Products',
+    secondaryCtaUrl: '/products',
+  },
+  flipCards: DEFAULT_SERVICE_FLIP_CARDS,
+  services: DEFAULT_SERVICES_LIST,
+  metaTitle: 'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra',
+  metaDescription:
+    'Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations.',
+};
+
 /**
  * Normalizes raw service entry from Strapi
  */
@@ -1919,14 +2033,26 @@ function normalizeService(raw: any): ServiceItem {
  */
 export async function fetchServicesPageContent(): Promise<ServicesPageContent> {
   try {
-    const raw = await fetchFromStrapi<any>('services-page?populate=*');
+    const raw = await fetchFromStrapi<any>(
+      'services-page?populate[hero][populate]=*&populate[cards][populate]=*&populate[flipCards][populate]=*&populate[features][populate]=*&populate[services][populate]=*&populate[closingCta][populate]=*'
+    );
     if (!raw) return DEFAULT_SERVICES_PAGE_CONTENT;
 
     const data = raw.attributes || raw;
     const hero = data.hero || {};
     const cards = data.cards || {};
+    const rawFlipCards = data.flipCards;
     const features = data.features || {};
+    const rawServices = data.services;
     const closingCta = data.closingCta || {};
+
+    const flipCards: ServiceFlipCardItem[] = Array.isArray(rawFlipCards) && rawFlipCards.length > 0
+      ? rawFlipCards.map(normalizeServiceFlipCard)
+      : DEFAULT_SERVICE_FLIP_CARDS;
+
+    const services: ServiceItem[] = Array.isArray(rawServices) && rawServices.length > 0
+      ? rawServices.map(normalizeService)
+      : DEFAULT_SERVICES_LIST;
 
     return {
       hero: {
@@ -1950,12 +2076,14 @@ export async function fetchServicesPageContent(): Promise<ServicesPageContent> {
         highlight: cards.highlight || DEFAULT_SERVICES_PAGE_CONTENT.cards.highlight,
         description: cards.description || DEFAULT_SERVICES_PAGE_CONTENT.cards.description,
       },
+      flipCards,
       features: {
         badge: features.badge || DEFAULT_SERVICES_PAGE_CONTENT.features.badge,
         headline: features.headline || DEFAULT_SERVICES_PAGE_CONTENT.features.headline,
         highlight: features.highlight || DEFAULT_SERVICES_PAGE_CONTENT.features.highlight,
         description: features.description || DEFAULT_SERVICES_PAGE_CONTENT.features.description,
       },
+      services,
       closingCta: {
         badge: closingCta.badge || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.badge,
         headline: closingCta.headline || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.headline,
@@ -1980,12 +2108,10 @@ export async function fetchServicesPageContent(): Promise<ServicesPageContent> {
  */
 export async function fetchServicesList(): Promise<ServiceItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>('services?populate=*&sort=cardOrder:asc');
-    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_SERVICES_LIST;
-
-    return raw.map(normalizeService);
+    const page = await fetchServicesPageContent();
+    return page.services && page.services.length > 0 ? page.services : DEFAULT_SERVICES_LIST;
   } catch (error) {
-    console.warn('[Strapi] Could not load services list, using defaults:', error);
+    console.warn('[Strapi] Could not load services list from Single Type, using defaults:', error);
     return DEFAULT_SERVICES_LIST;
   }
 }
@@ -2034,12 +2160,10 @@ function normalizeServiceFlipCard(raw: any, index: number): ServiceFlipCardItem 
  */
 export async function fetchServiceFlipCards(): Promise<ServiceFlipCardItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>('service-flip-cards?populate=*&sort=cardOrder:asc');
-    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_SERVICE_FLIP_CARDS;
-
-    return raw.map(normalizeServiceFlipCard);
+    const page = await fetchServicesPageContent();
+    return page.flipCards && page.flipCards.length > 0 ? page.flipCards : DEFAULT_SERVICE_FLIP_CARDS;
   } catch (error) {
-    console.warn('[Strapi] Could not load service-flip-cards, using defaults:', error);
+    console.warn('[Strapi] Could not load service flip cards from Single Type, using defaults:', error);
     return DEFAULT_SERVICE_FLIP_CARDS;
   }
 }
@@ -2078,13 +2202,9 @@ export function useServiceFlipCards() {
 
 export async function fetchServiceBySlug(slug: string): Promise<ServiceItem | null> {
   try {
-    const raw = await fetchFromStrapi<any>(
-      `services?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=*`
-    );
-
-    if (raw && Array.isArray(raw) && raw.length > 0) {
-      return normalizeService(raw[0]);
-    }
+    const page = await fetchServicesPageContent();
+    const found = page.services.find((s) => s.slug === slug || s.id === slug);
+    if (found) return found;
 
     const local = DEFAULT_SERVICES_LIST.find((s) => s.slug === slug || s.id === slug);
     return local || null;
@@ -2637,7 +2757,7 @@ function normalizeProduct(raw: any): ProductItem {
 export async function fetchProducts(): Promise<ProductItem[]> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'products?populate[features]=true&populate[heroTelemetryPills]=true&populate[screenshots][populate]=image&populate[pricingTiers][populate]=features&populate[faqs]=true&populate[kpiStats]=true&populate[primaryCta]=true&populate[secondaryCta]=true&populate[logo]=true&populate[heroMedia]=true&sort=order:asc'
+      'products?populate=deep&sort=order:asc'
     );
     if (!raw || !Array.isArray(raw) || raw.length === 0) return [];
     return raw.map(normalizeProduct);
@@ -2650,9 +2770,7 @@ export async function fetchProducts(): Promise<ProductItem[]> {
 export async function fetchProductBySlug(slug: string): Promise<ProductItem | null> {
   try {
     const raw = await fetchFromStrapi<any>(
-      `products?filters[slug][$eq]=${encodeURIComponent(
-        slug
-      )}&populate[features]=true&populate[heroTelemetryPills]=true&populate[screenshots][populate]=image&populate[pricingTiers][populate]=features&populate[faqs]=true&populate[kpiStats]=true&populate[primaryCta]=true&populate[secondaryCta]=true&populate[logo]=true&populate[heroMedia]=true`
+      `products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=deep`
     );
     if (!raw || !Array.isArray(raw) || raw.length === 0) return null;
     return normalizeProduct(raw[0]);
@@ -2724,14 +2842,6 @@ export function useProduct(slug: string) {
 // ABOUT PAGE CMS INTERFACES, FETCHERS & HOOKS
 // ============================================================================
 
-export interface PillarItem {
-  id?: number | string;
-  orderNumber: string;
-  title: string;
-  description: string;
-  icon: string;
-  accentColor: string;
-}
 
 export interface PanelHighlight {
   id?: number | string;
@@ -2755,33 +2865,25 @@ export interface AboutHeroData {
   secondaryCtaLabel: string;
   secondaryCtaUrl: string;
   heroImageUrl?: string;
-  pillars: PillarItem[];
   kpiStats: { label: string; value: string }[];
 }
 
-export interface ParallaxPanelWhoWeAreData {
+export interface AboutStorySlide {
+  id?: number | string;
+  orderNumber?: string;
   badge: string;
   headline: string;
   description: string;
-  coverImageUrl?: string;
-  highlightRows: PanelHighlight[];
+  quote?: string;
+  highlights?: { id?: string | number; title: string; description: string }[];
+  imageUrl?: string;
 }
 
-export interface ParallaxPanelMissionData {
+export interface AboutFaqSectionData {
   badge: string;
   headline: string;
   description: string;
-  missionQuote: string;
-  coverImageUrl?: string;
-}
-
-export interface ParallaxPanelVisionData {
-  badge: string;
-  headline: string;
-  description: string;
-  visionBadgeYear: string;
-  coverImageUrl?: string;
-  highlightRows: PanelHighlight[];
+  faqs: AboutFaqItem[];
 }
 
 export interface AboutContactCtaData {
@@ -2797,9 +2899,8 @@ export interface AboutContactCtaData {
 
 export interface AboutPageData {
   hero: AboutHeroData;
-  panelWhoWeAre: ParallaxPanelWhoWeAreData;
-  panelMission: ParallaxPanelMissionData;
-  panelVision: ParallaxPanelVisionData;
+  storySlides: AboutStorySlide[];
+  faqSection: AboutFaqSectionData;
   clientLogos: ClientLogoItem[];
   contactCta: AboutContactCtaData;
 }
@@ -2815,36 +2916,6 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
     secondaryCtaLabel: 'Explore Our Story',
     secondaryCtaUrl: '#story',
     heroImageUrl: undefined,
-    pillars: [
-      {
-        orderNumber: '01',
-        title: 'Full-Spectrum Architecture',
-        description: 'Zero-handoff engineering from cloud infrastructure to 60fps responsive interfaces.',
-        icon: 'Layers',
-        accentColor: '#FF4A1C',
-      },
-      {
-        orderNumber: '02',
-        title: 'Dual-Engine Innovation',
-        description: 'High-velocity bespoke client pods alongside our proprietary commercial SaaS products.',
-        icon: 'Server',
-        accentColor: '#3B82F6',
-      },
-      {
-        orderNumber: '03',
-        title: 'Autonomous AI Integration',
-        description: 'Production-ready LLM agents, vector retrieval RAG pipelines, and automated CRM workflows.',
-        icon: 'Cpu',
-        accentColor: '#10B981',
-      },
-      {
-        orderNumber: '04',
-        title: 'Global Delivery Standards',
-        description: 'Hyderabad engineering headquarters with 99.98% production SLA across 12+ countries.',
-        icon: 'Globe2',
-        accentColor: '#8B5CF6',
-      },
-    ],
     kpiStats: [
       { label: 'In-House Engineers', value: '100%' },
       { label: 'Clutch / G2 Rating', value: '4.9★' },
@@ -2852,38 +2923,108 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
       { label: 'Production SLA', value: '99.98%' },
     ],
   },
-  panelWhoWeAre: {
-    badge: 'Who We Are',
-    headline: 'Not just another dev shop.',
-    description:
-      'AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.',
-    coverImageUrl: undefined,
-    highlightRows: [
-      { title: 'In-house only', description: 'Every line of code written by our team' },
-      { title: 'End-to-end ownership', description: 'Design through deployment' },
-      { title: 'Hyderabad-based', description: 'Working with clients across 12 countries' },
-    ],
-  },
-  panelMission: {
-    badge: 'Our Mission',
-    headline: 'Build software that actually matters.',
-    description:
-      'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.',
-    missionQuote:
-      '"To make world-class engineering accessible to every visionary who dares to build."',
-    coverImageUrl: undefined,
-  },
-  panelVision: {
-    badge: '2030 Vision',
-    headline: 'Empowering the next generation of digital empires.',
-    description:
-      'We envision a world where ambitious software ventures scale frictionlessly from idea to global impact, powered by autonomous multi-agent engineering pods and mathematically sound design systems.',
-    visionBadgeYear: '2030 Vision',
-    coverImageUrl: undefined,
-    highlightRows: [
-      { title: 'Global Reach', description: 'Serving visionaries across 12+ countries with scale-ready architecture' },
-      { title: 'Agentic & Autonomous Speed', description: 'Integrating cutting-edge AI workflows with human craftsmanship' },
-      { title: 'Infinite Scale', description: 'Architected from day one to handle millions of active users' },
+  storySlides: [
+    {
+      id: '1',
+      orderNumber: '01',
+      badge: 'Who We Are',
+      headline: 'Not just another dev shop.',
+      description:
+        'AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.',
+      highlights: [
+        { id: '1', title: 'In-house only', description: 'Every line of code written by our team' },
+        { id: '2', title: 'End-to-end ownership', description: 'Design through deployment' },
+        { id: '3', title: 'Hyderabad-based', description: 'Working with clients across 12 countries' },
+      ],
+      imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
+    },
+    {
+      id: '2',
+      orderNumber: '02',
+      badge: 'Our Mission',
+      headline: 'Build software that actually matters.',
+      description:
+        'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.',
+      quote: '"To make world-class engineering accessible to every visionary who dares to build."',
+      highlights: [],
+      imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+    },
+    {
+      id: '3',
+      orderNumber: '03',
+      badge: 'Our Vision',
+      headline: 'The engineering partner for the next generation of global tech leaders.',
+      description:
+        'We envision a world where founders and enterprises can build, scale, and transform their digital capabilities with zero compromise on engineering standards or velocity.',
+      highlights: [
+        { id: '1', title: 'Global Reach', description: 'Serving visionaries across 12+ countries with scale-ready architecture' },
+        { id: '2', title: 'Agentic & Autonomous Speed', description: 'Integrating cutting-edge AI workflows with human craftsmanship' },
+        { id: '3', title: 'Infinite Scale', description: 'Architected from day one to handle millions of active users' },
+      ],
+      imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+    },
+  ],
+  faqSection: {
+    badge: 'Got Questions?',
+    headline: 'Questions We Actually Get Asked',
+    description: 'And honest answers to all of them.',
+    faqs: [
+      {
+        id: '1',
+        question: 'How is AProgra different from a typical software agency?',
+        answer: 'Most agencies outsource or use freelancers for parts of your project. At AProgra, every single person who touches your product is on our in-house team. No handoffs to strangers. No quality loss in translation. You get one point of contact and a team that treats your product like their own.',
+        category: 'Company & Team',
+        order: 1,
+      },
+      {
+        id: '2',
+        question: 'What types of projects do you take on?',
+        answer: 'We work on product engineering (web, mobile, SaaS), AI and automation systems, UI/UX design, and cloud infrastructure. From early-stage MVPs to scaling enterprise platforms — if it involves building software, we can help.',
+        category: 'Capabilities',
+        order: 2,
+      },
+      {
+        id: '3',
+        question: 'How long does it take to start a project?',
+        answer: 'After an initial discovery call, we typically scope and onboard within 1–2 weeks. For urgent projects, we’ve started within days. We don’t believe in unnecessary delays.',
+        category: 'Engagement',
+        order: 3,
+      },
+      {
+        id: '4',
+        question: 'Do you work with international clients?',
+        answer: 'Absolutely. We’ve partnered with clients across 12 countries including the US, UK, UAE, Singapore, and Australia. We work async-first and adapt to your timezone for key meetings.',
+        category: 'Global Delivery',
+        order: 4,
+      },
+      {
+        id: '5',
+        question: 'What does your development process look like?',
+        answer: 'We follow an iterative, milestone-driven approach: Discovery → Design → Build → Test → Launch → Support. You’re involved at every stage with regular demos, Slack updates, and transparent timelines.',
+        category: 'Process',
+        order: 5,
+      },
+      {
+        id: '6',
+        question: 'Can you take over an existing project or codebase?',
+        answer: 'Yes — and we do it often. We conduct a thorough code audit first, document what we find, then propose a clear path forward. We’ve rescued several projects that were over-budget and behind schedule.',
+        category: 'Engineering',
+        order: 6,
+      },
+      {
+        id: '7',
+        question: 'What is your pricing model?',
+        answer: 'We offer project-based pricing for fixed-scope work and monthly retainers for ongoing development. We’ll share a detailed quote after a discovery call. We believe in transparent pricing — no hidden fees, no scope creep surprises.',
+        category: 'Commercial',
+        order: 7,
+      },
+      {
+        id: '8',
+        question: 'How do we get started?',
+        answer: 'Simply fill out the contact form on this page or email us at hello@aprogra.com. We’ll schedule a discovery call within 24 hours, understand your project, and come back with a clear proposal.',
+        category: 'Onboarding',
+        order: 8,
+      },
     ],
   },
   clientLogos: [
@@ -3053,9 +3194,6 @@ export const DEFAULT_ABOUT_FAQS: AboutFaqItem[] = [
 function normalizeAboutPage(raw: any): AboutPageData {
   const data = raw.attributes || raw;
   const hero = data.hero || {};
-  const whoWeAre = data.panelWhoWeAre || {};
-  const mission = data.panelMission || {};
-  const vision = data.panelVision || {};
   const contact = data.contactCta || {};
 
   return {
@@ -3068,16 +3206,7 @@ function normalizeAboutPage(raw: any): AboutPageData {
       secondaryCtaLabel: hero.secondaryCtaLabel || DEFAULT_ABOUT_PAGE_DATA.hero.secondaryCtaLabel,
       secondaryCtaUrl: hero.secondaryCtaUrl || DEFAULT_ABOUT_PAGE_DATA.hero.secondaryCtaUrl,
       heroImageUrl: getStrapiMediaUrl(hero.heroImage) || undefined,
-      pillars: Array.isArray(hero.pillars) && hero.pillars.length > 0
-        ? hero.pillars.map((p: any) => ({
-            id: p.id,
-            orderNumber: p.orderNumber || '01',
-            title: p.title || '',
-            description: p.description || '',
-            icon: p.icon || 'Layers',
-            accentColor: p.accentColor || '#FF4A1C',
-          }))
-        : DEFAULT_ABOUT_PAGE_DATA.hero.pillars,
+
       kpiStats: Array.isArray(hero.kpiStats) && hero.kpiStats.length > 0
         ? hero.kpiStats.map((k: any) => ({
             label: k.label || '',
@@ -3085,40 +3214,40 @@ function normalizeAboutPage(raw: any): AboutPageData {
           }))
         : DEFAULT_ABOUT_PAGE_DATA.hero.kpiStats,
     },
-    panelWhoWeAre: {
-      badge: whoWeAre.badge || DEFAULT_ABOUT_PAGE_DATA.panelWhoWeAre.badge,
-      headline: whoWeAre.headline || DEFAULT_ABOUT_PAGE_DATA.panelWhoWeAre.headline,
-      description: whoWeAre.description || DEFAULT_ABOUT_PAGE_DATA.panelWhoWeAre.description,
-      coverImageUrl: getStrapiMediaUrl(whoWeAre.coverImage) || undefined,
-      highlightRows: Array.isArray(whoWeAre.highlightRows) && whoWeAre.highlightRows.length > 0
-        ? whoWeAre.highlightRows.map((h: any) => ({
-            id: h.id,
-            title: h.title || '',
-            description: h.description || '',
-          }))
-        : DEFAULT_ABOUT_PAGE_DATA.panelWhoWeAre.highlightRows,
-    },
-    panelMission: {
-      badge: mission.badge || DEFAULT_ABOUT_PAGE_DATA.panelMission.badge,
-      headline: mission.headline || DEFAULT_ABOUT_PAGE_DATA.panelMission.headline,
-      description: mission.description || DEFAULT_ABOUT_PAGE_DATA.panelMission.description,
-      missionQuote: mission.missionQuote || DEFAULT_ABOUT_PAGE_DATA.panelMission.missionQuote,
-      coverImageUrl: getStrapiMediaUrl(mission.coverImage) || undefined,
-    },
-    panelVision: {
-      badge: vision.badge || DEFAULT_ABOUT_PAGE_DATA.panelVision.badge,
-      headline: vision.headline || DEFAULT_ABOUT_PAGE_DATA.panelVision.headline,
-      description: vision.description || DEFAULT_ABOUT_PAGE_DATA.panelVision.description,
-      visionBadgeYear: vision.visionBadgeYear || DEFAULT_ABOUT_PAGE_DATA.panelVision.visionBadgeYear,
-      coverImageUrl: getStrapiMediaUrl(vision.coverImage) || undefined,
-      highlightRows: Array.isArray(vision.highlightRows) && vision.highlightRows.length > 0
-        ? vision.highlightRows.map((h: any) => ({
-            id: h.id,
-            title: h.title || '',
-            description: h.description || '',
-          }))
-        : DEFAULT_ABOUT_PAGE_DATA.panelVision.highlightRows,
-    },
+    storySlides: Array.isArray(data.storySlides) && data.storySlides.length > 0
+      ? data.storySlides.map((s: any, idx: number) => ({
+          id: s.id || `slide-${idx}`,
+          orderNumber: s.orderNumber || (idx + 1 < 10 ? `0${idx + 1}` : `${idx + 1}`),
+          badge: s.badge || '',
+          headline: s.headline || '',
+          description: s.description || '',
+          quote: s.quote || undefined,
+          highlights: Array.isArray(s.highlights)
+            ? s.highlights.map((h: any) => ({
+                id: h.id,
+                title: h.title || '',
+                description: h.description || '',
+              }))
+            : [],
+          imageUrl: getStrapiMediaUrl(s.image) || s.imageUrl || undefined,
+        }))
+      : DEFAULT_ABOUT_PAGE_DATA.storySlides,
+    faqSection: data.faqSection
+      ? {
+          badge: data.faqSection.badge || DEFAULT_ABOUT_PAGE_DATA.faqSection.badge,
+          headline: data.faqSection.headline || DEFAULT_ABOUT_PAGE_DATA.faqSection.headline,
+          description: data.faqSection.description || DEFAULT_ABOUT_PAGE_DATA.faqSection.description,
+          faqs: Array.isArray(data.faqSection.faqs) && data.faqSection.faqs.length > 0
+            ? data.faqSection.faqs.map((f: any, idx: number) => ({
+                id: String(f.id || idx + 1),
+                question: f.question || '',
+                answer: f.answer || '',
+                category: f.category || 'General',
+                order: f.order ?? idx + 1,
+              }))
+            : DEFAULT_ABOUT_PAGE_DATA.faqSection.faqs,
+        }
+      : DEFAULT_ABOUT_PAGE_DATA.faqSection,
     clientLogos: Array.isArray(data.clientLogos) && data.clientLogos.length > 0
       ? data.clientLogos.map((l: any) => ({
           id: l.id,
@@ -3143,9 +3272,14 @@ function normalizeAboutPage(raw: any): AboutPageData {
 export async function fetchAboutPage(): Promise<AboutPageData> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'about-page?populate[hero][populate]=*&populate[panelWhoWeAre][populate]=*&populate[panelMission][populate]=*&populate[panelVision][populate]=*&populate[clientLogos][populate]=*&populate[contactCta][populate]=*&populate[seo][populate]=*'
+      'about-page?populate[hero][populate]=*&populate[storySlides][populate]=*&populate[faqSection][populate]=*&populate[contactCta][populate]=*'
     );
-    if (!raw) return DEFAULT_ABOUT_PAGE_DATA;
+    
+    console.log('[Strapi] fetchAboutPage raw response:', raw);
+    if (!raw) {
+      console.warn('[Strapi] fetchAboutPage: raw is null/undefined, using defaults');
+      return DEFAULT_ABOUT_PAGE_DATA;
+    }
     return normalizeAboutPage(raw);
   } catch (error) {
     console.warn('[Strapi] Could not load About Page content, using defaults:', error);
@@ -3186,7 +3320,11 @@ function normalizeTeamMember(raw: any): TeamMemberItem {
   const data = raw.attributes || raw;
   const skillsRaw = data.skills;
   const skillsArray = Array.isArray(skillsRaw)
-    ? skillsRaw
+    ? skillsRaw.map((s: any) => {
+        if (typeof s === 'string') return s;
+        if (s.name) return s.name;
+        return '';
+      }).filter(Boolean)
     : typeof skillsRaw === 'string'
     ? skillsRaw.split(',').map((s: string) => s.trim()).filter(Boolean)
     : [];
@@ -3207,7 +3345,7 @@ function normalizeTeamMember(raw: any): TeamMemberItem {
 
 export async function fetchTeamMembers(): Promise<TeamMemberItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>('team-members?populate=*&sort=order:asc');
+    const raw = await fetchFromStrapi<any>('team-members?populate[photo]=true&populate[skills]=true&sort=order:asc');
     if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_TEAM_MEMBERS;
     return raw.map(normalizeTeamMember);
   } catch (error) {
@@ -3258,11 +3396,10 @@ function normalizeAboutFaq(raw: any): AboutFaqItem {
 
 export async function fetchAboutFaqs(): Promise<AboutFaqItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>('about-faqs?sort=order:asc');
-    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_ABOUT_FAQS;
-    return raw.map(normalizeAboutFaq);
+    const page = await fetchAboutPage();
+    return page.faqSection.faqs || DEFAULT_ABOUT_FAQS;
   } catch (error) {
-    console.warn('[Strapi] Could not load About FAQs list, using defaults:', error);
+    console.warn('[Strapi] Could not load About FAQs from Single Type, using defaults:', error);
     return DEFAULT_ABOUT_FAQS;
   }
 }
@@ -3296,4 +3433,400 @@ export function useAboutFaqs() {
   return { faqs, isLoading, error };
 }
 
+export interface HomeHeroSlide {
+  id: string;
+  badgeText: string;
+  title: string;
+  subtitle: string;
+  primaryValue?: string;
+  tags: string[];
+  imageUrl?: string;
+  imageLabel?: string;
+  imageSublabel?: string;
+}
 
+export interface HomeStat {
+  id: string;
+  target: number;
+  suffix: string;
+  label: string;
+}
+
+export interface HomeStatsSection {
+  badgeText: string;
+  title: string;
+  stats: HomeStat[];
+}
+
+export interface HomeStoryPhase {
+  id: string;
+  badgeText: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  showMetricsGrid: boolean;
+}
+
+export interface HomeStatement {
+  id: string;
+  mainText: string;
+  subText: string;
+}
+
+export interface HomeServiceSlide {
+  id: string;
+  orderNumber: string;
+  badgeText: string;
+  title: string;
+  description: string;
+  tags: string[];
+  serviceUrl: string;
+  serviceUrlText: string;
+  imageUrl?: string;
+}
+
+export interface HomeProductCard {
+  id: string;
+  badge: string;
+  versionStatus: string;
+  category: string;
+  categorySubtext: string;
+  title: string;
+  description: string;
+  specs: string[];
+  productUrl: string;
+  productUrlText: string;
+  demoUrl: string;
+  demoUrlText: string;
+  imageUrl?: string;
+}
+
+export interface HomePageData {
+  title: string;
+  heroSlides: HomeHeroSlide[];
+  statsSection: HomeStatsSection;
+  storyPhases: HomeStoryPhase[];
+  whyStatements: HomeStatement[];
+  servicesSlides: HomeServiceSlide[];
+  productsCards: HomeProductCard[];
+}
+
+export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
+  title: "Home Page",
+  heroSlides: [
+    {
+      id: "1",
+      badgeText: "Modern Software & AI",
+      title: "Engineering Software Without Limits.",
+      subtitle: "Full-cycle software engineering, architectural consulting, and autonomous AI systems for scale-ups and global enterprises.",
+      tags: ["High-Performance Computing", "Enterprise AI", "Cloud Native"],
+      imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      imageLabel: "Architecture Stack",
+      imageSublabel: "Production Ready",
+    },
+    {
+      id: "2",
+      badgeText: "Production Deployments",
+      title: "Commercial SaaS & ERP Platforms",
+      primaryValue: "40+",
+      subtitle: "We don't just build MVPs. We engineer and maintain mission-critical platforms that run real businesses with 99.99% SLA guarantees.",
+      tags: ["Multi-Tenant SaaS", "ERP Systems", "High Availability"],
+      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      imageLabel: "Global Footprint",
+      imageSublabel: "12 Countries",
+    },
+    {
+      id: "3",
+      badgeText: "Zero Outsourcing",
+      title: "Engineered In-House.",
+      subtitle: "Every line of code, every system architecture, every pixel—built entirely by our full-stack engineering pods based in our own studios.",
+      tags: ["100% In-House", "Dedicated Pods", "Direct Access"],
+      imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+      imageLabel: "Engineering Pods",
+      imageSublabel: "25+ Specialists",
+    }
+  ],
+  statsSection: {
+    badgeText: "PROVEN PERFORMANCE & GLOBAL FOOTPRINT",
+    title: "Engineered with Mathematical Precision.",
+    stats: [
+      { id: "1", target: 60, suffix: "+", label: "Enterprise Partners" },
+      { id: "2", target: 40, suffix: "+", label: "Production Systems" },
+      { id: "3", target: 12, suffix: "+", label: "Sovereign Regions" },
+      { id: "4", target: 7, suffix: "+", label: "Years of Craft" }
+    ]
+  },
+  storyPhases: [
+    {
+      id: "1",
+      badgeText: "Our Story",
+      title: "Not just another dev shop.",
+      description: "AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.",
+      imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: false
+    },
+    {
+      id: "2",
+      badgeText: "How We Work",
+      title: "Full-stack. Full-cycle. Full-ownership.",
+      description: "From the first discovery call to post-launch support, our in-house team owns every layer. Design. Frontend. Backend. QA. DevOps. All under one roof — your one point of contact.",
+      imageUrl: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: false
+    },
+    {
+      id: "3",
+      badgeText: "Our Team",
+      title: "25+ specialists. Zero strangers.",
+      description: "Designers who code. Engineers who think about UX. PMs who understand business. Everyone at AProgra is a specialist — and everyone cares about your product like it's their own.",
+      imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: false
+    },
+    {
+      id: "4",
+      badgeText: "Our Reach",
+      title: "Built here. Shipped everywhere.",
+      description: "40+ products live in market. 60+ clients across 12 countries. From Hyderabad to Houston, our software runs real businesses.",
+      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      showMetricsGrid: true
+    }
+  ],
+  whyStatements: [
+    { id: "1", mainText: "100%", subText: "In-house Talent" },
+    { id: "2", mainText: "Infinite", subText: "Possibilities" },
+    { id: "3", mainText: "One", subText: "Partner" }
+  ],
+  servicesSlides: [
+    {
+      id: "1",
+      orderNumber: "01",
+      badgeText: "Core Service",
+      title: "Product Engineering",
+      description: "We don't just build features — we engineer products. From architecture decisions to deployment pipelines, every choice we make is deliberate, scalable, and built to last.",
+      tags: ["Discovery", "Architecture", "Development", "QA", "Launch"],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "2",
+      orderNumber: "02",
+      badgeText: "Mobile Systems",
+      title: "Mobile Development",
+      description: "iOS, Android, or cross-platform. We build mobile experiences that feel native, perform flawlessly, and keep users coming back. Offline-first, animation-rich, crash-free.",
+      tags: ["iOS & Android", "React Native", "Flutter", "Offline-First", "App Store Ops"],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "3",
+      orderNumber: "03",
+      badgeText: "Applied AI",
+      title: "AI Integration & Automation",
+      description: "From custom LLM integrations to intelligent workflow automations — we make AI work for your actual business, not just your marketing copy.",
+      tags: ["LLM Pipelines", "RAG Systems", "Agents & Swarms", "Data Triage", "Fine-Tuning"],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "4",
+      orderNumber: "04",
+      badgeText: "Product Design",
+      title: "UI/UX & Design Systems",
+      description: "Design that converts. Interfaces that feel effortless. We craft design systems, component libraries, and end-to-end user journeys that elevate your brand.",
+      tags: ["Design Systems", "Component Libraries", "Wireframing", "Motion Design", "Figma to Code"],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "5",
+      orderNumber: "05",
+      badgeText: "Cloud & SRE",
+      title: "Cloud Architecture & DevOps",
+      description: "Infrastructure that scales without drama. CI/CD pipelines that deploy with confidence. Cloud architectures engineered for 99.99% uptime and zero maintenance headaches.",
+      tags: ["AWS / GCP", "Docker & K8s", "CI/CD Pipelines", "Zero-Downtime", "24/7 Monitoring"],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "6",
+      orderNumber: "06",
+      badgeText: "Modernization",
+      title: "Legacy Modernization & Audits",
+      description: "Inherited a codebase that gives you nightmares? We audit, refactor, and migrate legacy systems into clean, modern architectures without disrupting your live operations.",
+      tags: ["Architecture Audits", "Codebase Refactoring", "Database Migration", "Performance Tuning", "Zero-Downtime"],
+      serviceUrl: "/services",
+      serviceUrlText: "Explore Service",
+      imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1000&q=80"
+    }
+  ],
+  productsCards: [
+    {
+      id: "1",
+      badge: "NOTIFICATION 01 / 02 • SCHOOL ERP",
+      versionStatus: "v3.2 OPERATIONAL",
+      category: "EdTech Platform",
+      categorySubtext: "Multi-Campus Ready",
+      title: "SmartSchool ERP",
+      description: "The complete operational platform for modern institutions — unifying admissions, fee management, student records, and parent communication.",
+      specs: ["Role-Based Portals", "Automated Fee Invoicing", "Instant SMS/WhatsApp Alerts", "Gradebook & Report Cards"],
+      productUrl: "/products/school-erp",
+      productUrlText: "View Product Details",
+      demoUrl: "/contact",
+      demoUrlText: "Request Demo →",
+      imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"
+    },
+    {
+      id: "2",
+      badge: "NOTIFICATION 02 / 02 • OMNICHAT INBOX",
+      versionStatus: "NEW MESSAGE",
+      category: "Customer Engagement",
+      categorySubtext: "AI-Assisted Inbox",
+      title: "OmniChat",
+      description: "Unify WhatsApp, Instagram DMs, Email, and SMS into one collaborative inbox powered by autonomous AI response suggestions.",
+      specs: ["Omnichannel Inbox", "AI Smart Auto-Drafts", "Shared Team Assignments", "SLA & Analytics Tracking"],
+      productUrl: "/products/omnichat",
+      productUrlText: "View Product Details",
+      demoUrl: "/contact",
+      demoUrlText: "Request Demo →",
+      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
+    }
+  ]
+};
+
+export async function fetchHomePage(): Promise<HomePageData> {
+  try {
+    const raw = await fetchFromStrapi<any>(
+      'home-page?populate[heroSlides][populate]=*&populate[statsSection][populate]=*&populate[storyPhases][populate]=*&populate[whyStatements][populate]=*&populate[servicesSlides][populate]=*&populate[productsCards][populate]=*'
+    );
+    
+    if (!raw) {
+      return DEFAULT_HOME_PAGE_DATA;
+    }
+    
+    const data = raw.attributes || raw;
+    
+    // Normalize heroSlides
+    const rawHeroSlides = data.heroSlides;
+    const heroSlides = Array.isArray(rawHeroSlides) && rawHeroSlides.length > 0 ? rawHeroSlides.map((slide: any) => ({
+      id: String(slide.id),
+      badgeText: slide.badgeText || '',
+      title: slide.title || '',
+      subtitle: slide.subtitle || '',
+      primaryValue: slide.primaryValue || undefined,
+      tags: Array.isArray(slide.tags) ? slide.tags.map((t: any) => t.label || t.name || '').filter(Boolean) : [],
+      imageUrl: getStrapiMediaUrl(slide.image) || slide.imageUrl || undefined,
+      imageLabel: slide.imageLabel || undefined,
+      imageSublabel: slide.imageSublabel || undefined,
+    })) : DEFAULT_HOME_PAGE_DATA.heroSlides;
+
+    // Normalize statsSection
+    const rawStatsSection = data.statsSection || {};
+    const statsSection = {
+      badgeText: rawStatsSection.badgeText || DEFAULT_HOME_PAGE_DATA.statsSection.badgeText,
+      title: rawStatsSection.title || DEFAULT_HOME_PAGE_DATA.statsSection.title,
+      stats: Array.isArray(rawStatsSection.stats) && rawStatsSection.stats.length > 0 ? rawStatsSection.stats.map((s: any) => ({
+        id: String(s.id),
+        target: s.target || 0,
+        suffix: s.suffix || '',
+        label: s.label || ''
+      })) : DEFAULT_HOME_PAGE_DATA.statsSection.stats
+    };
+
+    // Normalize storyPhases
+    const rawStoryPhases = data.storyPhases;
+    const storyPhases = Array.isArray(rawStoryPhases) && rawStoryPhases.length > 0 ? rawStoryPhases.map((phase: any) => ({
+      id: String(phase.id),
+      badgeText: phase.badgeText || '',
+      title: phase.title || '',
+      description: phase.description || '',
+      imageUrl: getStrapiMediaUrl(phase.image) || phase.imageUrl || undefined,
+      showMetricsGrid: !!phase.showMetricsGrid
+    })) : DEFAULT_HOME_PAGE_DATA.storyPhases;
+
+    // Normalize whyStatements
+    const rawWhyStatements = data.whyStatements;
+    const whyStatements = Array.isArray(rawWhyStatements) && rawWhyStatements.length > 0 ? rawWhyStatements.map((stmt: any) => ({
+      id: String(stmt.id),
+      mainText: stmt.mainText || '',
+      subText: stmt.subText || ''
+    })) : DEFAULT_HOME_PAGE_DATA.whyStatements;
+
+    // Normalize servicesSlides
+    const rawServicesSlides = data.servicesSlides;
+    const servicesSlides = Array.isArray(rawServicesSlides) && rawServicesSlides.length > 0 ? rawServicesSlides.map((s: any) => ({
+      id: String(s.id),
+      orderNumber: s.orderNumber || '01',
+      badgeText: s.badgeText || '',
+      title: s.title || '',
+      description: s.description || '',
+      tags: Array.isArray(s.tags) ? s.tags.map((t: any) => t.label || t.name || '').filter(Boolean) : [],
+      serviceUrl: s.serviceUrl || '/services',
+      serviceUrlText: s.serviceUrlText || 'Explore Service',
+      imageUrl: getStrapiMediaUrl(s.image) || s.imageUrl || undefined,
+    })) : DEFAULT_HOME_PAGE_DATA.servicesSlides;
+
+    // Normalize productsCards
+    const rawProductsCards = data.productsCards;
+    const productsCards = Array.isArray(rawProductsCards) && rawProductsCards.length > 0 ? rawProductsCards.map((p: any) => ({
+      id: String(p.id),
+      badge: p.badge || '',
+      versionStatus: p.versionStatus || '',
+      category: p.category || '',
+      categorySubtext: p.categorySubtext || '',
+      title: p.title || '',
+      description: p.description || '',
+      specs: Array.isArray(p.specs) ? p.specs.map((sp: any) => sp.label || sp.name || '').filter(Boolean) : [],
+      productUrl: p.productUrl || '/products',
+      productUrlText: p.productUrlText || 'View Product Details',
+      demoUrl: p.demoUrl || '/contact',
+      demoUrlText: p.demoUrlText || 'Request Demo →',
+      imageUrl: getStrapiMediaUrl(p.image) || p.imageUrl || undefined,
+    })) : DEFAULT_HOME_PAGE_DATA.productsCards;
+    
+    return {
+      title: data.title || DEFAULT_HOME_PAGE_DATA.title,
+      heroSlides,
+      statsSection,
+      storyPhases,
+      whyStatements,
+      servicesSlides,
+      productsCards
+    };
+  } catch (error) {
+    console.warn('[Strapi] Could not load Home Page content, using defaults:', error);
+    return DEFAULT_HOME_PAGE_DATA;
+  }
+}
+
+export function useHomePage() {
+  const [homePage, setHomePage] = useState<HomePageData>(DEFAULT_HOME_PAGE_DATA);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchHomePage()
+      .then((data) => {
+        if (isMounted) {
+          if (data) setHomePage(data);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          setError(err);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { homePage, isLoading, error };
+}

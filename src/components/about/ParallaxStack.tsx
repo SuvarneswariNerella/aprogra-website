@@ -1,310 +1,224 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import ScrollReveal from '@/components/animations/ScrollReveal';
-import { useAboutPage } from '@/lib/strapi';
+import { AboutStorySlide, DEFAULT_ABOUT_PAGE_DATA } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function ParallaxStack() {
-  const { aboutPage } = useAboutPage();
-  const { panelWhoWeAre, panelMission, panelVision } = aboutPage;
+interface ParallaxStackProps {
+  storySlides?: AboutStorySlide[];
+}
 
+export default function ParallaxStack({
+  storySlides = DEFAULT_ABOUT_PAGE_DATA.storySlides,
+}: ParallaxStackProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
-  const panel1Ref = useRef<HTMLDivElement>(null);
-  const panel2Ref = useRef<HTMLDivElement>(null);
-  const panel3Ref = useRef<HTMLDivElement>(null);
+  const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const [activePanel, setActivePanel] = useState(0);
-  const [containerHeight, setContainerHeight] = useState('360vh');
+  const slides = storySlides && storySlides.length > 0
+    ? storySlides
+    : DEFAULT_ABOUT_PAGE_DATA.storySlides;
 
-  // Dynamic Height Calculation & GSAP ScrollTrigger Configuration
+  const totalSlides = slides.length;
+  // Calculate container height: 100vh per slide (e.g. 3 slides = 300vh)
+  const containerHeight = totalSlides <= 1 ? '100vh' : `${totalSlides * 100}vh`;
+
+  // GSAP Single Pinned Timeline Configuration
   useEffect(() => {
-    if (!containerRef.current || !stickyRef.current) return;
+    if (!containerRef.current || !stickyRef.current || totalSlides <= 1) return;
 
-    const updateContainerHeight = () => {
-      const vh = window.innerHeight;
-      const calculatedVh = 3.6 * vh;
-      setContainerHeight(`${calculatedVh}px`);
-    };
-
-    updateContainerHeight();
-    window.addEventListener('resize', updateContainerHeight);
+    // Reset slideRefs length
+    slideRefs.current = slideRefs.current.slice(0, totalSlides);
 
     const ctx = gsap.context(() => {
-      // 1. Primary pinning ScrollTrigger instance
-      ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: 'bottom bottom',
-        pin: stickyRef.current,
-        pinSpacing: false,
-        scrub: true,
-        onUpdate: (self) => {
-          const p = self.progress;
-          if (p < 0.32) {
-            setActivePanel(0);
-          } else if (p < 0.62) {
-            setActivePanel(1);
-          } else {
-            setActivePanel(2);
-          }
+      // 1. Initial state: ensure all slides after slide 0 start below the viewport
+      for (let i = 1; i < totalSlides; i++) {
+        const slideEl = slideRefs.current[i];
+        if (slideEl) {
+          gsap.set(slideEl, { yPercent: 100 });
         }
+      }
+
+      // 2. Create single unified timeline pinned on the container
+      const tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: containerRef.current,
+          start: 'top top',
+          end: 'bottom bottom',
+          pin: stickyRef.current,
+          pinSpacing: false,
+          scrub: 0.8,
+          invalidateOnRefresh: true,
+        },
       });
 
-      // 2. Panel 2 (Mission) reveal timeline (slides up smoothly between 20% and 46%)
-      if (panel2Ref.current) {
-        gsap.fromTo(
-          panel2Ref.current,
-          { yPercent: 100 },
-          {
-            yPercent: 0,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top+=20% top',
-              end: 'top+=46% top',
-              scrub: true,
-              pinSpacing: false,
-            }
-          }
-        );
+      // 3. Sequentially animate each slide sliding up and holding
+      for (let i = 1; i < totalSlides; i++) {
+        const slideEl = slideRefs.current[i];
+        if (!slideEl) continue;
+
+        tl.to(slideEl, {
+          yPercent: 0,
+          ease: 'none',
+          duration: 1,
+        });
+
+        // Hold pause between slides if not the last one
+        if (i < totalSlides - 1) {
+          tl.to({}, { duration: 0.4 });
+        }
       }
 
-      // 3. Panel 3 (Vision) reveal timeline (slides up smoothly between 48% and 74%, then stays fully pinned until 100%)
-      if (panel3Ref.current) {
-        gsap.fromTo(
-          panel3Ref.current,
-          { yPercent: 100 },
-          {
-            yPercent: 0,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: containerRef.current,
-              start: 'top+=48% top',
-              end: 'top+=74% top',
-              scrub: true,
-              pinSpacing: false,
-            }
-          }
-        );
-      }
+      ScrollTrigger.refresh();
     }, containerRef);
 
     return () => {
-      window.removeEventListener('resize', updateContainerHeight);
       ctx.revert();
     };
-  }, []);
-
-  const scrollToPanel = (index: number) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const containerStart = rect.top + scrollTop;
-    const containerH = containerRef.current.offsetHeight - window.innerHeight;
-
-    let targetP = 0;
-    if (index === 1) targetP = 0.38;
-    if (index === 2) targetP = 0.74;
-
-    const targetScroll = containerStart + targetP * containerH;
-    window.scrollTo({ top: targetScroll, behavior: 'smooth' });
-  };
+  }, [slides, totalSlides]);
 
   return (
     <section 
       ref={containerRef} 
-      style={{ height: containerHeight, scrollSnapType: 'y mandatory' }}
-      className="relative w-full bg-[#F4F1EA] m-0 mt-0 mb-0 p-0 overflow-hidden snap-y snap-mandatory"
+      style={{ height: containerHeight }}
+      className="relative w-full bg-[#F4F1EA] m-0 mt-0 mb-0 p-0 overflow-hidden"
     >
       {/* Sticky Viewport Frame */}
       <div 
         ref={stickyRef}
         className="sticky top-0 h-screen min-h-[100vh] w-full overflow-hidden m-0 p-0"
       >
-        {/* Removed Progress Dots Indicator per user request */}
+        {slides.map((slide, index) => {
+          const isImageLeft = index % 2 === 0; // 0 (1st) -> Left, 1 (2nd) -> Right, 2 (3rd) -> Left, 3 (4th) -> Right, 4 (5th) -> Left...
+          const isDark = index % 2 === 1;      // Alternating dark & light theme
+          const orderFormatted = slide.orderNumber || (index + 1 < 10 ? `0${index + 1}` : `${index + 1}`);
 
-        {/* ================= PANEL 1: ABOUT COMPANY ================= */}
-        <div 
-          ref={panel1Ref}
-          style={{ minHeight: '100vh' }}
-          className="sticky-wrapper absolute inset-0 w-full h-[100vh] min-h-screen bg-[#FAF8F5] text-[#0B0D12] z-10 flex flex-col lg:flex-row overflow-hidden snap-start snap-always"
-        >
-          {/* LEFT: VISUAL (50%) - Panel 1 (Image on Left) */}
-          <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-full bg-[#F4F1EA] relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-[#0B0D12]/10">
-            {/* Decorative Number 01 */}
-            <span className="absolute bottom-[-20px] left-[-20px] font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none text-[#0B0D12]/[0.04] select-none pointer-events-none">
-              01
-            </span>
+          const bgClass = isDark ? 'bg-[#0B0D12] text-[#FAF8F5]' : 'bg-[#FAF8F5] text-[#0B0D12]';
+          const borderClass = isDark ? 'border-white/10' : 'border-[#0B0D12]/10';
+          const textMutedClass = isDark ? 'text-[#FAF8F5]/70' : 'text-[#0B0D12]/70';
+          const numberColor = isDark ? 'text-white/[0.03]' : 'text-[#0B0D12]/[0.04]';
 
-            <img 
-              src={panelWhoWeAre.coverImageUrl || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"} 
-              alt={panelWhoWeAre.headline || "AProgra Engineering Team"} 
-              className="w-full h-full object-cover relative z-10"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent z-15 pointer-events-none" />
-          </div>
+          // Visual section (Image or Geometric Graphic)
+          const visualSection = (
+            <div 
+              className={`w-full lg:w-1/2 h-56 sm:h-64 lg:h-full relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 ${
+                isImageLeft ? 'lg:border-r' : 'lg:border-l'
+              } ${borderClass} ${isDark ? 'bg-[#131722]' : 'bg-[#F4F1EA]'} ${
+                !isImageLeft ? 'order-1 lg:order-2' : ''
+              }`}
+            >
+              {/* Giant Decorative Watermark Number */}
+              <span className={`absolute bottom-[-20px] ${isImageLeft ? 'left-[-20px]' : 'right-[-20px]'} font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none ${numberColor} select-none pointer-events-none z-0`}>
+                {orderFormatted}
+              </span>
 
-          {/* RIGHT: TEXT (50%) */}
-          <ScrollReveal className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto">
-            <span className="text-badge text-[#FF4A1C]">
-              {panelWhoWeAre.badge || 'Who We Are'}
-            </span>
-
-            <h2 className="text-h2 text-[#0B0D12]">
-              {panelWhoWeAre.headline || 'Not just another dev shop.'}
-            </h2>
-
-            <p className="text-body-lg text-[#0B0D12]/70">
-              {panelWhoWeAre.description || 'AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.'}
-            </p>
-
-            {/* Feature Rows */}
-            <div className="space-y-3.5 pt-1">
-              {panelWhoWeAre.highlightRows && panelWhoWeAre.highlightRows.length > 0 ? (
-                panelWhoWeAre.highlightRows.map((row, idx) => (
-                  <div key={row.id || idx} className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">{row.title}</div>
-                    <div className="text-caption text-[#0B0D12]/60">{row.description}</div>
-                  </div>
-                ))
+              {slide.imageUrl ? (
+                /* High-Res Photography with Ambient Overlay */
+                <div className="relative w-full h-full group overflow-hidden z-10">
+                  <img 
+                    src={slide.imageUrl}
+                    alt={slide.headline}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  <div className={`absolute inset-0 bg-gradient-to-t ${isDark ? 'from-[#0B0D12]/80' : 'from-[#0B0D12]/40'} via-transparent to-transparent pointer-events-none`} />
+                </div>
               ) : (
-                <>
-                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">In-house only</div>
-                    <div className="text-caption text-[#0B0D12]/60">Every line of code written by our team</div>
+                /* Fallback Geometric / Architectural Shapes */
+                <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center z-10">
+                  <div className={`absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border ${borderClass} ${isDark ? 'bg-white/[0.02]' : 'bg-[#0B0D12]/[0.02]'}`} />
+                  <div className="absolute w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.04] translate-x-6 -translate-y-4" />
+                  <div className="absolute w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-full bg-[#FF4A1C] flex items-center justify-center shadow-lg shadow-[#FF4A1C]/30">
+                    <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white" />
                   </div>
-                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">End-to-end ownership</div>
-                    <div className="text-caption text-[#0B0D12]/60">Design through deployment</div>
-                  </div>
-                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">Hyderabad-based</div>
-                    <div className="text-caption text-[#0B0D12]/60">Working with clients across 12 countries</div>
-                  </div>
-                </>
+                </div>
               )}
             </div>
-          </ScrollReveal>
-        </div>
+          );
 
-        {/* ================= PANEL 2: MISSION ================= */}
-        <div 
-          ref={panel2Ref}
-          style={{ minHeight: '100vh' }}
-          className="sticky-wrapper absolute inset-0 w-full h-[100vh] min-h-screen bg-[#0B0D12] text-[#FAF8F5] z-20 flex flex-col lg:flex-row overflow-hidden shadow-2xl border-t border-white/10 snap-start snap-always"
-        >
-          {/* LEFT: TEXT (50%) */}
-          <div className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 order-2 lg:order-1 overflow-y-auto">
-            <span className="text-badge text-[#FF4A1C]">
-              {panelMission.badge || 'Our Mission'}
-            </span>
+          // Content / Text section
+          const textSection = (
+            <ScrollReveal 
+              className={`w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto ${
+                !isImageLeft ? 'order-2 lg:order-1' : ''
+              }`}
+            >
+              {slide.badge && (
+                <span className="text-badge text-[#FF4A1C]">
+                  {slide.badge}
+                </span>
+              )}
 
-            <h2 className="text-h2 text-[#FAF8F5]">
-              {panelMission.headline || 'Build software that actually matters.'}
-            </h2>
+              <h2 className={`text-h2 ${isDark ? 'text-[#FAF8F5]' : 'text-[#0B0D12]'}`}>
+                {slide.headline}
+              </h2>
 
-            <p className="text-body-lg text-[#FAF8F5]/70">
-              {panelMission.description || 'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.'}
-            </p>
-
-            {/* Mission Statement Box */}
-            <div className="mt-4 sm:mt-6 pl-4 sm:pl-6 border-l-2 border-[#FF4A1C] py-2">
-              <p className="text-h3 text-[#FAF8F5] leading-snug font-normal">
-                {panelMission.missionQuote || '"To make world-class engineering accessible to every visionary who dares to build."'}
+              <p className={`text-body-lg ${textMutedClass}`}>
+                {slide.description}
               </p>
-            </div>
-          </div>
 
-          {/* RIGHT: VISUAL (50%) - Panel 2 (Image on Right) */}
-          <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-full bg-[#131722] relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-l border-white/10 order-1 lg:order-2">
-            {/* Decorative Number 02 */}
-            <span className="absolute bottom-[-20px] right-[-20px] font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none text-white/[0.03] select-none pointer-events-none">
-              02
-            </span>
+              {/* Callout Quote (e.g. for Mission) */}
+              {slide.quote && (
+                <div className="mt-4 sm:mt-6 pl-4 sm:pl-6 border-l-2 border-[#FF4A1C] py-2">
+                  <p className={`text-h3 leading-snug font-normal ${isDark ? 'text-[#FAF8F5]' : 'text-[#0B0D12]'}`}>
+                    {slide.quote}
+                  </p>
+                </div>
+              )}
 
-            <img 
-              src={panelMission.coverImageUrl || "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80"} 
-              alt={panelMission.headline || "Engineering Mission"} 
-              className="w-full h-full object-cover relative z-10"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent z-15 pointer-events-none" />
-          </div>
-        </div>
+              {/* Bullet / Capability Highlights */}
+              {slide.highlights && slide.highlights.length > 0 && (
+                <div className="space-y-3.5 pt-1">
+                  {slide.highlights.map((row, rIdx) => (
+                    <div 
+                      key={row.id || rIdx} 
+                      className={`pl-4 sm:pl-5 border-l-2 ${isDark ? 'border-white/60' : 'border-[#0B0D12]'} py-1 space-y-0.5`}
+                    >
+                      <div className={`text-h4 ${isDark ? 'text-white' : 'text-[#0B0D12]'}`}>
+                        {row.title}
+                      </div>
+                      <div className={`text-caption ${textMutedClass}`}>
+                        {row.description}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </ScrollReveal>
+          );
 
-        {/* ================= PANEL 3: VISION ================= */}
-        <div 
-          ref={panel3Ref}
-          style={{ minHeight: '100vh' }}
-          className="sticky-wrapper absolute inset-0 w-full h-[100vh] min-h-screen bg-[#FAF8F5] text-[#0B0D12] z-30 flex flex-col lg:flex-row overflow-hidden shadow-2xl border-t border-[#0B0D12]/10 snap-start snap-always"
-        >
-          {/* LEFT: VISUAL (50%) - Panel 3 (Image on Left) */}
-          <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-full bg-[#F4F1EA] relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-[#0B0D12]/10">
-            {/* Decorative Number 03 */}
-            <span className="absolute bottom-[-20px] left-[-20px] font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none text-[#0B0D12]/[0.04] select-none pointer-events-none">
-              03
-            </span>
-
-            <img 
-              src={panelVision.coverImageUrl || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"} 
-              alt={panelVision.headline || "AProgra Future Vision"} 
-              className="w-full h-full object-cover relative z-10"
-              loading="lazy"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent z-15 pointer-events-none" />
-          </div>
-
-          {/* RIGHT: TEXT (50%) */}
-          <div className="w-full lg:w-1/2 h-full p-6 sm:p-10 lg:p-16 flex flex-col justify-center space-y-5 lg:space-y-6 overflow-y-auto">
-            <span className="text-badge text-[#FF4A1C]">
-              {panelVision.badge || 'Our Vision'}
-            </span>
-
-            <h2 className="text-h2 text-[#0B0D12]">
-              {panelVision.headline || 'Empowering the next generation of digital empires.'}
-            </h2>
-
-            <p className="text-body-lg text-[#0B0D12]/70">
-              {panelVision.description || 'We envision a world where ambitious software ventures scale frictionlessly from idea to global impact, powered by autonomous multi-agent engineering pods and mathematically sound design systems.'}
-            </p>
-
-            {/* Vision Feature Rows */}
-            <div className="space-y-3.5 pt-1">
-              {panelVision.highlightRows && panelVision.highlightRows.length > 0 ? (
-                panelVision.highlightRows.map((row, idx) => (
-                  <div key={row.id || idx} className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">{row.title}</div>
-                    <div className="text-caption text-[#0B0D12]/60">{row.description}</div>
-                  </div>
-                ))
+          return (
+            <div 
+              key={slide.id || index}
+              ref={(el) => { slideRefs.current[index] = el; }}
+              style={{
+                minHeight: '100vh',
+                zIndex: (index + 1) * 10,
+              }}
+              className={`sticky-wrapper absolute inset-0 w-full h-[100vh] min-h-screen ${bgClass} flex flex-col lg:flex-row overflow-hidden shadow-2xl ${
+                index > 0 ? `border-t ${borderClass}` : ''
+              }`}
+            >
+              {isImageLeft ? (
+                <>
+                  {visualSection}
+                  {textSection}
+                </>
               ) : (
                 <>
-                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">Global Reach</div>
-                    <div className="text-caption text-[#0B0D12]/60">Serving visionaries across 12+ countries with scale-ready architecture</div>
-                  </div>
-
-                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">Agentic &amp; Autonomous Speed</div>
-                    <div className="text-caption text-[#0B0D12]/60">Integrating cutting-edge AI workflows with human craftsmanship</div>
-                  </div>
-
-                  <div className="pl-4 sm:pl-5 border-l-2 border-[#0B0D12] py-1 space-y-0.5">
-                    <div className="text-h4 text-[#0B0D12]">Infinite Scale</div>
-                    <div className="text-caption text-[#0B0D12]/60">Architected from day one to handle millions of active users</div>
-                  </div>
+                  {textSection}
+                  {visualSection}
                 </>
               )}
             </div>
-          </div>
-        </div>
-
+          );
+        })}
       </div>
     </section>
   );
 }
+
+
 

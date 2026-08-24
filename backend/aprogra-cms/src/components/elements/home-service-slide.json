@@ -1,0 +1,53 @@
+{
+  "collectionName": "components_elements_home_service_slides",
+  "info": {
+    "displayName": "Home Service Slide",
+    "icon": "layer",
+    "description": "Horizontal sliding card for Services section on homepage"
+  },
+  "options": {},
+  "attributes": {
+    "orderNumber": {
+      "type": "string",
+      "required": true,
+      "default": "01"
+    },
+    "badgeText": {
+      "type": "string",
+      "required": true,
+      "default": "Core Service"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "tags": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "serviceUrl": {
+      "type": "string",
+      "default": "/services"
+    },
+    "serviceUrlText": {
+      "type": "string",
+      "default": "Explore Service"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "imageUrl": {
+      "type": "string"
+    }
+  }
+}

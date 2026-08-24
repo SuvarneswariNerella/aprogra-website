@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { HomeStoryPhase } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export default function AboutCompany() {
+export default function AboutCompany({ storyPhases = [] }: { storyPhases?: HomeStoryPhase[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Left Side Visuals
@@ -99,6 +100,11 @@ export default function AboutCompany() {
     return () => ctx.revert();
   }, []);
 
+  const phase1 = storyPhases[0] || {} as HomeStoryPhase;
+  const phase2 = storyPhases[1] || {} as HomeStoryPhase;
+  const phase3 = storyPhases[2] || {} as HomeStoryPhase;
+  const phase4 = storyPhases[3] || {} as HomeStoryPhase;
+
   return (
     <section 
       ref={containerRef}
@@ -116,8 +122,8 @@ export default function AboutCompany() {
           <div ref={vis1Ref} className="absolute inset-0 transition-opacity">
             <div ref={vis1ContentRef} className="w-full h-full opacity-0">
               <img 
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80" 
-                alt="Engineering Operations & Craft"
+                src={phase1.imageUrl} 
+                alt={phase1.title}
                 className="w-full h-full object-cover"
                 loading="lazy"
               />
@@ -128,8 +134,8 @@ export default function AboutCompany() {
           {/* VISUAL 2: Full-Size Container Image */}
           <div ref={vis2Ref} className="absolute inset-0 transition-opacity">
             <img 
-              src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80" 
-              alt="Full-Stack Product Lifecycle"
+              src={phase2.imageUrl} 
+              alt={phase2.title}
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -139,8 +145,8 @@ export default function AboutCompany() {
           {/* VISUAL 3: Full-Size Container Image */}
           <div ref={vis3Ref} className="absolute inset-0 transition-opacity">
             <img 
-              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" 
-              alt="In-House Engineering Specialists"
+              src={phase3.imageUrl} 
+              alt={phase3.title}
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -150,8 +156,8 @@ export default function AboutCompany() {
           {/* VISUAL 4: Full-Size Container Image */}
           <div ref={vis4Ref} className="absolute inset-0 transition-opacity">
             <img 
-              src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" 
-              alt="Global Operations & Shipped Software"
+              src={phase4.imageUrl} 
+              alt={phase4.title}
               className="w-full h-full object-cover"
               loading="lazy"
             />
@@ -167,13 +173,13 @@ export default function AboutCompany() {
           <div ref={txt1Ref} className="absolute inset-0 flex flex-col justify-center">
             <div ref={txt1ContentRef} className="space-y-5 opacity-0">
               <span className="text-badge text-[#0B0D12]">
-                Our Story
+                {phase1.badgeText}
               </span>
-            <h2 className="text-h2 text-[#0B0D12]">
-              Not just another dev shop.
-            </h2>
+              <h2 className="text-h2 text-[#0B0D12]">
+                {phase1.title}
+              </h2>
               <p className="text-body-lg text-[#5A5E6E]">
-                AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.
+                {phase1.description}
               </p>
             </div>
           </div>
@@ -181,59 +187,61 @@ export default function AboutCompany() {
           {/* PHASE 2 TEXT */}
           <div ref={txt2Ref} className="absolute inset-0 flex flex-col justify-center space-y-5">
             <span className="text-badge text-[#0B0D12]">
-              How We Work
+              {phase2.badgeText}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Full-stack. Full-cycle. Full-ownership.
+              {phase2.title}
             </h2>
             <p className="text-body-lg text-[#5A5E6E]">
-              From the first discovery call to post-launch support, our in-house team owns every layer. Design. Frontend. Backend. QA. DevOps. All under one roof — your one point of contact.
+              {phase2.description}
             </p>
           </div>
 
           {/* PHASE 3 TEXT */}
           <div ref={txt3Ref} className="absolute inset-0 flex flex-col justify-center space-y-5">
             <span className="text-badge text-[#0B0D12]">
-              Our Team
+              {phase3.badgeText}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              25+ specialists. Zero strangers.
+              {phase3.title}
             </h2>
             <p className="text-body-lg text-[#5A5E6E]">
-              Designers who code. Engineers who think about UX. PMs who understand business. Everyone at AProgra is a specialist — and everyone cares about your product like it's their own.
+              {phase3.description}
             </p>
           </div>
 
           {/* PHASE 4 TEXT */}
           <div ref={txt4Ref} className="absolute inset-0 flex flex-col justify-center space-y-5">
             <span className="text-badge text-[#0B0D12]">
-              Our Reach
+              {phase4.badgeText}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Built here. Shipped everywhere.
+              {phase4.title}
             </h2>
             <p className="text-body text-[#5A5E6E]">
-              40+ products live in market. 60+ clients across 12 countries. From Hyderabad to Houston, our software runs real businesses.
+              {phase4.description}
             </p>
 
-            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#0B0D12]/10">
-              <div>
-                <span className="block text-h3 text-[#0B0D12]">40+</span>
-                <span className="text-caption text-[#5A5E6E]">Products Live</span>
+            {phase4.showMetricsGrid && (
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-[#0B0D12]/10">
+                <div>
+                  <span className="block text-h3 text-[#0B0D12]">40+</span>
+                  <span className="text-caption text-[#5A5E6E]">Products Live</span>
+                </div>
+                <div>
+                  <span className="block text-h3 text-[#0B0D12]">60+</span>
+                  <span className="text-caption text-[#5A5E6E]">Global Clients</span>
+                </div>
+                <div>
+                  <span className="block text-h3 text-[#0B0D12]">12</span>
+                  <span className="text-caption text-[#5A5E6E]">Countries</span>
+                </div>
+                <div>
+                  <span className="block text-h3 text-[#FF4A1C]">25+</span>
+                  <span className="text-caption text-[#5A5E6E]">Team Specialists</span>
+                </div>
               </div>
-              <div>
-                <span className="block text-h3 text-[#0B0D12]">60+</span>
-                <span className="text-caption text-[#5A5E6E]">Global Clients</span>
-              </div>
-              <div>
-                <span className="block text-h3 text-[#0B0D12]">12</span>
-                <span className="text-caption text-[#5A5E6E]">Countries</span>
-              </div>
-              <div>
-                <span className="block text-h3 text-[#FF4A1C]">25+</span>
-                <span className="text-caption text-[#5A5E6E]">Team Specialists</span>
-              </div>
-            </div>
+            )}
           </div>
 
         </div>

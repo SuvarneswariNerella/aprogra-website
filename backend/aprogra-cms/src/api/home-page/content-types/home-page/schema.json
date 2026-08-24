@@ -1,0 +1,50 @@
+{
+  "kind": "singleType",
+  "collectionName": "home_pages",
+  "info": {
+    "singularName": "home-page",
+    "pluralName": "home-pages",
+    "displayName": "Home Page",
+    "description": "Content for the main homepage"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Home Page"
+    },
+    "heroSlides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.home-hero-slide"
+    },
+    "statsSection": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.home-stats-section"
+    },
+    "storyPhases": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.home-story-phase"
+    },
+    "whyStatements": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.home-statement"
+    },
+    "servicesSlides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.home-service-slide"
+    },
+    "productsCards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.home-product-card"
+    }
+  }
+}

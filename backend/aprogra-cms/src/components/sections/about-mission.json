@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_sections_about_missions",
+  "info": {
+    "displayName": "About Panel: Our Mission",
+    "icon": "bulletList",
+    "description": "Story Panel 02: Our Mission"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Our Mission"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Build software that actually matters."
+    },
+    "description": {
+      "type": "text",
+      "default": "Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed."
+    },
+    "missionQuote": {
+      "type": "text",
+      "default": "\"To make world-class engineering accessible to every visionary who dares to build.\""
+    }
+  }
+}

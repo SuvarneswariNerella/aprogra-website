@@ -1,0 +1,41 @@
+{
+  "kind": "singleType",
+  "collectionName": "about_pages",
+  "info": {
+    "singularName": "about-page",
+    "pluralName": "about-pages",
+    "displayName": "About Us Page",
+    "description": "Comprehensive settings for the About page including hero and contact CTA"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "About Us Page",
+      "private": true
+    },
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.about-hero"
+    },
+    "storySlides": {
+      "type": "component",
+      "repeatable": true,
+      "component": "sections.about-story-slide"
+    },
+    "faqSection": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.about-faq-section"
+    },
+    "contactCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.about-contact-cta"
+    }
+  }
+}

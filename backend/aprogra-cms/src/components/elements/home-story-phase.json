@@ -1,0 +1,40 @@
+{
+  "collectionName": "components_elements_home_story_phases",
+  "info": {
+    "displayName": "Home Story Phase",
+    "icon": "book",
+    "description": "A scrolling phase in the About Company narrative"
+  },
+  "options": {},
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "imageUrl": {
+      "type": "string",
+      "description": "Fallback image URL if no media uploaded"
+    },
+    "showMetricsGrid": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, shows the final metrics grid under this phase"
+    }
+  }
+}

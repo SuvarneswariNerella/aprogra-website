@@ -1,0 +1,29 @@
+{
+  "collectionName": "components_sections_about_who_we_ares",
+  "info": {
+    "displayName": "About Panel: Who We Are",
+    "icon": "userCheck",
+    "description": "Story Panel 01: Who We Are"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "Who We Are"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Not just another dev shop."
+    },
+    "description": {
+      "type": "text",
+      "default": "AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do."
+    },
+    "highlights": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.panel-highlight"
+    }
+  }
+}

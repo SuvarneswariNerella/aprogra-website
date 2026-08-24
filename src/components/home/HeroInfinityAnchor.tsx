@@ -4,15 +4,12 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { 
   ArrowRight, 
   Sparkles, 
-  Terminal, 
-  Activity, 
-  ShieldCheck, 
   Layers, 
   Globe2, 
-  CheckCircle2,
-  Cpu
+  ShieldCheck
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { HomeHeroSlide } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -21,18 +18,7 @@ const PATH_VARIANT_1 = "M 90,60 C 50,20 15,20 15,60 C 15,100 50,100 90,60 C 130,
 const PATH_VARIANT_2 = "M 90,60 C 65,30 25,25 25,60 C 25,95 65,90 90,60 C 115,30 155,25 155,60 C 155,95 115,90 90,60 Z";
 const PATH_VARIANT_3 = "M 90,60 C 40,12 8,12 8,60 C 8,108 40,108 90,60 C 140,12 172,12 172,60 C 172,108 140,108 90,60 Z";
 
-const TECH_TAGS = [
-  "Next.js & React", "TypeScript", "Python & AI", "Kubernetes", "PostgreSQL", "AWS & Cloud"
-];
-
-const METRICS = [
-  { value: "40+", label: "Products Shipped", sub: "Enterprise & SaaS" },
-  { value: "60+", label: "Global Clients", sub: "12+ Countries" },
-  { value: "99.9%", label: "Uptime SLA", sub: "Production Grade" },
-  { value: "100%", label: "In-House Team", sub: "Zero Outsourcing" }
-];
-
-export default function HeroInfinityAnchor() {
+export default function HeroInfinityAnchor({ slides = [] }: { slides?: HomeHeroSlide[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const pinnedCenterRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<SVGPathElement>(null);
@@ -190,6 +176,10 @@ export default function HeroInfinityAnchor() {
     return () => ctx.revert();
   }, [reducedMotion]);
 
+  const slide1 = slides[0] || {} as HomeHeroSlide;
+  const slide2 = slides[1] || {} as HomeHeroSlide;
+  const slide3 = slides[2] || {} as HomeHeroSlide;
+
   return (
     <section 
       ref={containerRef}
@@ -298,20 +288,15 @@ export default function HeroInfinityAnchor() {
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FF4A1C]" />
                 </span>
                 <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span>Modern Software &amp; AI</span>
+                <span>{slide1.badgeText}</span>
               </div>
 
               <div className="space-y-2">
-                <h1 className="text-h1 text-[#0B0D12]">
-                  Engineering Software <br />
-                  <span className="text-[#FF4A1C]">
-                    Without Limits.
-                  </span>
-                </h1>
+                <h1 className="text-h1 text-[#0B0D12]" dangerouslySetInnerHTML={{ __html: slide1.title?.replace('Without Limits.', '<span class="text-[#FF4A1C]">Without Limits.</span>') || '' }} />
               </div>
 
               <p className="text-body-lg text-[#5A5E6E] max-w-md leading-relaxed">
-                Full-cycle software engineering, intelligent AI workflows, and resilient architectures.
+                {slide1.subtitle}
               </p>
 
               <div className="flex flex-wrap items-center gap-3 pt-1">
@@ -340,24 +325,24 @@ export default function HeroInfinityAnchor() {
             >
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge shadow-2xs">
                 <Layers className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span>Production Deployments</span>
+                <span>{slide2.badgeText}</span>
               </div>
 
               <div className="text-5xl sm:text-6xl font-bold text-[#0B0D12] leading-none font-display">
-                40<span className="text-[#FF4A1C]">+</span>
+                {slide2.primaryValue?.replace('+', '')}<span className="text-[#FF4A1C]">+</span>
               </div>
 
               <div className="space-y-1.5">
                 <h2 className="text-h2 text-[#0B0D12]">
-                  Commercial SaaS &amp; ERP Platforms
+                  {slide2.title}
                 </h2>
                 <p className="text-body-lg text-[#5A5E6E] max-w-sm">
-                  From campus ERPs to real-time AI suites, we build and run production systems globally.
+                  {slide2.subtitle}
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-1.5 pt-0.5">
-                {["EduNura", "SmartSchool ERP", "OmniChat AI", "+37 More"].map((item, idx) => (
+                {slide2.tags?.map((item, idx) => (
                   <span key={idx} className="px-2.5 py-0.5 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-xs font-mono text-[#0B0D12]">
                     {item}
                   </span>
@@ -372,25 +357,22 @@ export default function HeroInfinityAnchor() {
             >
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge shadow-2xs">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span>Zero Outsourcing</span>
+                <span>{slide3.badgeText}</span>
               </div>
 
-              <h2 className="text-h2 text-[#0B0D12]">
-                Engineered In-House. <br />
-                <span className="text-[#FF4A1C]">Delivered On Time.</span>
-              </h2>
+              <h2 className="text-h2 text-[#0B0D12]" dangerouslySetInnerHTML={{ __html: slide3.title?.replace('Delivered On Time.', '<br /><span class="text-[#FF4A1C]">Delivered On Time.</span>') || '' }} />
 
               <p className="text-body-lg text-[#5A5E6E] max-w-sm">
-                Direct access to principal software architects and DevOps specialists.
+                {slide3.subtitle}
               </p>
 
               <div className="grid grid-cols-2 gap-2 pt-0.5 max-w-xs">
                 <div className="p-2 bg-[#FAF8F5] rounded-lg border border-[#0B0D12]/15">
-                  <div className="text-xs font-bold font-mono text-[#FF4A1C]">99.9% SLA</div>
+                  <div className="text-xs font-bold font-mono text-[#FF4A1C]">{slide3.tags?.[0] || '99.9% SLA'}</div>
                   <div className="text-[10px] text-[#5A5E6E] font-mono">Availability</div>
                 </div>
                 <div className="p-2 bg-[#FAF8F5] rounded-lg border border-[#0B0D12]/15">
-                  <div className="text-xs font-bold font-mono text-[#0B0D12]">100% In-House</div>
+                  <div className="text-xs font-bold font-mono text-[#0B0D12]">{slide3.tags?.[1] || '100% In-House'}</div>
                   <div className="text-[10px] text-[#5A5E6E] font-mono">Senior Team</div>
                 </div>
               </div>
@@ -413,17 +395,17 @@ export default function HeroInfinityAnchor() {
               <div ref={sidePanel1ContentRef} className="w-full opacity-0">
                 <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
                   <img 
-                    src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1000&q=80" 
-                    alt="Production Architecture & Code Stack" 
+                    src={slide1.imageUrl}
+                    alt={slide1.imageLabel || "Production Architecture"} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
                   <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-mono">
-                    <span className="px-2 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">Architecture Stack</span>
+                    <span className="px-2 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">{slide1.imageLabel}</span>
                     <span className="flex items-center gap-1.5 text-emerald-400">
                       <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      Production Ready
+                      {slide1.imageSublabel}
                     </span>
                   </div>
                 </div>
@@ -437,15 +419,15 @@ export default function HeroInfinityAnchor() {
             >
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
                 <img 
-                  src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1000&q=80" 
-                  alt="Enterprise Shipped Platforms & SaaS Analytics" 
+                  src={slide2.imageUrl}
+                  alt={slide2.imageLabel || "Enterprise Shipped Platforms"} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-mono">
-                  <span className="px-2 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">Commercial Platforms</span>
-                  <span className="text-[#FF7A50] font-bold">40+ Shipped</span>
+                  <span className="px-2 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">{slide2.imageLabel}</span>
+                  <span className="text-[#FF7A50] font-bold">{slide2.imageSublabel}</span>
                 </div>
               </div>
             </div>
@@ -457,15 +439,15 @@ export default function HeroInfinityAnchor() {
             >
               <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
                 <img 
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1000&q=80" 
-                  alt="In-House Senior Engineering & CI/CD Delivery" 
+                  src={slide3.imageUrl}
+                  alt={slide3.imageLabel || "In-House Senior Engineering"} 
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-xs font-mono">
-                  <span className="px-2 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">In-House Delivery</span>
-                  <span className="text-white">Zero Outsourcing</span>
+                  <span className="px-2 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">{slide3.imageLabel}</span>
+                  <span className="text-white">{slide3.imageSublabel}</span>
                 </div>
               </div>
             </div>

@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_sections_home_stats_sections",
+  "info": {
+    "displayName": "Home Stats Section",
+    "icon": "apps",
+    "description": "The wrapper section for the homepage statistics"
+  },
+  "options": {},
+  "attributes": {
+    "badgeText": {
+      "type": "string",
+      "required": true,
+      "default": "PROVEN PERFORMANCE & GLOBAL FOOTPRINT"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "stats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.home-stat"
+    }
+  }
+}

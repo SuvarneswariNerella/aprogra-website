@@ -22,10 +22,20 @@
       "repeatable": false,
       "component": "sections.services-cards-section"
     },
+    "flipCards": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.service-flip-card"
+    },
     "features": {
       "type": "component",
       "repeatable": false,
       "component": "sections.services-features-section"
+    },
+    "services": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.service-showcase-item"
     },
     "closingCta": {
       "type": "component",
