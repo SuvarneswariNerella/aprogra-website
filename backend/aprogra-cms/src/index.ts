@@ -593,6 +593,189 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
   },
 ];
 
+const DEFAULT_CONTACT_PAGE_SEED_DATA = {
+  hero: {
+    availabilityBadge: 'ACCEPTING SELECT H2 / Q3 2026 ENGAGEMENTS',
+    headline: 'Engineering Partnerships &',
+    highlight: 'Project Inquiries.',
+    description: 'Have a breakthrough product, an enterprise platform to scale, or an AI workflow to automate? Connect directly with our lead architects to turn your vision into production-ready software.',
+    primaryCtaText: 'Start Your Brief',
+    secondaryCtaText: 'Schedule Intro Call',
+    slaBadge1: '< 2 hrs Response SLA',
+    slaBadge2: '100% NDA Protected',
+    slaBadge3: 'Lead Architect Access',
+    directChannelsTitle: 'DIRECT CHANNELS',
+    podStatus: 'Active Pods Online',
+    emailLabel: 'PRIMARY INQUIRIES',
+    email: 'hello@aprogra.com',
+    emailCopyButtonText: 'Copy',
+    phoneLabel: 'DIRECT PHONE LINE',
+    phone: '+1 (800) 555-0199',
+    phoneCopyButtonText: 'Copy',
+    studioHqLabel: 'STUDIO HQ',
+    studioHqValue: 'Hyderabad, India • Global Remote Pods',
+    bookIntroCallButtonText: 'Book 15-Min Intro Call',
+  },
+  roadmap: {
+    badge: '01 / ENGAGEMENT LIFECYCLE',
+    title: 'From First Contact to Sprint 1',
+    steps: [
+      {
+        timeframe: '01 / Days 1–3',
+        title: 'Architecture Blueprint',
+        description: 'We review your technical specifications, analyze legacy constraints, and formulate a full system topology and sprint milestones.',
+      },
+      {
+        timeframe: '02 / Week 1',
+        title: 'Sprint 0 & Core Scaffolding',
+        description: 'Repository setup, CI/CD pipelines, database schema design, and production environment provisioning with strict security policies.',
+      },
+      {
+        timeframe: '03 / Weeks 2–8',
+        title: 'Bi-Weekly Velocity Drops',
+        description: 'Continuous shipping with staging previews, real-time Slack/Discord sync, and weekly architectural review calls.',
+      },
+    ],
+  },
+  brief: {
+    badge: '02 / INTERACTIVE SPECIFICATION',
+    title: 'Configure Your Project Brief',
+    subtitle: 'Fill out the brief below to generate your custom project preview and start a direct conversation with our technical team.',
+    formHeading: 'Project Requirements Form',
+    formSubheading: 'Select your project attributes to help us match the right technical team.',
+    fieldNameLabel: 'Your Name *',
+    fieldNamePlaceholder: 'e.g. Alex Morgan',
+    fieldEmailLabel: 'Work Email *',
+    fieldEmailPlaceholder: 'alex@company.com',
+    fieldCompanyLabel: 'Company / Organization (optional)',
+    fieldCompanyPlaceholder: 'e.g. NextGen SaaS or Stealth Startup',
+    capabilitiesQuestion: 'What capabilities do you require?',
+    capabilitiesList: [
+      { label: 'Web Apps' },
+      { label: 'Mobile Apps' },
+      { label: 'AI & Automation' },
+      { label: 'Content & Marketing' },
+      { label: 'Design Systems' },
+      { label: 'Enterprise ERP' },
+    ],
+    budgetQuestion: 'Expected Investment Range',
+    budgetRangesList: [
+      { label: '< $15K' },
+      { label: '$15K – $25K' },
+      { label: '$25K – $75K' },
+      { label: '$75K+' },
+    ],
+    timelineQuestion: 'Target Timeline',
+    timelineRangesList: [
+      { label: '< 1 Month' },
+      { label: '1–3 Months' },
+      { label: '3–6 Months' },
+      { label: 'Flexible' },
+    ],
+    messageQuestion: 'Project Overview & Objectives *',
+    messagePlaceholder: 'Describe your current tech stack, desired architecture, target timeline, and success criteria...',
+    submitButtonText: 'SUBMIT PROJECT BRIEF',
+    successTitle: 'Project Brief Received!',
+  },
+  preview: {
+    cardTitle: 'REAL-TIME BRIEF SPECIFICATION',
+    cardBadge: 'LIVE DRAFT',
+    capabilitiesLabel: 'Capabilities in Scope',
+    investmentLabel: 'Investment',
+    timelineLabel: 'Timeline',
+    engagementTitle: 'Engagement Architecture',
+    engagementSteps: [
+      {
+        timeframe: '1',
+        title: 'Initial Brief Review',
+        description: 'Our lead architects analyze your specific requirements.',
+      },
+      {
+        timeframe: '2',
+        title: 'System Design & Scope',
+        description: 'We map out technical constraints and platform architecture.',
+      },
+      {
+        timeframe: '3',
+        title: 'Engineering Kickoff',
+        description: 'Dedicated pods are spun up for immediate development.',
+      },
+    ],
+    guaranteesTitle: 'Enterprise Guarantees',
+    guarantee1_title: 'Strict Mutual NDA',
+    guarantee1_desc: '100% IP Protection',
+    guarantee2_title: 'SOC2 Type II',
+    guarantee2_desc: 'Bank-grade security',
+    slaResponseText: 'SLA: < 2 hrs Response SLA',
+    readyReviewText: 'Ready for Review',
+    videoTitle: 'Prefer a face-to-face video call?',
+    videoDescription: 'Schedule an immediate 15-minute intro with our engineering leads to talk through your platform requirements.',
+    videoButtonText: 'BOOK A 15-MIN INTRO CALL',
+  },
+  channels: [
+    {
+      order: 1,
+      type: 'email',
+      label: 'PRIMARY INQUIRIES',
+      primaryValue: 'hello@aprogra.com',
+      subtext: 'Monitored 24/7 by solution engineers',
+      buttonText: 'Copy Email Address',
+      iconName: 'mail',
+    },
+    {
+      order: 2,
+      type: 'phone',
+      label: 'DIRECT PHONE LINE',
+      primaryValue: '+1 (800) 555-0199',
+      subtext: 'Mon–Fri, 8:00 AM–6:00 PM PST',
+      buttonText: 'Copy Phone Number',
+      iconName: 'phone',
+    },
+    {
+      order: 3,
+      type: 'office',
+      label: 'PRIMARY STUDIO HQ',
+      primaryValue: 'San Francisco, CA',
+      subtext: '535 Mission St, 14th Floor, San Francisco, CA 94105',
+      buttonText: 'Open in Google Maps',
+      buttonUrl: 'https://maps.google.com/?q=535+Mission+St+14th+Floor+San+Francisco+CA+94105',
+      iconName: 'map-pin',
+    },
+    {
+      order: 4,
+      type: 'hub',
+      label: 'GLOBAL TECH HUBS',
+      primaryValue: 'New York • Austin • London',
+      subtext: 'Serving enterprise partners across time zones',
+      buttonText: 'Remote First Engineering',
+      iconName: 'globe',
+    },
+  ],
+  introCallModal: {
+    title: 'Engineering Kickoff Call',
+    subtitle: 'Directly with our Lead Solutions Architect. 15 minutes to evaluate technical fit.',
+    topicOptions: [
+      { label: 'System Architecture' },
+      { label: 'AI & Automation' },
+      { label: 'Project Rescue' },
+      { label: 'Team Augmentation' },
+    ],
+    timeSlots: [
+      { label: 'Tomorrow, 10:00 AM EST' },
+      { label: 'Tomorrow, 2:30 PM EST' },
+      { label: 'Thursday, 11:00 AM EST' },
+      { label: 'Friday, 4:00 PM EST' },
+    ],
+    submitButtonText: 'Confirm Calendar Reservation',
+    successTitle: 'Call Reserved!',
+  },
+  closingBannerHeadline: 'Engineering Infinite',
+  closingBannerHighlight: 'Possibilities.',
+  closingBannerSubtitle: 'Thank you for visiting. We look forward to building with you.',
+  metaTitle: 'Contact Lead Architects | Aprogra',
+  metaDescription: 'Connect directly with Aprogra lead architects for enterprise custom software, agentic AI, and scalable cloud systems.',
+};
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
@@ -621,6 +804,9 @@ export default {
           'api::service.service.findOne',
           'api::service-flip-card.service-flip-card.find',
           'api::service-flip-card.service-flip-card.findOne',
+          'api::contact-page.contact-page.find',
+          'api::contact-inquiry.contact-inquiry.create',
+          'api::contact-inquiry.contact-inquiry.find',
         ];
 
         for (const action of actions) {
@@ -789,6 +975,16 @@ export default {
           });
           strapi.log.info(`[Bootstrap] Updated Service Flip Card Deliverables: "${fc.title}"`);
         }
+      }
+
+      // 11. Contact Page Settings Single Type
+      const existingContactPage = await strapiAny.documents('api::contact-page.contact-page').findFirst();
+      if (!existingContactPage) {
+        await strapiAny.documents('api::contact-page.contact-page').create({
+          data: DEFAULT_CONTACT_PAGE_SEED_DATA,
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created and published Contact Page Settings in Strapi.');
       }
 
     } catch (err: any) {

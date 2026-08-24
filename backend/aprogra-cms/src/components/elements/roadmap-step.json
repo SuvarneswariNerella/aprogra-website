@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_roadmap_steps",
+  "info": {
+    "displayName": "Roadmap Step",
+    "icon": "clock",
+    "description": "Lifecycle engagement step"
+  },
+  "options": {},
+  "attributes": {
+    "timeframe": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

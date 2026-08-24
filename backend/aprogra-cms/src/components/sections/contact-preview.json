@@ -1,0 +1,80 @@
+{
+  "collectionName": "components_sections_contact_previews",
+  "info": {
+    "displayName": "Contact Preview Section",
+    "icon": "eye",
+    "description": "Right side live project draft preview"
+  },
+  "options": {},
+  "attributes": {
+    "cardTitle": {
+      "type": "string",
+      "default": "REAL-TIME BRIEF SPECIFICATION"
+    },
+    "cardBadge": {
+      "type": "string",
+      "default": "LIVE DRAFT"
+    },
+    "capabilitiesLabel": {
+      "type": "string",
+      "default": "Capabilities in Scope"
+    },
+    "investmentLabel": {
+      "type": "string",
+      "default": "Investment"
+    },
+    "timelineLabel": {
+      "type": "string",
+      "default": "Timeline"
+    },
+    "engagementTitle": {
+      "type": "string",
+      "default": "Engagement Architecture"
+    },
+    "engagementSteps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.roadmap-step"
+    },
+    "guaranteesTitle": {
+      "type": "string",
+      "default": "Enterprise Guarantees"
+    },
+    "guarantee1_title": {
+      "type": "string",
+      "default": "Strict Mutual NDA"
+    },
+    "guarantee1_desc": {
+      "type": "string",
+      "default": "100% IP Protection"
+    },
+    "guarantee2_title": {
+      "type": "string",
+      "default": "SOC2 Type II"
+    },
+    "guarantee2_desc": {
+      "type": "string",
+      "default": "Bank-grade security"
+    },
+    "slaResponseText": {
+      "type": "string",
+      "default": "SLA: < 2 hrs Response SLA"
+    },
+    "readyReviewText": {
+      "type": "string",
+      "default": "Ready for Review"
+    },
+    "videoTitle": {
+      "type": "string",
+      "default": "Prefer a face-to-face video call?"
+    },
+    "videoDescription": {
+      "type": "text",
+      "default": "Schedule an immediate 15-minute intro with our engineering leads to talk through your platform requirements."
+    },
+    "videoButtonText": {
+      "type": "string",
+      "default": "BOOK A 15-MIN INTRO CALL"
+    }
+  }
+}

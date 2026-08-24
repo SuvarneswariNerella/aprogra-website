@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_elements_option_items",
+  "info": {
+    "displayName": "Option Item",
+    "icon": "bulletList",
+    "description": "Single option or bullet point"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

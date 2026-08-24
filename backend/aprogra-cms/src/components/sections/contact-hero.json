@@ -1,0 +1,92 @@
+{
+  "collectionName": "components_sections_contact_heroes",
+  "info": {
+    "displayName": "Contact Hero Section",
+    "icon": "layout",
+    "description": "Contact page top hero and direct info bar"
+  },
+  "options": {},
+  "attributes": {
+    "availabilityBadge": {
+      "type": "string",
+      "default": "ACCEPTING SELECT H2 / Q3 2026 ENGAGEMENTS"
+    },
+    "headline": {
+      "type": "string",
+      "required": true,
+      "default": "Engineering Partnerships &"
+    },
+    "highlight": {
+      "type": "string",
+      "default": "Project Inquiries."
+    },
+    "description": {
+      "type": "text",
+      "default": "Have a breakthrough product, an enterprise platform to scale, or an AI workflow to automate? Connect directly with our lead architects to turn your vision into production-ready software."
+    },
+    "primaryCtaText": {
+      "type": "string",
+      "default": "Start Your Brief"
+    },
+    "secondaryCtaText": {
+      "type": "string",
+      "default": "Schedule Intro Call"
+    },
+    "slaBadge1": {
+      "type": "string",
+      "default": "< 2 hrs Response SLA"
+    },
+    "slaBadge2": {
+      "type": "string",
+      "default": "100% NDA Protected"
+    },
+    "slaBadge3": {
+      "type": "string",
+      "default": "Lead Architect Access"
+    },
+    "directChannelsTitle": {
+      "type": "string",
+      "default": "DIRECT CHANNELS"
+    },
+    "podStatus": {
+      "type": "string",
+      "default": "Active Pods Online"
+    },
+    "emailLabel": {
+      "type": "string",
+      "default": "PRIMARY INQUIRIES"
+    },
+    "email": {
+      "type": "string",
+      "default": "hello@aprogra.com"
+    },
+    "emailCopyButtonText": {
+      "type": "string",
+      "default": "Copy"
+    },
+    "phoneLabel": {
+      "type": "string",
+      "default": "DIRECT PHONE LINE"
+    },
+    "phone": {
+      "type": "string",
+      "default": "+1 (800) 555-0199"
+    },
+    "phoneCopyButtonText": {
+      "type": "string",
+      "default": "Copy"
+    },
+    "studioHqLabel": {
+      "type": "string",
+      "default": "STUDIO HQ"
+    },
+    "studioHqValue": {
+      "type": "string",
+      "default": "Hyderabad, India • Global Remote Pods"
+    },
+    "bookIntroCallButtonText": {
+      "type": "string",
+      "default": "Book 15-Min Intro Call"
+    }
+  }
+}

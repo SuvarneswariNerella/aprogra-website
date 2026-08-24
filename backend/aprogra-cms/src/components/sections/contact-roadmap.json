@@ -1,0 +1,25 @@
+{
+  "collectionName": "components_sections_contact_roadmaps",
+  "info": {
+    "displayName": "Contact Roadmap Section",
+    "icon": "bulletList",
+    "description": "Lifecycle and timeline steps on contact page"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "01 / ENGAGEMENT LIFECYCLE"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "From First Contact to Sprint 1"
+    },
+    "steps": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.roadmap-step"
+    }
+  }
+}

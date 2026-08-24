@@ -516,6 +516,7 @@ export interface ContactPageContent {
   directChannelsHeader: ContactDirectChannelsHeader;
   closingBanner: ContactClosingBannerSection;
   introCallModal: ContactIntroCallModalSection;
+  channels?: ContactChannelItem[];
   metaTitle?: string;
   metaDescription?: string;
 }
@@ -719,7 +720,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
 export async function fetchContactPageContent(): Promise<ContactPageContent> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'contact-page?populate[hero][populate]=*&populate[roadmap][populate]=*&populate[brief][populate]=*&populate[preview][populate]=*&populate[directChannelsHeader][populate]=*&populate[closingBanner][populate]=*&populate[introCallModal][populate]=*'
+      'contact-page?populate[hero][populate]=*&populate[roadmap][populate]=*&populate[brief][populate]=*&populate[preview][populate]=*&populate[channels][populate]=*&populate[introCallModal][populate]=*'
     );
     if (!raw) return DEFAULT_CONTACT_PAGE_CONTENT;
 
@@ -729,13 +730,29 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
     const brief = data.brief || {};
     const preview = data.preview || {};
     const directChannelsHeader = data.directChannelsHeader || {};
-    const closingBanner = data.closingBanner || {};
     const introCallModal = data.introCallModal || {};
 
     const extractChoiceNames = (list: any[] | undefined, defaultList: string[]): string[] => {
       if (!Array.isArray(list) || list.length === 0) return defaultList;
-      return list.map((item: any) => typeof item === 'string' ? item : item.name || '');
+      return list.map((item: any) => (typeof item === 'string' ? item : item.label || item.name || item.title || ''));
     };
+
+    let channels: ContactChannelItem[] = DEFAULT_CONTACT_CHANNELS;
+    if (Array.isArray(data.channels) && data.channels.length > 0) {
+      channels = data.channels.map((ch: any, idx: number) => ({
+        id: String(ch.id || ch.label || `channel-${idx + 1}`),
+        order: typeof ch.order === 'number' ? ch.order : idx + 1,
+        type: ch.type || 'email',
+        label: ch.label || '',
+        primaryValue: ch.primaryValue || '',
+        subtext: ch.subtext || '',
+        buttonText: ch.buttonText || '',
+        buttonUrl: ch.buttonUrl || undefined,
+        iconName: ch.iconName || 'mail',
+        iconMedia: ch.iconMedia,
+        iconUrl: getStrapiMediaUrl(ch.iconMedia) || ch.iconUrl || undefined,
+      }));
+    }
 
     return {
       hero: {
@@ -817,10 +834,10 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
         subtitle: directChannelsHeader.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.subtitle,
       },
       closingBanner: {
-        headline: closingBanner.headline || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.headline,
-        highlight: closingBanner.highlight || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.highlight,
-        subtitle: closingBanner.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.subtitle,
-        backToTopText: closingBanner.backToTopText || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.backToTopText,
+        headline: data.closingBannerHeadline || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.headline,
+        highlight: data.closingBannerHighlight || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.highlight,
+        subtitle: data.closingBannerSubtitle || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.subtitle,
+        backToTopText: DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.backToTopText,
       },
       introCallModal: {
         title: introCallModal.title || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.title,
@@ -830,6 +847,7 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
         submitButtonText: introCallModal.submitButtonText || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.submitButtonText,
         successTitle: introCallModal.successTitle || DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.successTitle,
       },
+      channels: channels,
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
     };
@@ -844,25 +862,11 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
  */
 export async function fetchContactChannels(): Promise<ContactChannelItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>('contact-channels?populate=*&sort=order:asc');
-    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_CONTACT_CHANNELS;
-
-    return raw.map((item: any) => {
-      const data = item.attributes || item;
-      return {
-        id: String(item.documentId || item.id || data.label || Math.random()),
-        order: typeof data.order === 'number' ? data.order : 1,
-        type: data.type || 'email',
-        label: data.label || '',
-        primaryValue: data.primaryValue || '',
-        subtext: data.subtext || '',
-        buttonText: data.buttonText || '',
-        buttonUrl: data.buttonUrl || undefined,
-        iconName: data.iconName || 'mail',
-        iconMedia: data.iconMedia,
-        iconUrl: getStrapiMediaUrl(data.iconMedia) || data.iconUrl || undefined,
-      };
-    });
+    const pageData = await fetchContactPageContent();
+    if (pageData.channels && pageData.channels.length > 0) {
+      return pageData.channels;
+    }
+    return DEFAULT_CONTACT_CHANNELS;
   } catch (error) {
     console.warn('[Strapi] Could not load contact-channels, using defaults:', error);
     return DEFAULT_CONTACT_CHANNELS;
@@ -879,15 +883,21 @@ export function useContactPageContent() {
 
   useEffect(() => {
     let isMounted = true;
-    Promise.all([fetchContactPageContent(), fetchContactChannels()]).then(([pageData, channelsData]) => {
-      if (isMounted) {
-        if (pageData) setContent(pageData);
-        if (channelsData && channelsData.length > 0) setChannels(channelsData);
-        setIsLoading(false);
-      }
-    }).catch(() => {
-      if (isMounted) setIsLoading(false);
-    });
+    fetchContactPageContent()
+      .then((pageData) => {
+        if (isMounted) {
+          if (pageData) {
+            setContent(pageData);
+            if (pageData.channels && pageData.channels.length > 0) {
+              setChannels(pageData.channels);
+            }
+          }
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setIsLoading(false);
+      });
 
     return () => {
       isMounted = false;
@@ -920,10 +930,10 @@ export interface InquiryResponse {
 }
 
 /**
- * Submits a project brief or intro call inquiry to Strapi
+ * Submits a project brief or intro call inquiry to Strapi contact-inquiries
  */
 export async function submitInquiry(payload: InquiryPayload): Promise<InquiryResponse> {
-  const url = `${STRAPI_URL}/api/inquiries`;
+  const url = `${STRAPI_URL}/api/contact-inquiries`;
 
   try {
     const headers: HeadersInit = {
@@ -945,10 +955,11 @@ export async function submitInquiry(payload: InquiryPayload): Promise<InquiryRes
           capabilities: payload.capabilities || [],
           budget: payload.budget || '',
           timeline: payload.timeline || '',
-          message: payload.message,
-          type: payload.type || 'project_brief',
+          message: payload.message || '',
+          inquiryType: payload.type === 'intro_call' ? 'call_booking' : 'brief',
+          preferredTopic: payload.metadata?.topic || '',
+          preferredTime: payload.metadata?.timeSlot || '',
           status: 'new',
-          metadata: payload.metadata || {},
         },
       }),
     });

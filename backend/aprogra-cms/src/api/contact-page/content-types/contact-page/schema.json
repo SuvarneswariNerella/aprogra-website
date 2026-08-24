@@ -1,0 +1,66 @@
+{
+  "kind": "singleType",
+  "collectionName": "contact_pages",
+  "info": {
+    "singularName": "contact-page",
+    "pluralName": "contact-pages",
+    "displayName": "Contact Page Settings",
+    "description": "Comprehensive settings for the Contact page, interactive project brief form, roadmap, channels, and modal"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact-hero"
+    },
+    "roadmap": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact-roadmap"
+    },
+    "brief": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact-brief"
+    },
+    "preview": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact-preview"
+    },
+    "channels": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.contact-channel"
+    },
+    "introCallModal": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.contact-modal"
+    },
+    "closingBannerHeadline": {
+      "type": "string",
+      "default": "Engineering Infinite"
+    },
+    "closingBannerHighlight": {
+      "type": "string",
+      "default": "Possibilities."
+    },
+    "closingBannerSubtitle": {
+      "type": "string",
+      "default": "Thank you for visiting. We look forward to building with you."
+    },
+    "metaTitle": {
+      "type": "string",
+      "default": "Contact Lead Architects | Aprogra"
+    },
+    "metaDescription": {
+      "type": "text",
+      "default": "Connect directly with Aprogra lead architects for enterprise custom software, agentic AI, and scalable cloud systems."
+    }
+  }
+}

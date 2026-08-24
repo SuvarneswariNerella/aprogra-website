@@ -1,0 +1,37 @@
+{
+  "collectionName": "components_sections_contact_modals",
+  "info": {
+    "displayName": "Contact Modal Section",
+    "icon": "calendar",
+    "description": "Intro call modal settings"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "default": "Engineering Kickoff Call"
+    },
+    "subtitle": {
+      "type": "text",
+      "default": "Directly with our Lead Solutions Architect. 15 minutes to evaluate technical fit."
+    },
+    "topicOptions": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "timeSlots": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "submitButtonText": {
+      "type": "string",
+      "default": "Confirm Calendar Reservation"
+    },
+    "successTitle": {
+      "type": "string",
+      "default": "Call Reserved!"
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "collectionName": "components_sections_contact_briefs",
+  "info": {
+    "displayName": "Contact Brief Form Section",
+    "icon": "write",
+    "description": "Interactive contact and project brief form settings"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "02 / INTERACTIVE SPECIFICATION"
+    },
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Configure Your Project Brief"
+    },
+    "subtitle": {
+      "type": "text",
+      "default": "Fill out the brief below to generate your custom project preview and start a direct conversation with our technical team."
+    },
+    "formHeading": {
+      "type": "string",
+      "default": "Project Requirements Form"
+    },
+    "formSubheading": {
+      "type": "string",
+      "default": "Select your project attributes to help us match the right technical team."
+    },
+    "fieldNameLabel": {
+      "type": "string",
+      "default": "Your Name *"
+    },
+    "fieldNamePlaceholder": {
+      "type": "string",
+      "default": "e.g. Alex Morgan"
+    },
+    "fieldEmailLabel": {
+      "type": "string",
+      "default": "Work Email *"
+    },
+    "fieldEmailPlaceholder": {
+      "type": "string",
+      "default": "alex@company.com"
+    },
+    "fieldCompanyLabel": {
+      "type": "string",
+      "default": "Company / Organization (optional)"
+    },
+    "fieldCompanyPlaceholder": {
+      "type": "string",
+      "default": "e.g. NextGen SaaS or Stealth Startup"
+    },
+    "capabilitiesQuestion": {
+      "type": "string",
+      "default": "What capabilities do you require?"
+    },
+    "capabilitiesList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "budgetQuestion": {
+      "type": "string",
+      "default": "Expected Investment Range"
+    },
+    "budgetRangesList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "timelineQuestion": {
+      "type": "string",
+      "default": "Target Timeline"
+    },
+    "timelineRangesList": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    },
+    "messageQuestion": {
+      "type": "string",
+      "default": "Project Overview & Objectives *"
+    },
+    "messagePlaceholder": {
+      "type": "text",
+      "default": "Describe your current tech stack, desired architecture, target timeline, and success criteria..."
+    },
+    "submitButtonText": {
+      "type": "string",
+      "default": "SUBMIT PROJECT BRIEF"
+    },
+    "successTitle": {
+      "type": "string",
+      "default": "Project Brief Received!"
+    }
+  }
+}

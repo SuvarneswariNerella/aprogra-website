@@ -1,0 +1,42 @@
+{
+  "collectionName": "components_elements_contact_channels",
+  "info": {
+    "displayName": "Contact Channel",
+    "icon": "phone",
+    "description": "Direct communication channel card"
+  },
+  "options": {},
+  "attributes": {
+    "type": {
+      "type": "enumeration",
+      "enum": ["email", "phone", "office", "hub", "custom"],
+      "default": "email"
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "primaryValue": {
+      "type": "string",
+      "required": true
+    },
+    "subtext": {
+      "type": "string"
+    },
+    "buttonText": {
+      "type": "string"
+    },
+    "buttonUrl": {
+      "type": "string"
+    },
+    "iconName": {
+      "type": "enumeration",
+      "enum": ["mail", "phone", "map-pin", "globe", "message-square"],
+      "default": "mail"
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}
