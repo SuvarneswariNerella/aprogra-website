@@ -4,7 +4,7 @@
   "info": {
     "singularName": "service-flip-card",
     "pluralName": "service-flip-cards",
-    "displayName": "Service Flip Card",
+    "displayName": "Service Page Flip Card",
     "description": "Individual flip cards for the Engineering Disciplines flip-card grid"
   },
   "options": {
