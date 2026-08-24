@@ -7,9 +7,11 @@ import {
   CheckCircle2, 
   ChevronDown, 
   ChevronLeft, 
-  ChevronRight,
+  ChevronRight, 
+  GraduationCap,
+  Sparkles,
   Layers,
-  GraduationCap
+  Image as ImageIcon
 } from 'lucide-react';
 import ScrollReveal from '@/components/animations/ScrollReveal';
 
@@ -20,6 +22,7 @@ export interface SchoolModuleItem {
   title: string;
   desc: string;
   kpi: string;
+  image?: string;
   color?: string;
   tag?: string;
   highlights?: string[];
@@ -30,439 +33,332 @@ interface SchoolModulesSectionProps {
   className?: string;
 }
 
+const DEFAULT_SCHOOL_IMAGES: string[] = [
+  "https://images.unsplash.com/photo-1551836022-d5d88e9218df?auto=format&fit=crop&w=1200&q=80", // Admissions CRM
+  "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=1200&q=80", // Attendance & Biometrics
+  "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80", // Timetable & Exams
+  "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80", // Fees & Payments
+  "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&fit=crop&w=1200&q=80", // Bus Fleet GPS
+  "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80", // Mobile Apps
+  "https://images.unsplash.com/photo-1450133064473-71024230f91b?auto=format&fit=crop&w=1200&q=80", // HR & Payroll
+  "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=1200&q=80", // Daycare
+  "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80", // Appointments
+  "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80", // AI Assistant
+  "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80", // Analytics & Reports
+];
+
 export const SchoolModulesSection: React.FC<SchoolModulesSectionProps> = ({
   modules,
   className = ""
 }) => {
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const pinContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollProgress, setScrollProgress] = useState(0);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    const trigger = triggerRef.current;
-    const pinContainer = pinContainerRef.current;
-    if (!trigger || !pinContainer || modules.length === 0) return;
+    const section = sectionRef.current;
+    if (!section || modules.length === 0) return;
 
-    // Calculate total scroll distance: 540px per module transition
-    const scrollDistance = (modules.length - 1) * 540;
+    const scrollDistance = (modules.length - 1) * 260;
 
-    const applyCardStyles = (rawIdx: number) => {
-      modules.forEach((_, idx) => {
-        const cardEl = cardRefs.current[idx];
-        if (!cardEl) return;
-
-        const diff = rawIdx - idx;
-
-        if (diff < -1) {
-          // UPCOMING CARDS: waiting below, hidden cleanly without overflowing container
-          gsap.set(cardEl, {
-            y: 40,
-            scale: 0.96,
-            opacity: 0,
-            zIndex: 1,
-            pointerEvents: "none"
-          });
-        } else if (diff >= -1 && diff < 0) {
-          // ENTERING CARD: transitioning smoothly onto top of stack
-          const t = diff + 1; // 0 to 1
-          const y = (1 - t) * 35;
-          const scale = 0.97 + t * 0.03;
-          const opacity = Math.min(t * 1.5, 1);
-          const zIndex = 40 + Math.round(t * 10);
-
-          gsap.set(cardEl, {
-            y: y,
-            scale: scale,
-            opacity: opacity,
-            zIndex: zIndex,
-            pointerEvents: t > 0.7 ? "auto" : "none"
-          });
-        } else {
-          // ACTIVE & PAST CARDS: stacked tightly and cleanly behind with active card having highest zIndex
-          const stackOffset = Math.min(diff, 3);
-          const y = -7 * stackOffset;
-          const scale = 1 - 0.015 * stackOffset;
-          const zIndex = Math.max(2, 50 - Math.round(diff * 2));
-          // Maintain crisp solid opacity
-          const opacity = stackOffset > 2 ? Math.max(1 - (diff - 2) * 0.3, 0) : 1;
-
-          gsap.set(cardEl, {
-            y: y,
-            scale: scale,
-            opacity: opacity,
-            zIndex: zIndex,
-            pointerEvents: diff < 0.4 ? "auto" : "none"
-          });
-        }
-      });
-    };
-
-    // Apply initial styles immediately so card 0 is on top from frame 1
-    applyCardStyles(0);
+    const isDesktop = window.innerWidth >= 1024;
+    if (!isDesktop) return;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
-        trigger: trigger,
-        start: "top top+=80",
+        trigger: section,
+        pin: section,
+        start: 'top top+=76',
         end: `+=${scrollDistance}`,
-        pin: pinContainer,
         pinSpacing: true,
-        scrub: 0.35,
+        scrub: 0.3,
         anticipatePin: 1,
         onUpdate: (self) => {
-          const progress = self.progress;
-          setScrollProgress(progress);
-
-          // Calculate precise active index
-          const rawIdx = progress * (modules.length - 1);
-          const currentIdx = Math.min(Math.round(rawIdx), modules.length - 1);
-          setActiveIndex(currentIdx);
-
-          // Animate cards sequentially based on scroll progress
-          applyCardStyles(rawIdx);
+          setScrollProgress(self.progress);
+          const rawIdx = self.progress * (modules.length - 1);
+          setActiveIndex(Math.min(Math.round(rawIdx), modules.length - 1));
         }
       });
-    }, triggerRef);
+    }, sectionRef);
 
-    return () => {
-      ctx.revert();
-    };
+    return () => ctx.revert();
   }, [modules]);
 
   const scrollToModule = (index: number) => {
-    if (!triggerRef.current) return;
-    const trigger = triggerRef.current;
-    const scrollDistance = (modules.length - 1) * 540;
-    const startY = trigger.getBoundingClientRect().top + window.scrollY - 80;
-    const targetScroll = startY + (index / (modules.length - 1)) * scrollDistance;
-
-    window.scrollTo({
-      top: targetScroll,
-      behavior: 'smooth'
-    });
-  };
-
-  const handleNext = () => {
-    if (activeIndex < modules.length - 1) {
-      scrollToModule(activeIndex + 1);
+    setActiveIndex(index);
+    const isDesktop = window.innerWidth >= 1024;
+    if (isDesktop && sectionRef.current) {
+      const scrollDistance = (modules.length - 1) * 260;
+      const startY = sectionRef.current.getBoundingClientRect().top + window.scrollY - 76;
+      const targetScroll = startY + (index / Math.max(modules.length - 1, 1)) * scrollDistance;
+      window.scrollTo({ top: targetScroll, behavior: 'smooth' });
     }
   };
 
-  const handlePrev = () => {
-    if (activeIndex > 0) {
-      scrollToModule(activeIndex - 1);
-    }
-  };
+  const handleNext = () => { if (activeIndex < modules.length - 1) scrollToModule(activeIndex + 1); };
+  const handlePrev = () => { if (activeIndex > 0) scrollToModule(activeIndex - 1); };
 
-  const currentModule = modules[activeIndex] || modules[0];
+  const currentMod = modules[activeIndex] || modules[0];
+  const CurrentIcon = currentMod.icon;
 
   return (
-    <section 
+    <section
       id="school-erp"
-      ref={triggerRef} 
-      className={`relative w-full bg-white border-b border-[#0B0D12]/10 overflow-hidden ${className}`}
+      ref={sectionRef}
+      className={`relative w-full min-h-[calc(100vh-76px)] bg-white border-b border-[#0B0D12]/10 flex items-center justify-center py-8 px-4 sm:px-6 md:px-12 select-none ${className}`}
     >
-      {/* PINNED SECTION VIEWPORT CONTAINER (Both Left and Right Columns Stay Fixed & Fit in Single Screen) */}
-      <div 
-        ref={pinContainerRef} 
-        className="w-full min-h-[calc(100vh-80px)] flex items-center justify-center py-6 px-4 sm:px-6 md:px-12 select-none"
-      >
-        <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-center">
+      <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        
+        {/* ========================================================= */}
+        {/* 1. PERSISTENT LEFT INFORMATION PANEL (UNIFIED SCHOOL ERP) */}
+        {/* ========================================================= */}
+        <div className="lg:col-span-5 flex flex-col justify-center space-y-4 text-left">
           
-          {/* ========================================================= */}
-          {/* 1. PERSISTENT LEFT INFORMATION PANEL (UNIFIED SCHOOL ERP) */}
-          {/* ========================================================= */}
-          <div className="lg:col-span-5 flex flex-col justify-center space-y-3 sm:space-y-3.5 text-left">
-            
-            <ScrollReveal className="space-y-6">
-              {/* Header Block with Product Badge */}
-              <div className="space-y-1.5">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-xs font-semibold shadow-2xs">
-                  <GraduationCap className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                  <span className="text-[#FF4A1C] font-mono font-bold">Product #1</span>
-                  <span className="text-[#5A5E6E]">· Education &amp; Daycare SaaS</span>
-                </div>
-                
-                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-[#0B0D12] leading-tight tracking-tight">
-                  SmartSchool ERP <br />
-                  <span className="text-[#FF4A1C] font-bold text-xl sm:text-2xl lg:text-3xl block mt-0.5">
-                    {modules.length} Core Modules &amp; Campus OS
-                  </span>
-                </h2>
-                
-                <p className="text-xs sm:text-sm text-[#5A5E6E] leading-relaxed max-w-md">
-                  A unified multi-tenant campus operating system engineered to digitize admissions CRM, biometric attendance, fee gateways, live GPS fleet telemetry, and Saraswati AI lesson planning.
-                </p>
+          <ScrollReveal className="space-y-4">
+            {/* Header Block with Product Badge */}
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-xs font-semibold shadow-2xs">
+                <GraduationCap className="w-3.5 h-3.5 text-[#FF4A1C]" />
+                <span className="text-[#FF4A1C] font-mono font-bold">Product #1</span>
+                <span className="text-[#5A5E6E]">· Education &amp; Daycare SaaS</span>
               </div>
-
-              {/* 4 Unified Enterprise KPI Metrics - Clean Horizontal Row */}
-              <div className="grid grid-cols-4 gap-2 pt-0.5">
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                  <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
-                    11
-                  </span>
-                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                    Modules
-                  </span>
-                </div>
-
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                  <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
-                    480+
-                  </span>
-                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                    Screens
-                  </span>
-                </div>
-
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                  <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
-                    99.9%
-                  </span>
-                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                    Uptime
-                  </span>
-                </div>
-
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
-                  <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
-                    120K+
-                  </span>
-                  <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
-                    Students
-                  </span>
-                </div>
-              </div>
-
-              {/* Live Synchronized Focus Card */}
-              <div className="p-3 rounded-xl bg-white border border-[#0B0D12]/12 space-y-1.5 shadow-2xs hover:border-[#FF4A1C]/35 transition-all duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono uppercase text-[#5A5E6E] font-bold tracking-wider flex items-center gap-1.5">
-                    <Layers className="w-3 h-3 text-[#FF4A1C]" />
-                    Active Module in Stack
-                  </span>
-                  <span className="text-[10px] font-mono text-[#0B0D12] font-semibold bg-[#FAF8F5] border border-[#0B0D12]/10 px-2 py-0.5 rounded">
-                    {activeIndex + 1} / {modules.length}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm sm:text-base font-bold font-display text-[#0B0D12] leading-snug truncate">
-                    {String(activeIndex + 1).padStart(2, "0")}. {currentModule?.title}
-                  </span>
-                  <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF8F5] text-[#FF4A1C] border border-[#FF4A1C]/20 shrink-0">
-                    {currentModule?.tag || 'CORE'}
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-1.5 pt-0.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
-                  <span className="text-[11px] sm:text-xs font-mono text-[#FF4A1C] font-semibold truncate">
-                    {currentModule?.kpi}
-                  </span>
-                </div>
-              </div>
-
-              {/* Action CTA Buttons */}
-              <div className="pt-0.5 flex flex-wrap gap-2.5 sm:gap-3 items-center">
-                <Link
-                  to="/contact"
-                  className="h-10 px-5 rounded-xl bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
-                >
-                  <span>Request Campus Demo</span>
-                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-                <Link
-                  to="/products/school-erp"
-                  className="h-10 px-4 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-xs sm:text-sm font-semibold transition-all shadow-2xs hover:shadow-xs flex items-center justify-center"
-                >
-                  Learn More
-                </Link>
-              </div>
-            </ScrollReveal>
-
-          </div>
-
-          {/* ========================================================= */}
-          {/* 2. INTERACTIVE MODULE STACK & LIVE PREVIEW SHOWCASE       */}
-          {/* ========================================================= */}
-          <div className="lg:col-span-7 flex flex-col justify-center items-center">
-            
-            {/* Top Control Bar: Modules Stack Badge + Step Indicators + Arrows */}
-            <div className="w-full max-w-2xl flex flex-wrap items-center justify-between gap-2.5 mb-8 px-1 select-none">
               
-              {/* Stack Badge */}
-              <div className="flex items-center gap-1.5 bg-[#FAF8F5] px-3 py-1.5 rounded-xl border border-[#0B0D12]/12 shadow-2xs">
-                <Layers className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span className="text-xs font-mono font-bold text-[#0B0D12]">{modules.length} Core Modules Stack</span>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-[#0B0D12] leading-tight tracking-tight">
+                SmartSchool ERP <br />
+                <span className="text-[#FF4A1C] font-bold text-xl sm:text-2xl lg:text-3xl block mt-0.5">
+                  {modules.length} Core Modules &amp; Campus OS
+                </span>
+              </h2>
+              
+              <p className="text-xs sm:text-sm text-[#5A5E6E] leading-relaxed max-w-md">
+                A unified multi-tenant campus operating system engineered to digitize admissions CRM, biometric attendance, fee gateways, live GPS fleet telemetry, and Saraswati AI lesson planning.
+              </p>
+            </div>
+
+            {/* 4 Unified Enterprise KPI Metrics */}
+            <div className="grid grid-cols-4 gap-2 pt-0.5">
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
+                  11
+                </span>
+                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                  Modules
+                </span>
               </div>
 
-              {/* Clickable Step Pills */}
-              <div className="hidden sm:flex items-center gap-1 bg-[#FAF8F5] px-2.5 py-1.5 rounded-full border border-[#0B0D12]/12 shadow-2xs">
-                {modules.map((_, i) => (
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
+                  480+
+                </span>
+                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                  Screens
+                </span>
+              </div>
+
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                <span className="block text-sm sm:text-base font-bold font-display text-[#0B0D12] group-hover:text-[#FF4A1C] transition-colors">
+                  99.9%
+                </span>
+                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                  Uptime
+                </span>
+              </div>
+
+              <div className="p-2 sm:p-2.5 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/12 shadow-2xs text-center group hover:border-[#FF4A1C]/35 transition-all">
+                <span className="block text-sm sm:text-base font-bold font-display text-[#FF4A1C]">
+                  120K+
+                </span>
+                <span className="text-[9px] font-mono text-[#5A5E6E] uppercase font-medium block leading-tight">
+                  Students
+                </span>
+              </div>
+            </div>
+
+            {/* Module Quick-Selector Matrix */}
+            <div className="space-y-1.5 pt-1">
+              <span className="text-[10px] font-mono uppercase text-[#5A5E6E] font-bold tracking-wider block">
+                Quick-Jump to Module
+              </span>
+              <div className="flex flex-wrap gap-1.5 max-h-[130px] overflow-y-auto pr-1">
+                {modules.map((m, mIdx) => (
                   <button
-                    key={i}
-                    onClick={() => scrollToModule(i)}
-                    aria-label={`Jump to module ${i + 1}`}
-                    title={`Module ${i + 1}: ${modules[i]?.title}`}
-                    className={`h-2 rounded-full transition-all duration-200 cursor-pointer ${
-                      i === activeIndex 
-                        ? 'w-5 bg-[#FF4A1C]' 
-                        : 'w-1.5 bg-[#0B0D12]/20 hover:bg-[#0B0D12]/50'
+                    key={mIdx}
+                    type="button"
+                    onClick={() => scrollToModule(mIdx)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-mono transition-all cursor-pointer ${
+                      mIdx === activeIndex
+                        ? 'bg-[#0B0D12] text-white font-bold shadow-xs'
+                        : 'bg-[#FAF8F5] text-[#5A5E6E] hover:text-[#0B0D12] border border-[#0B0D12]/10 hover:border-[#0B0D12]/30'
                     }`}
-                  />
+                  >
+                    {String(mIdx + 1).padStart(2, '0')} {m.title.split(' ')[0]}
+                  </button>
                 ))}
               </div>
-
-              {/* Navigation Progress and Arrows */}
-              <div className="flex items-center gap-1.5">
-                <div className="text-[10px] sm:text-[11px] font-mono font-semibold text-[#5A5E6E] bg-[#FAF8F5] px-2.5 py-1 rounded-md border border-[#0B0D12]/10">
-                  {Math.round(scrollProgress * 100)}%
-                </div>
-                <button 
-                  onClick={handlePrev}
-                  disabled={activeIndex === 0}
-                  aria-label="Previous module"
-                  className="p-1.5 rounded-lg bg-[#FAF8F5] border border-[#0B0D12]/10 text-[#0B0D12] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                >
-                  <ChevronLeft className="w-3.5 h-3.5" />
-                </button>
-                <button 
-                  onClick={handleNext}
-                  disabled={activeIndex === modules.length - 1}
-                  aria-label="Next module"
-                  className="p-1.5 rounded-lg bg-[#FAF8F5] border border-[#0B0D12]/10 text-[#0B0D12] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
-                >
-                  <ChevronRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
             </div>
 
-            {/* STACK VIEWPORT */}
-            <div className="relative w-full max-w-2xl min-h-[385px] sm:min-h-[365px] flex items-center justify-center">
-              <div 
-                className="relative w-full h-[385px] sm:h-[365px] flex items-center justify-center"
-                style={{ perspective: 1200 }}
+            {/* Action CTA Buttons */}
+            <div className="pt-1 flex flex-wrap gap-2.5 sm:gap-3 items-center">
+              <Link
+                to="/contact"
+                className="h-10 px-5 rounded-xl bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-xs sm:text-sm font-semibold shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 group cursor-pointer"
               >
-                {modules.map((mod, index) => {
-                  const Icon = mod.icon;
-                  const isActive = index === activeIndex;
-
-                  return (
-                    <div
-                      key={index}
-                      ref={(el) => { cardRefs.current[index] = el; }}
-                      style={{
-                        position: 'absolute',
-                        width: '100%',
-                        maxWidth: '672px',
-                        borderRadius: '16px',
-                        top: 0,
-                        zIndex: index === 0 ? 50 : 1,
-                        opacity: index === 0 ? 1 : 0,
-                        transform: index === 0 ? 'translateY(0px) scale(1)' : 'translateY(40px) scale(0.96)',
-                        pointerEvents: index === 0 ? 'auto' : 'none',
-                        willChange: 'transform, opacity'
-                      }}
-                      className="select-none"
-                    >
-                      {/* Enterprise Module Card Body */}
-                      <div 
-                        className={`relative w-full rounded-2xl bg-[#FAF8F5] border border-[#0B0D12]/15 border-t-[3px] border-t-[#FF4A1C] p-4 sm:p-5 space-y-3 transition-shadow duration-200 ${
-                          isActive 
-                            ? 'shadow-[0_16px_36px_-10px_rgba(11,13,18,0.12),0_2px_8px_rgba(11,13,18,0.04)] bg-white' 
-                            : 'shadow-[0_10px_24px_-8px_rgba(11,13,18,0.08)] bg-[#FAF8F5]'
-                        }`}
-                      >
-                        {/* Top Row: Icon + Module Number + Category Tag */}
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-[#FFF5F2] border border-[#FF4A1C]/25 flex items-center justify-center text-[#FF4A1C] shadow-2xs">
-                              <Icon className="w-5 h-5" />
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="inline-block px-2 py-0.5 rounded bg-[#FFF5F2] text-[#FF4A1C] border border-[#FF4A1C]/20 text-[10px] font-mono font-bold">
-                                  MOD {String(index + 1).padStart(2, "0")}
-                                </span>
-                                <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#5A5E6E]">
-                                  {mod.tag || "ERP CORE"}
-                                </span>
-                              </div>
-                              <span className="text-[11px] font-mono text-[#0B0D12]/70 font-semibold block mt-0.5">
-                                SmartSchool ERP Suite
-                              </span>
-                            </div>
-                          </div>
-
-                          {/* Large Module Numeric Accent */}
-                          <div className="text-right">
-                            <span className="text-2xl sm:text-3xl font-mono font-extrabold text-[#0B0D12]/20 select-none">
-                              {String(index + 1).padStart(2, "0")}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Middle: Title & Description */}
-                        <div className="space-y-1">
-                          <h4 className="text-base sm:text-lg font-bold font-display text-[#0B0D12] tracking-tight">
-                            {mod.title}
-                          </h4>
-                          <p className="text-xs sm:text-[13px] text-[#4B5563] leading-relaxed line-clamp-2">
-                            {mod.desc}
-                          </p>
-                        </div>
-
-                        {/* Key Capabilities Checklist */}
-                        {mod.highlights && mod.highlights.length > 0 && (
-                          <div className="space-y-1 pt-1 border-t border-[#0B0D12]/8">
-                            <span className="text-[9px] font-mono uppercase text-[#5A5E6E] font-bold tracking-wider block">
-                              Core Capabilities
-                            </span>
-                            <div className="grid grid-cols-1 gap-1">
-                              {mod.highlights.map((point, hIdx) => (
-                                <div key={hIdx} className="flex items-start gap-1.5 text-xs text-[#374151]">
-                                  <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0 mt-0.5" />
-                                  <span className="leading-snug text-[11px] sm:text-xs">{point}</span>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-
-                        {/* Bottom Footer: KPI Metric Badge */}
-                        <div className="pt-2 border-t border-[#0B0D12]/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono">
-                          <div className="inline-flex items-center gap-1.5 text-[#0B0D12] font-semibold bg-white px-2.5 py-1 rounded-lg border border-[#0B0D12]/10 shadow-2xs text-[11px]">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
-                            <span>{mod.kpi}</span>
-                          </div>
-                          <span className="text-[10px] font-mono text-[#5A5E6E] uppercase font-bold">
-                            100% Cloud Native
-                          </span>
-                        </div>
-
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+                <span>Request Campus Demo</span>
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+              </Link>
+              <Link
+                to="/products/school-erp"
+                className="h-10 px-4 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-xs sm:text-sm font-semibold transition-all shadow-2xs hover:shadow-xs flex items-center justify-center"
+              >
+                Learn More
+              </Link>
             </div>
+          </ScrollReveal>
 
-            {/* Bottom Scroll Helper Prompt */}
-            <div className="mt-3 flex items-center gap-2 text-xs font-mono text-[#5A5E6E] bg-[#FAF8F5] px-3 py-1 rounded-full border border-[#0B0D12]/12 shadow-2xs select-none">
-              <ChevronDown className="w-3.5 h-3.5 text-[#FF4A1C] animate-bounce" />
-              <span>
-                {activeIndex === modules.length - 1 
-                  ? "All 11 modules explored · Continue to OmniChat" 
-                  : `Scroll or click to explore next module (${activeIndex + 1}/${modules.length})`}
+        </div>
+
+        {/* ========================================================= */}
+        {/* 2. PRODUCT MODULES IMAGE SLIDESHOW SHOWCASE                */}
+        {/* ========================================================= */}
+        <div className="lg:col-span-7 flex flex-col justify-center items-center">
+          
+          {/* Top Control Bar: Stack Badge + Step Indicators + Navigation Arrows */}
+          <div className="w-full max-w-2xl flex flex-wrap items-center justify-between gap-2.5 mb-4 px-1 select-none">
+            
+            {/* Stack Badge */}
+            <div className="flex items-center gap-1.5 bg-[#FAF8F5] px-3 py-1.5 rounded-xl border border-[#0B0D12]/12 shadow-2xs">
+              <Layers className="w-3.5 h-3.5 text-[#FF4A1C]" />
+              <span className="text-xs font-mono font-bold text-[#0B0D12]">
+                {modules.length} Core Modules Slideshow
               </span>
             </div>
 
+            {/* Clickable Step Pills */}
+            <div className="hidden sm:flex items-center gap-1 bg-[#FAF8F5] px-2.5 py-1.5 rounded-full border border-[#0B0D12]/12 shadow-2xs">
+              {modules.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={() => scrollToModule(i)}
+                  aria-label={`Jump to slide ${i + 1}`}
+                  title={`Module ${i + 1}: ${modules[i]?.title}`}
+                  className={`h-2 rounded-full transition-all duration-200 cursor-pointer ${
+                    i === activeIndex 
+                      ? 'w-5 bg-[#FF4A1C]' 
+                      : 'w-1.5 bg-[#0B0D12]/20 hover:bg-[#0B0D12]/50'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Navigation Progress and Arrows */}
+            <div className="flex items-center gap-1.5">
+              <div className="text-[10px] sm:text-[11px] font-mono font-semibold text-[#5A5E6E] bg-[#FAF8F5] px-2.5 py-1 rounded-md border border-[#0B0D12]/10">
+                {String(activeIndex + 1).padStart(2, '0')} / {String(modules.length).padStart(2, '0')}
+              </div>
+              <button 
+                type="button"
+                onClick={handlePrev}
+                disabled={activeIndex === 0}
+                aria-label="Previous module"
+                className="p-1.5 rounded-lg bg-[#FAF8F5] border border-[#0B0D12]/10 text-[#0B0D12] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <button 
+                type="button"
+                onClick={handleNext}
+                disabled={activeIndex === modules.length - 1}
+                aria-label="Next module"
+                className="p-1.5 rounded-lg bg-[#FAF8F5] border border-[#0B0D12]/10 text-[#0B0D12] hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer transition-colors"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* MAIN IMAGE SLIDESHOW FRAME */}
+          <div className="w-full max-w-2xl">
+            <div className="relative w-full aspect-[16/10] sm:aspect-[16/10] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-white shadow-xl group">
+              
+              {/* Slides Container */}
+              {modules.map((mod, index) => {
+                const isActive = index === activeIndex;
+                const imgSrc = mod.image || DEFAULT_SCHOOL_IMAGES[index % DEFAULT_SCHOOL_IMAGES.length];
+                const ModIcon = mod.icon;
+
+                return (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-all duration-500 ease-out ${
+                      isActive 
+                        ? 'opacity-100 scale-100 z-10 pointer-events-auto' 
+                        : 'opacity-0 scale-98 z-0 pointer-events-none'
+                    }`}
+                  >
+                    <img 
+                      src={imgSrc} 
+                      alt={mod.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading={index === 0 ? "eager" : "lazy"}
+                    />
+
+                    {/* Gradient Overlay for Text Readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/85 via-[#0B0D12]/25 to-transparent pointer-events-none" />
+
+                    {/* Top Floating Badge Bar */}
+                    <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0B0D12]/80 backdrop-blur-md border border-white/15 text-white text-[10px] font-mono font-bold">
+                          <ModIcon className="w-3 h-3 text-[#FF4A1C]" />
+                          <span>MOD {String(index + 1).padStart(2, '0')}</span>
+                        </span>
+                        <span className="hidden sm:inline-block px-2.5 py-1 rounded-lg bg-white/90 backdrop-blur-md border border-[#0B0D12]/10 text-[#0B0D12] text-[10px] font-mono font-bold uppercase tracking-wider">
+                          {mod.tag || "CAMPUS MODULE"}
+                        </span>
+                      </div>
+
+                      <span className="px-2.5 py-1 rounded-lg bg-emerald-500/90 backdrop-blur-md text-white text-[10px] font-mono font-bold">
+                        100% Cloud Native
+                      </span>
+                    </div>
+
+                    {/* Bottom Frosted Glass Info Overlay */}
+                    <div className="absolute bottom-3.5 left-3.5 right-3.5 p-3 sm:p-4 rounded-xl bg-[#0B0D12]/80 backdrop-blur-md border border-white/15 text-white space-y-1.5 shadow-lg">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h3 className="text-sm sm:text-base md:text-lg font-bold font-display tracking-tight text-white flex items-center gap-2">
+                          <span>{mod.title}</span>
+                        </h3>
+                        <span className="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-mono font-semibold px-2 py-0.5 rounded bg-white/10 text-[#FF4A1C] border border-[#FF4A1C]/30">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />
+                          {mod.kpi}
+                        </span>
+                      </div>
+                      
+                      <p className="text-xs sm:text-[13px] text-white/80 line-clamp-2 leading-relaxed">
+                        {mod.desc}
+                      </p>
+                    </div>
+
+                  </div>
+                );
+              })}
+
+            </div>
+          </div>
+
+          {/* Bottom Scroll / Interaction Helper */}
+          <div className="mt-3 flex items-center gap-2 text-xs font-mono text-[#5A5E6E] bg-[#FAF8F5] px-3 py-1 rounded-full border border-[#0B0D12]/12 shadow-2xs select-none">
+            <ChevronDown className="w-3.5 h-3.5 text-[#FF4A1C] animate-bounce" />
+            <span>
+              {activeIndex === modules.length - 1 
+                ? "All 11 modules explored · Continue to OmniChat" 
+                : `Scroll or click to explore next module (${activeIndex + 1}/${modules.length})`}
+            </span>
           </div>
 
         </div>
+
       </div>
     </section>
   );

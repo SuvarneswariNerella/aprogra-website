@@ -132,20 +132,14 @@ export default function Services() {
               </Link>
             </div>
 
-            {/* Right SVG Diagram */}
-            <div ref={rightContentRef} className="bg-[#FAF8F5] p-8 rounded-lg border border-[#0B0D12]/15 shadow-sm flex flex-col justify-center space-y-4 opacity-0">
-              <div className="text-xs font-mono uppercase text-[#0B0D12] font-bold">Lifecycle Pipeline</div>
-              <div className="flex items-center justify-between gap-2 border-b border-[#0B0D12]/10 pb-4">
-                {["Idea", "Design", "Build", "Test", "Deploy"].map((step, i) => (
-                  <div key={i} className="flex flex-col items-center gap-1">
-                    <div className="w-8 h-8 rounded bg-[#0B0D12] text-white font-bold text-xs flex items-center justify-center font-mono">
-                      {i + 1}
-                    </div>
-                    <span className="text-[10px] font-semibold text-[#0B0D12] font-mono">{step}</span>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-[#5A5E6E] font-mono">Automated CI/CD with 99.9% uptime guarantees.</p>
+            {/* Right Image */}
+            <div ref={rightContentRef} className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group opacity-0">
+              <img 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80" 
+                alt="Product Engineering & Architecture Lifecycle" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -182,25 +176,14 @@ export default function Services() {
               </Link>
             </div>
 
-            {/* Right Phone Frames */}
-            <div className="flex justify-center items-center gap-6 perspective-[800px]">
-              <div className="w-36 h-64 bg-[#0B0D12] rounded-xl p-2 shadow-md transform -rotate-6 border-2 border-[#0B0D12] flex flex-col justify-between">
-                <div className="w-12 h-1.5 bg-[#5A5E6E] rounded-full mx-auto my-1" />
-                <div className="h-full bg-[#FAF8F5] rounded p-2 flex flex-col gap-2">
-                  <div className="w-10 h-2 bg-[#0B0D12] rounded" />
-                  <div className="w-full h-12 bg-[#F4F1EA] rounded border border-[#0B0D12]/10" />
-                  <div className="w-full h-12 bg-[#F4F1EA] rounded border border-[#0B0D12]/10" />
-                </div>
-              </div>
-
-              <div className="w-36 h-64 bg-[#0B0D12] rounded-xl p-2 shadow-md transform rotate-6 border-2 border-[#0B0D12] flex flex-col justify-between">
-                <div className="w-12 h-1.5 bg-[#5A5E6E] rounded-full mx-auto my-1" />
-                <div className="h-full bg-[#FAF8F5] rounded p-2 flex flex-col gap-2">
-                  <div className="w-10 h-2 bg-[#FF4A1C] rounded" />
-                  <div className="w-full h-12 bg-[#F4F1EA] rounded border border-[#0B0D12]/10" />
-                  <div className="w-full h-12 bg-[#F4F1EA] rounded border border-[#0B0D12]/10" />
-                </div>
-              </div>
+            {/* Right Image */}
+            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+              <img 
+                src="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80" 
+                alt="Mobile Application Engineering" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -237,26 +220,14 @@ export default function Services() {
               </Link>
             </div>
 
-            {/* Right Browser Frame Simulation */}
-            <div className="bg-[#FAF8F5] rounded-lg border border-[#0B0D12]/15 shadow-sm overflow-hidden">
-              <div className="bg-[#F4F1EA] px-4 py-2.5 border-b border-[#0B0D12]/10 flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#FF4A1C]" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#0B0D12]/20" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-[#0B0D12]/10" />
-                </div>
-                <div className="bg-white px-3 py-0.5 rounded text-label-mono text-[#5A5E6E] w-full max-w-xs ml-2 border border-[#0B0D12]/10">
-                  https://aprogra.com/app
-                </div>
-              </div>
-              <div className="p-6 space-y-4">
-                <div className="h-5 bg-[#0B0D12]/10 rounded w-3/4" />
-                <div className="h-4 bg-[#0B0D12]/5 rounded w-1/2" />
-                <div className="h-20 bg-white rounded border border-[#0B0D12]/10 p-4 flex items-center justify-between">
-                  <span className="text-label-mono font-bold text-[#0B0D12]">Lighthouse Score: 100/100</span>
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF4A1C]" />
-                </div>
-              </div>
+            {/* Right Image */}
+            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+              <img 
+                src="https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80" 
+                alt="Modern Web Application Development" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -293,19 +264,14 @@ export default function Services() {
               </Link>
             </div>
 
-            {/* Neural Network SVG Visual */}
-            <div className="bg-white p-8 rounded-lg border border-[#0B0D12]/15 shadow-sm flex items-center justify-center">
-              <svg viewBox="0 0 300 200" className="w-full h-48">
-                <circle cx="50" cy="100" r="10" fill="#0B0D12" />
-                <circle cx="150" cy="50" r="10" fill="#0B0D12" />
-                <circle cx="150" cy="150" r="10" fill="#FF4A1C" />
-                <circle cx="250" cy="100" r="10" fill="#0B0D12" />
-
-                <line x1="50" y1="100" x2="150" y2="50" stroke="#0B0D12" strokeWidth="1.5" />
-                <line x1="50" y1="100" x2="150" y2="150" stroke="#0B0D12" strokeWidth="1.5" strokeDasharray="4 4" />
-                <line x1="150" y1="50" x2="250" y2="100" stroke="#0B0D12" strokeWidth="1.5" strokeDasharray="4 4" />
-                <line x1="150" y1="150" x2="250" y2="100" stroke="#FF4A1C" strokeWidth="1.5" />
-              </svg>
+            {/* Right Image */}
+            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+              <img 
+                src="https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80" 
+                alt="AI Systems & Intelligent Automation" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -342,18 +308,14 @@ export default function Services() {
               </Link>
             </div>
 
-            {/* Figma Component Swatches */}
-            <div className="bg-[#FAF8F5] p-6 rounded-lg border border-[#0B0D12]/15 shadow-sm space-y-4">
-              <div className="text-badge text-[#5A5E6E]">Design Tokens & UI Swatches</div>
-              <div className="flex gap-3">
-                <div className="w-12 h-12 rounded bg-[#0B0D12] flex items-center justify-center text-white text-[10px] font-mono">Ink</div>
-                <div className="w-12 h-12 rounded bg-[#FF4A1C] flex items-center justify-center text-white text-[10px] font-mono">Accent</div>
-                <div className="w-12 h-12 rounded bg-[#F4F1EA] border border-[#0B0D12]/20 flex items-center justify-center text-[#0B0D12] text-[10px] font-mono">Paper</div>
-              </div>
-              <div className="p-3 rounded bg-white border border-[#0B0D12]/10 flex justify-between items-center text-label-mono font-bold">
-                <span>Button Component</span>
-                <button className="px-4 py-1.5 rounded bg-[#0B0D12] text-white font-bold text-xs">Click Me</button>
-              </div>
+            {/* Right Image */}
+            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+              <img 
+                src="https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80" 
+                alt="UI/UX Design Systems & Interfaces" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -390,12 +352,14 @@ export default function Services() {
               </Link>
             </div>
 
-            {/* Infrastructure Diagram */}
-            <div className="bg-white p-6 rounded-lg border border-[#0B0D12]/15 shadow-sm grid grid-cols-2 gap-3">
-              <div className="p-4 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 text-center text-label-mono font-bold text-[#0B0D12]">EC2 / Compute</div>
-              <div className="p-4 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 text-center text-label-mono font-bold text-[#0B0D12]">S3 Storage</div>
-              <div className="p-4 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 text-center text-label-mono font-bold text-[#0B0D12]">RDS Postgres</div>
-              <div className="p-4 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 text-center text-label-mono font-bold text-[#0B0D12]">CloudFront CDN</div>
+            {/* Right Image */}
+            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+              <img 
+                src="https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80" 
+                alt="Cloud Infrastructure & DevOps Pipeline" 
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>

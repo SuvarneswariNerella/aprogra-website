@@ -1,24 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import React, { useRef } from 'react';
 import { 
   GraduationCap, 
   MessageSquare, 
   Sparkles, 
   ShieldCheck, 
-  CheckCircle2, 
   Bus, 
   Users, 
   Calendar, 
   CreditCard, 
   Bot, 
   Smartphone, 
-  ArrowUpRight, 
   Zap, 
   Lock, 
-  Server, 
   Headphones, 
   MessageCircle, 
   Send, 
@@ -26,25 +19,22 @@ import {
   FileText, 
   HeartHandshake, 
   BarChart3, 
-  Check, 
-  ArrowRight,
-  Layers,
-  Activity,
-  UserCheck,
-  CalendarCheck,
-  Video,
-  Award
+  Layers, 
+  Activity, 
+  UserCheck, 
+  CalendarCheck, 
+  Award 
 } from 'lucide-react';
 
 import ProductsHero from '@/components/products/ProductsHero';
 import ProductsWhyTrust from '@/components/products/ProductsWhyTrust';
-import Testimonials from '@/components/home/Testimonials';
+import { Component as TestimonialSlider } from '@/components/ui/testimonial-slider';
+import ScrollReveal from '@/components/animations/ScrollReveal';
+import { useTestimonials } from '@/lib/strapi';
 import AboutContact from '@/components/about/AboutContact';
 import { SchoolModulesSection } from '@/components/products/SchoolModulesSection';
 import { OmniChatModulesSection } from '@/components/products/OmniChatModulesSection';
 import { useProduct } from '@/lib/strapi';
-
-gsap.registerPlugin(ScrollTrigger);
 
 const ICON_MAP: Record<string, any> = {
   BookOpen: FileText,
@@ -313,68 +303,20 @@ const OMNICHAT_FEATURES = [
   },
 ];
 
-// Motion Reveal Variants
-const headerRevealVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.6, ease: [0.215, 0.61, 0.355, 1] as const }
-  }
-};
-
-const gridRevealVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.05,
-    }
-  }
-};
-
-const cardRevealVariants = {
-  hidden: { opacity: 0, y: 24 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      ease: [0.215, 0.61, 0.355, 1] as const
-    }
-  }
-};
-
-// ----------------------------------------------------
-// PRODUCT GRID SKELETON LOADER
-// ----------------------------------------------------
-function ProductGridSkeleton({ count = 6 }: { count?: number }) {
-  return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-      {Array.from({ length: count }).map((_, idx) => (
-        <div 
-          key={idx}
-          className="bg-white border border-[#0B0D12]/10 p-6 rounded-lg space-y-4 shadow-sm animate-pulse relative overflow-hidden"
-        >
-          <div className="w-10 h-10 rounded bg-[#0B0D12]/5 border border-[#0B0D12]/10" />
-          <div className="h-5 bg-[#0B0D12]/10 rounded w-3/4" />
-          <div className="space-y-2 pt-1">
-            <div className="h-3.5 bg-[#0B0D12]/5 rounded w-full" />
-            <div className="h-3.5 bg-[#0B0D12]/5 rounded w-4/5" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
 
 export default function Products() {
   const pageRef = useRef<HTMLDivElement>(null);
-  const [isLoadingGrid, setIsLoadingGrid] = useState(true);
 
   const { product: schoolProduct } = useProduct('school-erp');
   const { product: omnichatProduct } = useProduct('omnichat');
+  const { testimonials: apiTestimonials } = useTestimonials();
+
+  const TESTIMONIALS = apiTestimonials.map(t => ({
+    img: t.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    quote: t.quote,
+    name: t.authorName,
+    role: t.authorCompany ? `${t.authorRole}, ${t.authorCompany}` : t.authorRole,
+  }));
 
   const schoolModules = (schoolProduct?.features && schoolProduct.features.length > 0)
     ? schoolProduct.features.map((f) => ({
@@ -398,23 +340,16 @@ export default function Products() {
       }))
     : OMNICHAT_FEATURES;
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoadingGrid(false);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
-    <div ref={pageRef} className="w-full relative bg-[#F4F1EA] text-[#0B0D12] overflow-hidden pt-16 md:pt-20">
+    <div ref={pageRef} className="w-full relative bg-[#F4F1EA] text-[#0B0D12]">
       
       {/* ---------------------------------------------------- */}
-      {/* 1. DISTINCT, REDESIGNED PRODUCTS HERO                */}
+      {/* 1. PRODUCTS HERO                                      */}
       {/* ---------------------------------------------------- */}
       <ProductsHero />
 
       {/* ---------------------------------------------------- */}
-      {/* 2. SCHOOL ERP & DYNAMIC CORE MODULES — UNIFIED SECTION */}
+      {/* 2. SCHOOL ERP & DYNAMIC CORE MODULES                  */}
       {/* ---------------------------------------------------- */}
       <SchoolModulesSection 
         modules={schoolModules} 
@@ -428,17 +363,38 @@ export default function Products() {
       />
 
       {/* ---------------------------------------------------- */}
-      {/* 4. REDESIGNED HIGH-IMPACT KPI CARDS                  */}
+      {/* 4. WHY TEAMS TRUST OUR PRODUCTS                       */}
       {/* ---------------------------------------------------- */}
       <ProductsWhyTrust />
 
       {/* ---------------------------------------------------- */}
-      {/* 5. TESTIMONIALS                                     */}
+      {/* 5. CLIENT TESTIMONIALS (no GSAP pin — avoids conflict */}
+      {/*    with the 2 pinned product sections above)          */}
       {/* ---------------------------------------------------- */}
-      <Testimonials />
+      {TESTIMONIALS.length > 0 && (
+        <section className="relative w-full py-16 sm:py-20 px-4 sm:px-6 md:px-12 bg-[#FAF8F5] text-[#0B0D12] border-b border-[#0B0D12]/10">
+          <div className="max-w-7xl mx-auto w-full space-y-10 relative z-10">
+            <ScrollReveal className="text-center max-w-3xl mx-auto space-y-3">
+              <span className="text-badge text-[#0B0D12] block">
+                Client Feedback
+              </span>
+              <h2 className="text-h2 text-[#0B0D12]">
+                Clients Don't Just Say It. They Mean It.
+              </h2>
+              <p className="text-body text-[#5A5E6E]">
+                Real feedback from partners who scale with AProgra.
+              </p>
+            </ScrollReveal>
+
+            <div className="pt-2">
+              <TestimonialSlider testimonials={TESTIMONIALS} />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ---------------------------------------------------- */}
-      {/* 6. UNIFIED CONTACT SECTION (MATCHING ABOUT & HOME)   */}
+      {/* 6. CONTACT SECTION                                    */}
       {/* ---------------------------------------------------- */}
       <AboutContact />
 

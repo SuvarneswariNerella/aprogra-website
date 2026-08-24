@@ -86,7 +86,7 @@ export default function AboutContact() {
               </div>
               <div>
                 <span className="text-white/50 block text-caption uppercase font-mono">Direct Inquiry</span>
-                <span className="font-bold text-white text-body">{contactData.email || content.hero_13_email || content.direct_card1_email || 'hello@aprogra.com'}</span>
+                <span className="font-bold text-white text-body">{contactData?.email || content?.hero?.email || 'hello@aprogra.com'}</span>
               </div>
             </div>
 
@@ -96,7 +96,7 @@ export default function AboutContact() {
               </div>
               <div>
                 <span className="text-white/50 block text-caption uppercase font-mono">Phone Support</span>
-                <span className="font-bold text-white text-body">{contactData.phone || content.hero_16_phone || content.direct_card2_phone || '+1 (800) 555-0199'}</span>
+                <span className="font-bold text-white text-body">{contactData?.phone || content?.hero?.phone || '+1 (800) 555-0199'}</span>
               </div>
             </div>
 
@@ -107,7 +107,7 @@ export default function AboutContact() {
               <div>
                 <span className="text-white/50 block text-caption uppercase font-mono">Global Headquarters</span>
                 <span className="font-bold text-white text-body">
-                  {contactData.officeLocation || content.hero_19_studioHqValue || content.direct_card3_city || 'Hyderabad, India • Global Remote Pods'}
+                  {contactData?.officeLocation || content?.hero?.studioHqValue || 'Hyderabad, India • Global Remote Pods'}
                 </span>
               </div>
             </div>

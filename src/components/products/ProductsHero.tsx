@@ -44,7 +44,7 @@ export default function ProductsHero() {
       ref={containerRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative w-full min-h-[calc(100vh-64px)] md:min-h-[calc(100vh-80px)] lg:h-[calc(100vh-80px)] lg:max-h-[calc(100vh-80px)] bg-[#F4F1EA] text-[#0B0D12] py-6 sm:py-8 lg:py-4 px-4 sm:px-6 md:px-10 lg:px-12 border-b border-[#0B0D12]/10 overflow-hidden flex flex-col justify-center"
+      className="relative w-full min-h-[calc(100vh-76px)] bg-[#F4F1EA] text-[#0B0D12] pt-20 pb-8 sm:pt-24 sm:pb-10 px-4 sm:px-6 md:px-10 lg:px-12 border-b border-[#0B0D12]/10 overflow-hidden flex flex-col justify-center"
     >
       {/* Ambient Engineering Grid & Glow in Background */}
       <div className="absolute inset-0 pointer-events-none -z-0 opacity-40">
@@ -149,47 +149,47 @@ export default function ProductsHero() {
           {/* Micro Telemetry Ticker */}
           <div className="pt-2.5 sm:pt-3 border-t border-[#0B0D12]/10 grid grid-cols-3 gap-2.5 max-w-lg">
             <div>
-              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">120K+</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">Active Users</span>
+              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">2</span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">SaaS Ecosystems</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#FF4A1C]">99.98%</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">Production SLA</span>
+              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#FF4A1C]">17</span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">Live Modules</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">100%</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">In-House Code</span>
+              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">480+</span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">Campuses &amp; Clients</span>
             </div>
           </div>
         </motion.div>
 
-        {/* RIGHT COLUMN: 3D Layered Technology Ecosystem Stage */}
+        {/* RIGHT COLUMN: Main Product Showcase Image Container */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.94 }}
+          initial={{ opacity: 0, scale: 0.95 }}
           animate={isInView ? { opacity: 1, scale: 1 } : {}}
-          transition={{ duration: 0.9, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
           className="lg:col-span-6 relative flex items-center justify-center w-full"
         >
-          {/* Main 3D Container with Parallax Tilt */}
           <div 
             style={{
-              transform: `perspective(1200px) rotateX(${mousePos.y * 0.7}deg) rotateY(${mousePos.x * 0.7}deg)`,
+              transform: `perspective(1200px) rotateX(${mousePos.y * 0.5}deg) rotateY(${mousePos.x * 0.5}deg)`,
               transition: 'transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1)'
             }}
-            className="w-full max-w-[480px] lg:max-w-[440px] xl:max-w-[480px] relative space-y-2"
+            className="w-full max-w-[540px] space-y-2.5"
           >
-            {/* Top Product Switch Tabs on Stage */}
+            {/* Top Product Tabs Bar */}
             <div className="flex items-center justify-between px-1">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-[#FF4A1C]" />
+                <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
                 <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#0B0D12]">
-                  Live Production Stream
+                  {activeStageProduct === 'smartschool' ? 'SmartSchool ERP Preview' : 'OmniChat AI Preview'}
                 </span>
               </div>
-              <div className="flex gap-1 bg-white/80 backdrop-blur-sm p-0.5 rounded-lg border border-[#0B0D12]/15 shadow-2xs">
+              <div className="flex gap-1 bg-white/90 backdrop-blur-sm p-0.5 rounded-lg border border-[#0B0D12]/15 shadow-2xs">
                 <button
+                  type="button"
                   onClick={() => setActiveStageProduct('smartschool')}
-                  className={`px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-md text-[10px] font-mono font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
                     activeStageProduct === 'smartschool'
                       ? 'bg-[#0B0D12] text-white shadow-xs'
                       : 'text-[#5A5E6E] hover:text-[#0B0D12]'
@@ -198,8 +198,9 @@ export default function ProductsHero() {
                   SmartSchool
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveStageProduct('omnichat')}
-                  className={`px-2 py-0.5 sm:px-2.5 sm:py-0.5 rounded-md text-[10px] font-mono font-bold transition-all ${
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold transition-all cursor-pointer ${
                     activeStageProduct === 'omnichat'
                       ? 'bg-[#0B0D12] text-white shadow-xs'
                       : 'text-[#5A5E6E] hover:text-[#0B0D12]'
@@ -210,153 +211,58 @@ export default function ProductsHero() {
               </div>
             </div>
 
-            {/* Core Display Dashboard Screen */}
-            <div className="bg-white border border-[#0B0D12]/20 rounded-2xl p-3 sm:p-3.5 lg:p-3.5 xl:p-4 shadow-lg relative overflow-hidden backdrop-blur-md">
+            {/* Main Product Image Container */}
+            <div className="relative w-full aspect-[16/10] sm:aspect-[16/10] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-white shadow-xl group">
+              <img 
+                src={
+                  activeStageProduct === 'smartschool'
+                    ? "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
+                    : "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"
+                }
+                alt={activeStageProduct === 'smartschool' ? "SmartSchool ERP Platform Interface" : "OmniChat AI Communication Hub"}
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="eager"
+              />
               
-              {/* Header Bar */}
-              <div className="flex items-center justify-between pb-2 border-b border-[#0B0D12]/10 mb-2">
-                <div className="flex items-center gap-1.5">
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 rounded-full bg-[#FF4A1C]/20 border border-[#FF4A1C]" />
-                    <span className="w-2 h-2 rounded-full bg-[#0B0D12]/20 border border-[#0B0D12]/40" />
-                    <span className="w-2 h-2 rounded-full bg-emerald-400/30 border border-emerald-500" />
-                  </div>
-                  <span className="ml-1 text-[10px] font-mono font-medium text-[#5A5E6E]">
-                    {activeStageProduct === 'smartschool' ? 'smartschool.aprogra.app/live' : 'omnichat.aprogra.app/bridge'}
-                  </span>
-                </div>
+              {/* Subtle Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/70 via-[#0B0D12]/10 to-transparent pointer-events-none" />
 
-                <span className="inline-flex items-center gap-1 text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  <span className="w-1 h-1 rounded-full bg-emerald-500 animate-ping" />
-                  ONLINE · 99.98%
+              {/* Top Status Badge */}
+              <div className="absolute top-3 right-3 z-10">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#0B0D12]/80 backdrop-blur-md border border-white/15 text-white text-[10px] font-mono font-semibold">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                  LIVE PRODUCTION · 99.98% SLA
                 </span>
               </div>
 
-              {/* Dynamic Product Viewport */}
-              {activeStageProduct === 'smartschool' ? (
-                <div className="space-y-2 animate-in fade-in duration-300">
-                  
-                  {/* Top Stats Grid */}
-                  <div className="grid grid-cols-3 gap-1.5">
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 space-y-0.5">
-                      <span className="text-[8px] sm:text-[9px] font-mono text-[#5A5E6E] uppercase">Campuses</span>
-                      <span className="block text-sm sm:text-base lg:text-lg font-extrabold font-display text-[#0B0D12]">480+</span>
-                      <span className="text-[7.5px] sm:text-[8px] text-emerald-600 font-mono font-semibold">↑ Synchronized</span>
-                    </div>
-
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 space-y-0.5">
-                      <span className="text-[8px] sm:text-[9px] font-mono text-[#5A5E6E] uppercase">Attendance</span>
-                      <span className="block text-sm sm:text-base lg:text-lg font-extrabold font-display text-[#FF4A1C]">98.4%</span>
-                      <span className="text-[7.5px] sm:text-[8px] text-[#5A5E6E] font-mono">Biometric Sync</span>
-                    </div>
-
-                    <div className="p-1.5 sm:p-2 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 space-y-0.5">
-                      <span className="text-[8px] sm:text-[9px] font-mono text-[#5A5E6E] uppercase">Fee Invoicing</span>
-                      <span className="block text-sm sm:text-base lg:text-lg font-extrabold font-display text-[#0B0D12]">$1.4M+</span>
-                      <span className="text-[7.5px] sm:text-[8px] text-emerald-600 font-mono">Automated</span>
-                    </div>
-                  </div>
-
-                  {/* Live Bus Fleet GPS Tracking Node */}
-                  <div className="p-2 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-white border border-[#0B0D12]/15 flex items-center justify-center text-[#FF4A1C]">
-                        <Bus className="w-3.5 h-3.5" />
-                      </div>
-                      <div>
-                        <span className="block text-[11px] sm:text-xs font-bold font-display text-[#0B0D12]">Fleet Route #18</span>
-                        <span className="block text-[8px] sm:text-[9px] font-mono text-[#5A5E6E]">42 Students · GPS Active</span>
-                      </div>
-                    </div>
-                    <span className="text-[9px] sm:text-[10px] font-mono font-bold text-emerald-600 px-1.5 py-0.5 rounded bg-emerald-50 border border-emerald-200">
-                      ETA 4 min
-                    </span>
-                  </div>
-
-                  {/* Saraswati AI Assistant Pill */}
-                  <div className="p-2 rounded-xl bg-[#0B0D12] text-white space-y-0.5 shadow-md">
-                    <div className="flex items-center justify-between text-[9px] sm:text-[10px] font-mono text-[#FF4A1C]">
-                      <span className="flex items-center gap-1.5 font-bold">
-                        <Bot className="w-3 h-3" /> Saraswati AI Engine
-                      </span>
-                      <span className="text-white/60 text-[8px]">Latency: 38ms</span>
-                    </div>
-                    <p className="text-[10px] sm:text-[11px] text-white/90 font-sans italic">
-                      "Autonomous exam paper generation complete for Grade 10 Physics."
-                    </p>
-                  </div>
-
+              {/* Bottom Info Bar Overlay */}
+              <div className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-between text-white text-xs font-mono">
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-1 rounded bg-[#0B0D12]/80 backdrop-blur-md border border-white/10 text-[11px] font-bold">
+                    {activeStageProduct === 'smartschool' ? 'SmartSchool • 11 Modules' : 'OmniChat • 4 Channels'}
+                  </span>
                 </div>
-              ) : (
-                <div className="space-y-2 animate-in fade-in duration-300">
-                  
-                  {/* Channels Bar */}
-                  <div className="flex items-center justify-between p-2 rounded-xl bg-[#FAF8F5] border border-[#0B0D12]/10">
-                    <span className="text-[10px] sm:text-[11px] font-mono font-bold text-[#0B0D12]">Connected Channels</span>
-                    <div className="flex gap-1">
-                      {['WhatsApp', 'Instagram', 'Telegram'].map((ch) => (
-                        <span key={ch} className="px-1.5 py-0.5 rounded text-[8px] sm:text-[9px] font-mono font-bold bg-white border border-[#0B0D12]/15 text-[#0B0D12]">
-                          {ch}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Live Multi-channel Chat Simulation */}
-                  <div className="space-y-1.5 bg-[#FAF8F5] p-2 rounded-xl border border-[#0B0D12]/10 text-xs">
-                    <div className="flex justify-start">
-                      <div className="bg-white border border-[#0B0D12]/10 px-2.5 py-1 rounded-xl text-[#0B0D12] max-w-[90%] space-y-0.5 shadow-2xs">
-                        <span className="block text-[8px] font-mono text-[#5A5E6E]">WhatsApp Official API</span>
-                        <p className="text-[10px] sm:text-[11px]">Hi! We need an enterprise license for 15 agents. Can we integrate our CRM?</p>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end">
-                      <div className="bg-[#0B0D12] text-white px-2.5 py-1.5 rounded-xl text-left max-w-[90%] space-y-0.5 shadow-md">
-                        <div className="flex items-center justify-between text-[8px] font-mono text-[#FF4A1C]">
-                          <span className="flex items-center gap-1 font-bold">
-                            <Bot className="w-2.5 h-2.5" /> OmniChat AI Copilot
-                          </span>
-                          <span className="text-white/60">Resolved</span>
-                        </div>
-                        <p className="text-[10px] sm:text-[11px] text-white/90">
-                          Yes! Webhook &amp; REST APIs connect in &lt;5 mins. Let's schedule a call!
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Meta Template Engine Verification */}
-                  <div className="p-2 rounded-xl bg-white border border-[#0B0D12]/15 flex items-center justify-between text-[10px] sm:text-[11px] font-mono">
-                    <span className="flex items-center gap-1.5 text-[#0B0D12] font-bold">
-                      <CheckCircle2 className="w-3 h-3 text-[#FF4A1C]" /> Meta Template Engine
-                    </span>
-                    <span className="text-[8px] sm:text-[9px] text-emerald-600 font-bold">APPROVED &amp; LIVE</span>
-                  </div>
-
-                </div>
-              )}
-
+                <span className="text-[10px] text-white/80 font-mono">
+                  {activeStageProduct === 'smartschool' ? '480+ Campuses Active' : 'Meta & AI Verified'}
+                </span>
+              </div>
             </div>
 
-            {/* Floating Layered Tech Badges with 3D Depth Offsets */}
+            {/* Bottom Tech Badges */}
             <div className="flex flex-wrap gap-1.5 pt-0.5 justify-center">
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/95 border border-[#0B0D12]/15 text-[#0B0D12] text-[9px] sm:text-[10px] font-mono font-bold shadow-xs hover:border-[#FF4A1C] transition-colors">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white border border-[#0B0D12]/12 text-[#0B0D12] text-[10px] font-mono font-semibold shadow-2xs">
                 <Database className="w-3 h-3 text-[#FF4A1C]" />
                 Multi-Tenant Postgres
               </span>
-
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/95 border border-[#0B0D12]/15 text-[#0B0D12] text-[9px] sm:text-[10px] font-mono font-bold shadow-xs hover:border-[#FF4A1C] transition-colors">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white border border-[#0B0D12]/12 text-[#0B0D12] text-[10px] font-mono font-semibold shadow-2xs">
                 <Lock className="w-3 h-3 text-[#FF4A1C]" />
-                SOC-2 Architecture
+                SOC-2 Certified
               </span>
-
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-white/95 border border-[#0B0D12]/15 text-[#0B0D12] text-[9px] sm:text-[10px] font-mono font-bold shadow-xs hover:border-[#FF4A1C] transition-colors">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-lg bg-white border border-[#0B0D12]/12 text-[#0B0D12] text-[10px] font-mono font-semibold shadow-2xs">
                 <Cpu className="w-3 h-3 text-[#FF4A1C]" />
-                Proprietary AI Models
+                Autonomous AI Models
               </span>
             </div>
-
           </div>
         </motion.div>
 

@@ -3,10 +3,8 @@ import gsap from 'gsap';
 import { 
   ArrowRight, 
   Sparkles, 
-  Activity, 
   ShieldCheck, 
   Globe2, 
-  Terminal,
   ArrowDown
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -218,94 +216,25 @@ export default function ServicesHero({
           </div>
 
           {/* ======================================================== */}
-          {/* RIGHT COLUMN: Credibility Panels & Architecture Stack    */}
+          {/* RIGHT COLUMN: Service Architecture & Delivery Image      */}
           {/* ======================================================== */}
-          <div ref={rightColRef} className="lg:col-span-5 space-y-3">
-            
-            {/* 1. Primary Card: Architecture Service Stack */}
-            <div className="hero-card-stagger rounded-2xl bg-white border border-[#0B0D12]/15 p-4 sm:p-5 shadow-md space-y-2.5">
-              
-              {/* Header row */}
-              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
-                <span className="text-[11px] font-mono font-bold text-[#0B0D12] uppercase tracking-wider flex items-center gap-1.5">
-                  <Terminal className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                  <span>{hero.stackTitle || 'SERVICE STACK'}</span>
-                </span>
-                
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>{hero.stackBadge || 'Live Pods'}</span>
-                </span>
-              </div>
-
-              {/* Service Categories List */}
-              <div className="space-y-1.5">
-                {services.slice(0, 5).map((item, idx) => (
-                  <div 
-                    key={item.slug || item.id || idx}
-                    className="p-1.5 sm:p-2 rounded-lg bg-gray-50/80 hover:bg-gray-100/80 border border-gray-200/80 transition-colors flex items-center justify-between gap-2"
-                  >
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span 
-                        className="w-1.5 h-1.5 rounded-full shrink-0"
-                        style={{ backgroundColor: item.accentColor }}
-                      />
-                      <span className="text-[11px] font-bold font-mono text-[#0B0D12] truncate">
-                        0{idx + 1} {item.title}
-                      </span>
-                    </div>
-
-                    <div className="hidden sm:flex items-center gap-1 shrink-0">
-                      {item.deliverables && item.deliverables.slice(0, 2).map((pill: any, pIdx: number) => {
-                        const pillText = typeof pill === 'string' ? pill : pill.item;
-                        return (
-                          <span 
-                            key={pIdx} 
-                            className="px-1.5 py-0.5 rounded bg-white border border-gray-200 text-[9px] font-mono text-gray-600 shadow-2xs"
-                          >
-                            {pillText}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Card Footer Metric */}
-              <div className="pt-1.5 flex items-center justify-between text-[10px] sm:text-[11px] font-mono text-gray-500 border-t border-gray-100">
-                <span>{hero.stackFooterLeft || 'Direct Access to Senior Architects'}</span>
-                <span className="font-bold text-[#0B0D12]">{hero.stackFooterRight || 'Zero Hand-offs'}</span>
-              </div>
-
-            </div>
-
-            {/* 2. Secondary Stacked Card: Velocity & SLA Credibility */}
-            <div className="hero-card-stagger rounded-xl bg-white border border-[#0B0D12]/15 p-2.5 sm:p-3 shadow-sm flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-lg bg-[#0B0D12] text-white flex items-center justify-center shrink-0">
-                  <Activity className="w-4 h-4 text-[#FF4A1C]" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold font-display text-[#0B0D12]">
-                    {hero.slaCardTitle || 'Engineering Velocity & SLAs'}
-                  </div>
-                  <div className="text-[10px] text-gray-500 font-mono">
-                    {hero.slaCardDesc || '99.98% Historical Uptime • 2-Week Sprints'}
-                  </div>
-                </div>
-              </div>
-
-              <div className="text-right shrink-0">
-                <span className="text-xs font-mono font-bold text-emerald-600 block">
-                  {hero.slaCardMetric || '98.4%'}
-                </span>
-                <span className="text-[9px] font-mono text-gray-400">
-                  {hero.slaCardMetricLabel || 'Retention Rate'}
+          <div ref={rightColRef} className="lg:col-span-5 relative w-full flex items-center justify-center">
+            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+              <img 
+                src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80" 
+                alt="Full-Cycle Software Engineering & Architecture"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-xs font-mono">
+                <span className="px-2.5 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">Full-Cycle Engineering</span>
+                <span className="flex items-center gap-1.5 text-emerald-400">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  Live Pods
                 </span>
               </div>
             </div>
-
           </div>
 
         </div>

@@ -132,29 +132,20 @@ export default function ParallaxStack() {
           style={{ minHeight: '100vh' }}
           className="sticky-wrapper absolute inset-0 w-full h-[100vh] min-h-screen bg-[#FAF8F5] text-[#0B0D12] z-10 flex flex-col lg:flex-row overflow-hidden snap-start snap-always"
         >
-          {/* LEFT: VISUAL (50%) */}
+          {/* LEFT: VISUAL (50%) - Panel 1 (Image on Left) */}
           <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-full bg-[#F4F1EA] relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-[#0B0D12]/10">
             {/* Decorative Number 01 */}
             <span className="absolute bottom-[-20px] left-[-20px] font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none text-[#0B0D12]/[0.04] select-none pointer-events-none">
               01
             </span>
 
-            {panelWhoWeAre.coverImageUrl ? (
-              <img 
-                src={panelWhoWeAre.coverImageUrl} 
-                alt={panelWhoWeAre.headline} 
-                className="w-full h-full object-cover relative z-10"
-              />
-            ) : (
-              /* Overlapping Circles Abstract Graphic */
-              <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center">
-                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border border-[#0B0D12]/20 bg-[#0B0D12]/[0.02]" />
-                <div className="absolute w-32 h-32 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.04] translate-x-8 -translate-y-6" />
-                <div className="absolute w-20 h-20 sm:w-24 sm:h-24 lg:w-32 lg:h-32 rounded-full bg-white border border-[#0B0D12]/10 shadow-lg -translate-x-6 translate-y-8 flex items-center justify-center">
-                  <div className="w-4 h-4 lg:w-5 lg:h-5 rounded-full bg-[#FF4A1C]" />
-                </div>
-              </div>
-            )}
+            <img 
+              src={panelWhoWeAre.coverImageUrl || "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80"} 
+              alt={panelWhoWeAre.headline || "AProgra Engineering Team"} 
+              className="w-full h-full object-cover relative z-10"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent z-15 pointer-events-none" />
           </div>
 
           {/* RIGHT: TEXT (50%) */}
@@ -228,30 +219,20 @@ export default function ParallaxStack() {
             </div>
           </div>
 
-          {/* RIGHT: VISUAL (50%) */}
+          {/* RIGHT: VISUAL (50%) - Panel 2 (Image on Right) */}
           <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-full bg-[#131722] relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-l border-white/10 order-1 lg:order-2">
             {/* Decorative Number 02 */}
             <span className="absolute bottom-[-20px] right-[-20px] font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none text-white/[0.03] select-none pointer-events-none">
               02
             </span>
 
-            {panelMission.coverImageUrl ? (
-              <img 
-                src={panelMission.coverImageUrl} 
-                alt={panelMission.headline} 
-                className="w-full h-full object-cover relative z-10"
-              />
-            ) : (
-              /* Target / Bullseye Visual */
-              <div className="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 flex items-center justify-center">
-                <div className="absolute w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full border border-white/10" />
-                <div className="absolute w-40 h-40 sm:w-48 sm:h-48 lg:w-60 lg:h-60 rounded-full border border-white/15 bg-white/[0.02]" />
-                <div className="absolute w-28 h-28 sm:w-32 sm:h-32 lg:w-40 lg:h-40 rounded-full border border-[#FF4A1C]/30 bg-[#FF4A1C]/[0.05]" />
-                <div className="absolute w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full bg-[#FF4A1C] flex items-center justify-center shadow-lg shadow-[#FF4A1C]/30">
-                  <div className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-white" />
-                </div>
-              </div>
-            )}
+            <img 
+              src={panelMission.coverImageUrl || "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80"} 
+              alt={panelMission.headline || "Engineering Mission"} 
+              className="w-full h-full object-cover relative z-10"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent z-15 pointer-events-none" />
           </div>
         </div>
 
@@ -261,36 +242,20 @@ export default function ParallaxStack() {
           style={{ minHeight: '100vh' }}
           className="sticky-wrapper absolute inset-0 w-full h-[100vh] min-h-screen bg-[#FAF8F5] text-[#0B0D12] z-30 flex flex-col lg:flex-row overflow-hidden shadow-2xl border-t border-[#0B0D12]/10 snap-start snap-always"
         >
-          {/* LEFT: VISUAL (50%) - Alternating layout matching Panel 1 */}
+          {/* LEFT: VISUAL (50%) - Panel 3 (Image on Left) */}
           <div className="w-full lg:w-1/2 h-56 sm:h-64 lg:h-full bg-[#F4F1EA] relative flex items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-r border-[#0B0D12]/10">
             {/* Decorative Number 03 */}
             <span className="absolute bottom-[-20px] left-[-20px] font-display font-extrabold text-[160px] sm:text-[180px] lg:text-[220px] leading-none text-[#0B0D12]/[0.04] select-none pointer-events-none">
               03
             </span>
 
-            {panelVision.coverImageUrl ? (
-              <img 
-                src={panelVision.coverImageUrl} 
-                alt={panelVision.headline} 
-                className="w-full h-full object-cover relative z-10"
-              />
-            ) : (
-              /* Glowing Infinity / Futuristic Visual */
-              <div className="relative flex items-center justify-center">
-                {/* Central Technical Shield */}
-                <div className="relative w-48 h-48 sm:w-56 sm:h-56 lg:w-72 lg:h-72 flex items-center justify-center bg-white rounded-lg border border-[#0B0D12]/10 shadow-lg p-6 group">
-                  <div className="absolute -top-3 -right-3 px-2.5 py-0.5 bg-[#0B0D12] text-white text-badge rounded">
-                    {panelVision.visionBadgeYear || '2030 Vision'}
-                  </div>
-
-                  <div className="w-28 h-28 sm:w-36 sm:h-36 lg:w-44 lg:h-44 rounded bg-[#FAF8F5] border border-[#0B0D12]/10 flex items-center justify-center relative overflow-hidden">
-                    <svg className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 text-[#0B0D12] relative z-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <path d="M12 12c-2-2.5-4-4-6.5-4A4.5 4.5 0 0 0 1 12.5 4.5 4.5 0 0 0 5.5 17c2.5 0 4.5-1.5 6.5-4zm0 0c2 2.5 4 4 6.5 4a4.5 4.5 0 0 0 4.5-4.5A4.5 4.5 0 0 0 18.5 7c-2.5 0-4.5 1.5-6.5 4z" />
-                    </svg>
-                  </div>
-                </div>
-              </div>
-            )}
+            <img 
+              src={panelVision.coverImageUrl || "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80"} 
+              alt={panelVision.headline || "AProgra Future Vision"} 
+              className="w-full h-full object-cover relative z-10"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent z-15 pointer-events-none" />
           </div>
 
           {/* RIGHT: TEXT (50%) */}

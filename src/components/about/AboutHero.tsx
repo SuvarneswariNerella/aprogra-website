@@ -3,49 +3,16 @@ import { motion, useInView } from 'motion/react';
 import { 
   Sparkles, 
   ArrowRight, 
-  ArrowDown, 
-  ShieldCheck, 
-  Globe2, 
-  Layers, 
-  Cpu, 
-  Code, 
-  Server, 
-  CheckCircle2,
-  Terminal,
-  Activity,
-  Zap,
-  Box
+  ArrowDown
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAboutPage, PillarItem } from '@/lib/strapi';
-
-function getPillarIcon(iconName: string) {
-  switch ((iconName || '').toLowerCase()) {
-    case 'server':
-      return Server;
-    case 'cpu':
-      return Cpu;
-    case 'globe2':
-    case 'globe':
-      return Globe2;
-    case 'code':
-      return Code;
-    case 'zap':
-      return Zap;
-    case 'box':
-      return Box;
-    case 'layers':
-    default:
-      return Layers;
-  }
-}
+import { useAboutPage } from '@/lib/strapi';
 
 export default function AboutHero() {
   const { aboutPage } = useAboutPage();
   const heroData = aboutPage.hero;
 
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [activePillar, setActivePillar] = useState(0);
   const heroRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(heroRef, { once: true, margin: "-50px" });
 
@@ -176,82 +143,29 @@ export default function AboutHero() {
         </motion.div>
 
         {/* ========================================================= */}
-        {/* RIGHT COLUMN: Interactive Studio DNA & Blueprint Card     */}
+        {/* RIGHT COLUMN: Studio Architecture & Team Image            */}
         {/* ========================================================= */}
         <motion.div 
           initial={{ opacity: 0, x: 35 }}
           animate={isInView ? { opacity: 1, x: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
-          className="lg:col-span-5 relative w-full"
+          className="lg:col-span-5 relative w-full flex items-center justify-center"
         >
-          <div className="rounded-2xl bg-white border border-[#0B0D12]/15 p-4 sm:p-5 lg:p-4.5 xl:p-5.5 shadow-lg space-y-3 sm:space-y-3.5">
-            
-            {/* Header row */}
-            <div className="flex items-center justify-between pb-2.5 sm:pb-3 border-b border-gray-100">
-              <span className="text-xs font-mono font-bold text-[#0B0D12] uppercase tracking-wider flex items-center gap-2">
-                <Terminal className="w-4 h-4 text-[#FF4A1C]" />
-                <span>STUDIO BLUEPRINT</span>
-              </span>
-              
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-mono font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Core DNA</span>
+          <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
+            <img 
+              src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80" 
+              alt="AProgra Global Engineering Studio"
+              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-xs font-mono">
+              <span className="px-2.5 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">Studio HQ • Hyderabad</span>
+              <span className="flex items-center gap-1.5 text-emerald-400">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                Global Delivery
               </span>
             </div>
-
-            {/* Pillar Interactive List */}
-            <div className="space-y-2 lg:space-y-2 xl:space-y-2.5">
-              {heroData.pillars.map((pillar, idx) => {
-                const IconComponent = getPillarIcon(pillar.icon);
-                const isActive = activePillar === idx;
-                const accentColor = pillar.accentColor || '#FF4A1C';
-
-                return (
-                  <div
-                    key={pillar.id || idx}
-                    onClick={() => setActivePillar(idx)}
-                    className={`p-2 sm:p-2.5 lg:p-2.5 xl:p-3 rounded-xl border transition-all cursor-pointer ${
-                      isActive 
-                        ? 'bg-[#FAF8F5] border-[#0B0D12] shadow-xs' 
-                        : 'bg-white border-gray-100 hover:border-gray-300'
-                    }`}
-                  >
-                    <div className="flex items-start gap-2.5 sm:gap-3">
-                      <div 
-                        className="w-7 h-7 sm:w-7.5 sm:h-7.5 lg:w-7.5 lg:h-7.5 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                        style={{ backgroundColor: `${accentColor}15`, color: accentColor }}
-                      >
-                        <IconComponent className="w-3.5 h-3.5" />
-                      </div>
-                      
-                      <div className="space-y-0.5 flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-mono font-bold text-[#0B0D12]">
-                            {pillar.orderNumber} {pillar.title}
-                          </span>
-                          {isActive && (
-                            <CheckCircle2 className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0" />
-                          )}
-                        </div>
-                        <p className="text-[11px] sm:text-xs text-[#5A5E6E] leading-relaxed">
-                          {pillar.description}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Card Footer Micro Bar */}
-            <div className="pt-2.5 sm:pt-3 border-t border-gray-100 flex items-center justify-between text-[10px] sm:text-caption font-mono text-[#5A5E6E]">
-              <span className="flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5 text-[#FF4A1C]" />
-                <span>24/7 Global Uptime</span>
-              </span>
-              <span>100% In-House</span>
-            </div>
-
           </div>
         </motion.div>
 

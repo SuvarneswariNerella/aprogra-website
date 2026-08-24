@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Component as TestimonialSlider } from '@/components/ui/testimonial-slider';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -7,55 +7,61 @@ import { useTestimonials } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
+// Scroll distance per testimonial (px) — shorter = snappier transitions
+const PX_PER_TESTIMONIAL = 400;
+
 export default function Testimonials() {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
 
   const { testimonials: apiTestimonials } = useTestimonials();
   const TESTIMONIALS = apiTestimonials.map(t => ({
-    img: t.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    img: t.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
     quote: t.quote,
     name: t.authorName,
     role: t.authorCompany ? `${t.authorRole}, ${t.authorCompany}` : t.authorRole,
   }));
 
   useEffect(() => {
-    if (!containerRef.current || TESTIMONIALS.length === 0) return;
+    const section = sectionRef.current;
+    if (!section || TESTIMONIALS.length === 0) return;
+
+    // Only pin on desktop — mobile just scrolls normally
+    const isDesktop = window.innerWidth >= 1024;
+    if (!isDesktop) return;
+
+    const totalScrollDistance = (TESTIMONIALS.length - 1) * PX_PER_TESTIMONIAL;
 
     const ctx = gsap.context(() => {
       ScrollTrigger.create({
-        trigger: containerRef.current,
-        start: 'top top',
-        end: '+=200%',
+        trigger: section,
+        start: 'top top+=76',
+        end: `+=${totalScrollDistance}`,
         pin: true,
         pinSpacing: true,
-        scrub: 0.8,
+        scrub: 0.5,
+        anticipatePin: 1,
         onUpdate: (self) => {
-          const count = TESTIMONIALS.length;
-          const newIndex = Math.min(
-            count - 1,
-            Math.max(0, Math.floor(self.progress * count))
-          );
+          const rawIdx = self.progress * (TESTIMONIALS.length - 1);
+          const newIndex = Math.min(TESTIMONIALS.length - 1, Math.max(0, Math.round(rawIdx)));
           setActiveIndex(newIndex);
         },
       });
-    }, containerRef);
+    }, sectionRef);
 
     return () => ctx.revert();
   }, [TESTIMONIALS.length]);
 
-  const handleActiveChange = (newIndex: number) => {
-    setActiveIndex(newIndex);
-  };
+  if (TESTIMONIALS.length === 0) return null;
 
   return (
-    <section 
-      ref={containerRef}
-      className="relative w-full min-h-screen flex flex-col justify-center items-center py-16 px-4 sm:px-6 md:px-12 bg-[#FAF8F5] text-[#0B0D12] border-b border-[#0B0D12]/10 overflow-hidden"
+    <section
+      ref={sectionRef}
+      className="relative w-full min-h-[calc(100vh-76px)] flex flex-col justify-center py-16 sm:py-20 px-4 sm:px-6 md:px-12 bg-[#FAF8F5] text-[#0B0D12] border-b border-[#0B0D12]/10"
     >
       <div className="max-w-7xl mx-auto w-full space-y-10 relative z-10">
-        
-        {/* HEADING wrapped in ScrollReveal */}
+
+        {/* HEADING */}
         <ScrollReveal className="text-center max-w-3xl mx-auto space-y-3">
           <span className="text-badge text-[#0B0D12] block">
             Client Feedback
@@ -68,12 +74,12 @@ export default function Testimonials() {
           </p>
         </ScrollReveal>
 
-        {/* TESTIMONIAL SLIDER */}
+        {/* TESTIMONIAL SLIDER — driven by scroll on desktop, interactive on mobile */}
         <div className="pt-2">
-          <TestimonialSlider 
-            testimonials={TESTIMONIALS} 
-            activeIndex={activeIndex} 
-            onActiveChange={handleActiveChange}
+          <TestimonialSlider
+            testimonials={TESTIMONIALS}
+            activeIndex={activeIndex}
+            onActiveChange={setActiveIndex}
           />
         </div>
 

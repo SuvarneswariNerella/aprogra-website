@@ -110,102 +110,52 @@ export default function AboutCompany() {
         <div className="hidden lg:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-[#0B0D12]/15 z-20 -translate-x-1/2" />
 
         {/* LEFT COLUMN: VISUAL ENGINE */}
-        <div className="relative w-full h-full flex items-center justify-center p-6 bg-[#FAF8F5] rounded-lg border border-[#0B0D12]/15 shadow-xs overflow-hidden">
+        <div className="relative w-full h-full flex items-center justify-center bg-[#FAF8F5] rounded-xl border border-[#0B0D12]/15 shadow-sm overflow-hidden">
           
-          {/* VISUAL 1: Geometric Nodes Blueprint SVG */}
-          <div ref={vis1Ref} className="absolute inset-0 p-8 flex flex-col items-center justify-center transition-opacity">
-            <div ref={vis1ContentRef} className="w-full h-full flex flex-col items-center justify-center opacity-0">
-              <svg viewBox="0 0 400 300" className="w-full h-full max-h-80">
-              {/* Lines */}
-              <line x1="80" y1="80" x2="200" y2="150" stroke="#0B0D12" strokeWidth="1.5" strokeDasharray="4 4" />
-              <line x1="320" y1="80" x2="200" y2="150" stroke="#0B0D12" strokeWidth="1.5" />
-              <line x1="200" y1="150" x2="120" y2="240" stroke="#0B0D12" strokeWidth="1.5" />
-              <line x1="200" y1="150" x2="280" y2="240" stroke="#0B0D12" strokeWidth="1.5" strokeDasharray="4 4" />
-
-              {/* Nodes */}
-              <circle cx="80" cy="80" r="10" fill="#0B0D12" />
-              <circle cx="320" cy="80" r="10" fill="#0B0D12" />
-              <circle cx="200" cy="150" r="16" fill="#0B0D12" stroke="#FF4A1C" strokeWidth="3" />
-              <circle cx="120" cy="240" r="12" fill="#FF4A1C" />
-              <circle cx="280" cy="240" r="12" fill="#0B0D12" />
-
-              {/* Core */}
-              <circle cx="200" cy="150" r="6" fill="#FFFFFF" />
-            </svg>
-              <span className="text-xs font-mono uppercase tracking-wider text-[#0B0D12] mt-4 font-bold">Engineering Operations</span>
-            </div>
-          </div>
-
-          {/* VISUAL 2: Pipeline Visualization Bars */}
-          <div ref={vis2Ref} className="absolute inset-0 p-12 flex flex-col justify-center space-y-6 transition-opacity">
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold font-mono text-[#0B0D12]">
-                <span>DESIGN</span>
-                <span>100%</span>
-              </div>
-              <div className="w-full h-3 rounded bg-[#0B0D12]/10 overflow-hidden">
-                <div className="h-full bg-[#0B0D12] w-full rounded" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold font-mono text-[#0B0D12]">
-                <span>ENGINEER</span>
-                <span>100%</span>
-              </div>
-              <div className="w-full h-3 rounded bg-[#0B0D12]/10 overflow-hidden">
-                <div className="h-full bg-[#0B0D12] w-full rounded" />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold font-mono text-[#0B0D12]">
-                <span>LAUNCH & SCALE</span>
-                <span>100%</span>
-              </div>
-              <div className="w-full h-3 rounded bg-[#0B0D12]/10 overflow-hidden">
-                <div className="h-full bg-[#FF4A1C] w-full rounded" />
-              </div>
-            </div>
-          </div>
-
-          {/* VISUAL 3: 12 Avatar Circles Grid */}
-          <div ref={vis3Ref} className="absolute inset-0 p-8 flex items-center justify-center transition-opacity">
-            <div className="grid grid-cols-4 gap-4 w-full max-w-xs">
-              {[
-                '#0B0D12', '#FF4A1C', '#0B0D12', '#0B0D12',
-                '#0B0D12', '#0B0D12', '#FF4A1C', '#0B0D12',
-                '#0B0D12', '#0B0D12', '#0B0D12', '#FF4A1C'
-              ].map((color, idx) => (
-                <div 
-                  key={idx}
-                  style={{ backgroundColor: color }}
-                  className="w-12 h-12 rounded border border-[#0B0D12]/20 shadow-xs flex items-center justify-center text-white text-xs font-bold font-mono"
-                >
-                  {`T${idx + 1}`}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* VISUAL 4: World Map SVG Outline */}
-          <div ref={vis4Ref} className="absolute inset-0 p-8 flex flex-col items-center justify-center transition-opacity">
-            <svg viewBox="0 0 500 250" className="w-full h-auto opacity-90">
-              <path 
-                d="M150,80 Q200,50 250,80 T350,80 M100,140 Q200,180 300,140 T420,120" 
-                fill="none" 
-                stroke="#0B0D12" 
-                strokeWidth="1.5" 
-                strokeDasharray="4 4"
+          {/* VISUAL 1: Full-Size Container Image */}
+          <div ref={vis1Ref} className="absolute inset-0 transition-opacity">
+            <div ref={vis1ContentRef} className="w-full h-full opacity-0">
+              <img 
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80" 
+                alt="Engineering Operations & Craft"
+                className="w-full h-full object-cover"
+                loading="lazy"
               />
-              {/* City Dots */}
-              <circle cx="280" cy="110" r="5" fill="#FF4A1C" /> {/* Hyderabad */}
-              <circle cx="120" cy="90" r="4" fill="#0B0D12" /> {/* US */}
-              <circle cx="220" cy="70" r="4" fill="#0B0D12" /> {/* UK */}
-              <circle cx="310" cy="100" r="4" fill="#FF4A1C" /> {/* UAE */}
-              <circle cx="380" cy="130" r="4" fill="#0B0D12" /> {/* SG */}
-            </svg>
-            <span className="text-xs font-mono uppercase tracking-wider text-[#0B0D12] mt-2 font-bold">Global Presence</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent pointer-events-none" />
+            </div>
+          </div>
+
+          {/* VISUAL 2: Full-Size Container Image */}
+          <div ref={vis2Ref} className="absolute inset-0 transition-opacity">
+            <img 
+              src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80" 
+              alt="Full-Stack Product Lifecycle"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* VISUAL 3: Full-Size Container Image */}
+          <div ref={vis3Ref} className="absolute inset-0 transition-opacity">
+            <img 
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80" 
+              alt="In-House Engineering Specialists"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent pointer-events-none" />
+          </div>
+
+          {/* VISUAL 4: Full-Size Container Image */}
+          <div ref={vis4Ref} className="absolute inset-0 transition-opacity">
+            <img 
+              src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80" 
+              alt="Global Operations & Shipped Software"
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/40 via-transparent to-transparent pointer-events-none" />
           </div>
 
         </div>

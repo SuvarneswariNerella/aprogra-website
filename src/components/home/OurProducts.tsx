@@ -224,39 +224,15 @@ export default function OurProducts() {
                 </div>
               </div>
 
-              {/* Right Mockup: Clean Minimalist Preview Card */}
+              {/* Right Mockup: SmartSchool Product Image */}
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
-                <div ref={rightContentRef} className="w-full max-w-[360px] bg-white rounded-xl border border-[#0B0D12]/15 shadow-sm overflow-hidden text-xs opacity-0">
-                  <div className="bg-[#0B0D12] text-white px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF4A1C]" />
-                      <span className="font-semibold text-xs">SmartSchool Dashboard</span>
-                    </div>
-                    <span className="text-[10px] text-[#5A5E6E] font-medium">Live Snapshot</span>
-                  </div>
-
-                  <div className="p-4 space-y-3 bg-[#FAF8F5]">
-                    <div className="grid grid-cols-2 gap-2.5">
-                      <div className="bg-white p-3 rounded-lg border border-[#0B0D12]/10 shadow-2xs">
-                        <div className="text-caption text-[#5A5E6E]">Enrolled Students</div>
-                        <div className="text-h3 text-[#0B0D12] mt-0.5">2,840</div>
-                      </div>
-                      <div className="bg-white p-3 rounded-lg border border-[#0B0D12]/10 shadow-2xs">
-                        <div className="text-caption text-[#5A5E6E]">Fee Collection</div>
-                        <div className="text-h3 text-[#FF4A1C] mt-0.5">98.4%</div>
-                      </div>
-                    </div>
-
-                    <div className="bg-white p-3 rounded-lg border border-[#0B0D12]/10 shadow-2xs space-y-2">
-                      <div className="flex items-center justify-between text-caption font-semibold text-[#0B0D12]">
-                        <span>System Status</span>
-                        <span className="text-[10px] text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded font-medium">All Modules Online</span>
-                      </div>
-                      <div className="h-1.5 w-full bg-[#F4F1EA] rounded-full overflow-hidden">
-                        <div className="h-full bg-[#FF4A1C] rounded-full w-4/5" />
-                      </div>
-                    </div>
-                  </div>
+                <div ref={rightContentRef} className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group opacity-0">
+                  <img 
+                    src="https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80" 
+                    alt="SmartSchool ERP Platform Interface" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
                 </div>
               </div>
 
@@ -346,36 +322,15 @@ export default function OurProducts() {
                 </div>
               </div>
 
-              {/* Right Mockup: Clean Minimalist Preview Card */}
+              {/* Right Mockup: OmniChat Product Image */}
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
-                <div className="w-full max-w-[360px] bg-white rounded-xl border border-[#0B0D12]/15 shadow-sm overflow-hidden text-xs">
-                  <div className="bg-[#0B0D12] text-white px-4 py-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#FF4A1C]" />
-                      <span className="font-semibold text-xs">OmniChat Live Stream</span>
-                    </div>
-                    <span className="text-[10px] text-emerald-400 font-medium">● Connected</span>
-                  </div>
-
-                  <div className="bg-[#FAF8F5] px-4 py-2 border-b border-[#0B0D12]/10 flex gap-2 text-caption">
-                    <span className="bg-[#0B0D12] text-white px-2.5 py-0.5 rounded text-[11px] font-medium">WhatsApp (4)</span>
-                    <span className="bg-white text-[#5A5E6E] px-2.5 py-0.5 rounded text-[11px] border border-[#0B0D12]/10">Instagram</span>
-                    <span className="bg-white text-[#5A5E6E] px-2.5 py-0.5 rounded text-[11px] border border-[#0B0D12]/10">Email</span>
-                  </div>
-
-                  <div className="p-4 bg-[#FAF8F5] space-y-2.5">
-                    <div className="bg-white text-[#0B0D12] p-3 rounded-lg border border-[#0B0D12]/10 text-caption shadow-2xs max-w-[90%]">
-                      Hello! Can we integrate our existing CRM with custom webhook triggers?
-                    </div>
-                    <div className="bg-[#0B0D12] text-white p-3 rounded-lg text-caption max-w-[90%] ml-auto text-right font-medium shadow-2xs">
-                      Hi Rahul! Yes, OmniChat offers full webhook events and bi-directional REST sync.
-                    </div>
-
-                    <div className="bg-white border border-[#FF4A1C]/30 p-2.5 rounded-lg text-caption text-[#0B0D12] flex items-center gap-2 shadow-2xs">
-                      <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0" />
-                      <span className="text-[11px] text-[#5A5E6E]">AI ready: <strong className="text-[#0B0D12]">Send API Reference Guide</strong></span>
-                    </div>
-                  </div>
+                <div className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group">
+                  <img 
+                    src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80" 
+                    alt="OmniChat Unified AI Inbox Interface" 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
                 </div>
               </div>
 
