@@ -168,56 +168,23 @@ export default function Community() {
           </motion.div>
 
           {/* ======================================================= */}
-          {/* RIGHT COLUMN: Featured Hero Image Showcase               */}
+          {/* RIGHT COLUMN: Simple Hero Image (No text on it)          */}
           {/* ======================================================= */}
-          <ScrollReveal className="lg:col-span-5" stagger={0.15}>
-            <div 
-              onClick={() => setActiveArticle(featuredPost || posts[0])}
-              className="relative w-full h-[300px] sm:h-[360px] lg:h-[380px] rounded-2xl overflow-hidden border border-[#0B0D12]/15 shadow-xl group cursor-pointer bg-[#0B0D12]"
-            >
-              {/* Featured Hero Image with subtle hover zoom */}
+          <motion.div 
+            initial={{ opacity: 0, x: 35 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.215, 0.61, 0.355, 1] }}
+            className="lg:col-span-5 relative w-full flex items-center justify-center"
+          >
+            <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
               <img 
-                src={getStrapiMediaUrl(featuredPost?.coverImage) || (typeof featuredPost?.coverImage === 'string' ? featuredPost?.coverImage : null) || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80'}
-                alt={featuredPost?.title || 'Featured Article'}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out brightness-[0.88] group-hover:brightness-95"
+                src={getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"}
+                alt="AProgra Tech Radar & Engineering Insights"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                loading="lazy"
               />
-
-              {/* Gradient Overlay for text contrast */}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/95 via-[#0B0D12]/30 to-transparent pointer-events-none" />
-
-              {/* Top Pill Badges */}
-              <div className="absolute top-3.5 left-3.5 right-3.5 flex items-center justify-between pointer-events-none">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[11px] font-mono font-semibold shadow-xs">
-                  <Sparkles className="w-3 h-3 text-[#FF4A1C]" />
-                  <span>FEATURED DISPATCH</span>
-                </div>
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-[#FF4A1C] text-white text-[10px] font-mono font-bold shadow-xs">
-                  {featuredPost?.readTime || '6 MIN READ'}
-                </span>
-              </div>
-
-              {/* Bottom Frosted Glass Card with Article Headline & Action */}
-              <div className="absolute bottom-3.5 left-3.5 right-3.5 p-3.5 sm:p-4 rounded-xl bg-[#0B0D12]/80 backdrop-blur-md border border-white/15 text-white space-y-1.5 group-hover:bg-[#0B0D12]/90 transition-colors">
-                <div className="flex items-center gap-2 text-[10px] font-mono text-white/70">
-                  <span className="text-[#FF4A1C] font-bold uppercase">{featuredPost?.category || 'AI & AUTOMATION'}</span>
-                  <span>•</span>
-                  <span>{featuredPost?.date || 'AUG 2026'}</span>
-                </div>
-                <h3 className="text-sm sm:text-base font-bold font-display text-white line-clamp-2 leading-snug group-hover:text-[#FF4A1C] transition-colors">
-                  {featuredPost?.title || spotlight.title}
-                </h3>
-                <div className="flex items-center justify-between pt-1 text-[11px] font-semibold text-white/90">
-                  <span className="flex items-center gap-1.5">
-                    <User className="w-3 h-3 text-[#FF4A1C]" />
-                    <span className="truncate max-w-[140px]">{featuredPost?.author?.name || 'Alex Rivera'}</span>
-                  </span>
-                  <span className="text-[#FF4A1C] flex items-center gap-1 group-hover:translate-x-1 transition-transform font-mono text-[11px]">
-                    Read Article <ArrowRight className="w-3 h-3" />
-                  </span>
-                </div>
-              </div>
             </div>
-          </ScrollReveal>
+          </motion.div>
 
         </div>
       </section>

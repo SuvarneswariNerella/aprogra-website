@@ -700,6 +700,8 @@ export interface BlogHeroSection {
   metric1_text: string;
   metric2_text: string;
   metric3_text: string;
+  heroImage?: StrapiMedia | string | null;
+  heroImageUrl?: string;
 }
 
 export interface BlogSpotlightSection {
@@ -774,6 +776,7 @@ export const DEFAULT_BLOG_PAGE_CONTENT: BlogPageContent = {
     metric1_text: '45+ Articles',
     metric2_text: '12k+ Monthly Readers',
     metric3_text: 'Weekly Technical Deep Dives',
+    heroImageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
   },
   spotlight: {
     headerTitle: 'FEATURED SPOTLIGHT',
