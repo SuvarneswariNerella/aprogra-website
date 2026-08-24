@@ -24,6 +24,16 @@
       "type": "text",
       "default": "Have a breakthrough product, an enterprise platform to scale, or an AI workflow to automate? Connect directly with our lead architects to turn your vision into production-ready software."
     },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "heroImageUrl": {
+      "type": "string",
+      "default": "https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80"
+    },
     "primaryCtaText": {
       "type": "string",
       "default": "Start Your Brief"

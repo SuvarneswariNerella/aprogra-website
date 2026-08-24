@@ -401,6 +401,8 @@ export interface ContactHeroSection {
   studioHqLabel: string;
   studioHqValue: string;
   bookIntroCallButtonText: string;
+  heroImage?: StrapiMedia | string | null;
+  heroImageUrl?: string;
 }
 
 export interface ContactRoadmapStep {
@@ -588,6 +590,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
     studioHqLabel: 'STUDIO HQ',
     studioHqValue: 'Hyderabad, India • Global Remote Pods',
     bookIntroCallButtonText: 'Book 15-Min Intro Call',
+    heroImageUrl: 'https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80',
   },
   roadmap: {
     badge: '01 / ENGAGEMENT LIFECYCLE',
@@ -776,6 +779,8 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
         studioHqLabel: hero.studioHqLabel || DEFAULT_CONTACT_PAGE_CONTENT.hero.studioHqLabel,
         studioHqValue: hero.studioHqValue || DEFAULT_CONTACT_PAGE_CONTENT.hero.studioHqValue,
         bookIntroCallButtonText: hero.bookIntroCallButtonText || DEFAULT_CONTACT_PAGE_CONTENT.hero.bookIntroCallButtonText,
+        heroImage: hero.heroImage,
+        heroImageUrl: getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || DEFAULT_CONTACT_PAGE_CONTENT.hero.heroImageUrl,
       },
       roadmap: {
         badge: roadmap.badge || DEFAULT_CONTACT_PAGE_CONTENT.roadmap.badge,
@@ -829,9 +834,9 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
         videoButtonText: preview.videoButtonText || DEFAULT_CONTACT_PAGE_CONTENT.preview.videoButtonText,
       },
       directChannelsHeader: {
-        badge: directChannelsHeader.badge || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.badge,
-        title: directChannelsHeader.title || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.title,
-        subtitle: directChannelsHeader.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.subtitle,
+        badge: data.directChannelsBadge || directChannelsHeader.badge || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.badge,
+        title: data.directChannelsTitle || directChannelsHeader.title || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.title,
+        subtitle: data.directChannelsSubtitle || directChannelsHeader.subtitle || DEFAULT_CONTACT_PAGE_CONTENT.directChannelsHeader.subtitle,
       },
       closingBanner: {
         headline: data.closingBannerHeadline || DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.headline,

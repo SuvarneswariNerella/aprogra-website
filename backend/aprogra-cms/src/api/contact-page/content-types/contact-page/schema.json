@@ -32,6 +32,18 @@
       "repeatable": false,
       "component": "sections.contact-preview"
     },
+    "directChannelsBadge": {
+      "type": "string",
+      "default": "03 / IMMEDIATE CHANNELS"
+    },
+    "directChannelsTitle": {
+      "type": "string",
+      "default": "Direct Access to Our Technical Leadership"
+    },
+    "directChannelsSubtitle": {
+      "type": "text",
+      "default": "Prefer direct communication? Reach out through any of our primary channels below."
+    },
     "channels": {
       "type": "component",
       "repeatable": true,

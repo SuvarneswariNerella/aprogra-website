@@ -56,6 +56,26 @@ export default function Contact() {
     }
   }, [content.introCallModal.topicOptions, content.introCallModal.timeSlots]);
 
+  // Sync form options if admin updates budget, timeline or capabilities in Strapi
+  useEffect(() => {
+    if (content.brief.budgetRangesList && content.brief.budgetRangesList.length > 0) {
+      if (!content.brief.budgetRangesList.includes(formData.budget)) {
+        setFormData(prev => ({ ...prev, budget: content.brief.budgetRangesList[0] }));
+      }
+    }
+    if (content.brief.timelineRangesList && content.brief.timelineRangesList.length > 0) {
+      if (!content.brief.timelineRangesList.includes(formData.timeline)) {
+        setFormData(prev => ({ ...prev, timeline: content.brief.timelineRangesList[0] }));
+      }
+    }
+    if (content.brief.capabilitiesList && content.brief.capabilitiesList.length > 0) {
+      const validCaps = formData.capabilities.filter(c => content.brief.capabilitiesList.includes(c));
+      if (validCaps.length === 0) {
+        setFormData(prev => ({ ...prev, capabilities: [content.brief.capabilitiesList[0]] }));
+      }
+    }
+  }, [content.brief.budgetRangesList, content.brief.timelineRangesList, content.brief.capabilitiesList]);
+
   // Refs for Animations
   const mainRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
@@ -358,17 +378,17 @@ export default function Contact() {
           <div ref={rightColumnRef} className="lg:col-span-5 relative w-full flex items-center justify-center">
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
               <img 
-                src="https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80" 
+                src={content.hero.heroImageUrl || "https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80"} 
                 alt="Engineering Partnerships & Direct Contact"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
               <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-xs font-mono">
-                <span className="px-2.5 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">Active Pods Online</span>
+                <span className="px-2.5 py-0.5 rounded bg-[#0B0D12]/80 backdrop-blur-xs border border-white/10">{content.hero.podStatus || 'Active Pods Online'}</span>
                 <span className="flex items-center gap-1.5 text-emerald-400">
                   <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  &lt; 2 hrs SLA
+                  {content.hero.slaBadge1 || '< 2 hrs SLA'}
                 </span>
               </div>
             </div>
