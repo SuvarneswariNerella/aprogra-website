@@ -1,0 +1,64 @@
+{
+  "collectionName": "components_sections_services_hero_sections",
+  "info": {
+    "displayName": "Services Hero Section",
+    "icon": "layout",
+    "description": "Hero section for the Services page with editable content, points, and right-side image"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "CORE ENGINEERING & AI CAPABILITIES"
+    },
+    "headline": {
+      "type": "string",
+      "default": "Architecting High-Throughput Cloud &"
+    },
+    "highlight": {
+      "type": "string",
+      "default": "Autonomous AI Systems"
+    },
+    "description": {
+      "type": "text",
+      "default": "We engineer resilient multi-tenant architectures, high-performance web systems, and autonomous agent pipelines for visionary enterprises."
+    },
+    "primaryCtaText": {
+      "type": "string",
+      "default": "Schedule Architectural Brief"
+    },
+    "primaryCtaUrl": {
+      "type": "string",
+      "default": "/contact"
+    },
+    "secondaryCtaText": {
+      "type": "string",
+      "default": "Explore Capabilities"
+    },
+    "secondaryCtaUrl": {
+      "type": "string",
+      "default": "#services-cards-overview"
+    },
+    "point1": {
+      "type": "string",
+      "default": "Zero Architectural Debt & 99.99% Availability"
+    },
+    "point2": {
+      "type": "string",
+      "default": "Sub-Second Edge Telemetry & Real-Time Sync"
+    },
+    "point3": {
+      "type": "string",
+      "default": "Bank-Grade SOC2 Security & Tenant Partitioning"
+    },
+    "heroImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "heroImageUrl": {
+      "type": "string"
+    }
+  }
+}

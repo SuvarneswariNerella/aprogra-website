@@ -1432,7 +1432,6 @@ export interface ArchitecturePoint {
   id?: number | string;
   title: string;
   description: string;
-  iconMedia?: StrapiMedia | string | null;
 }
 
 export interface Faq {
@@ -1442,54 +1441,50 @@ export interface Faq {
 }
 
 export interface ServicesHeroSection {
-  topMetaBadge: string;
-  countryBadge: string;
-  complianceBadge: string;
   badge: string;
   headline: string;
   highlight: string;
   description: string;
-  primaryCta: CtaButton;
-  secondaryCta: CtaButton;
-  statItems: string[];
-  stackTitle: string;
-  stackBadge: string;
-  stackFooterLeft: string;
-  stackFooterRight: string;
-  slaCardTitle: string;
-  slaCardDesc: string;
-  slaCardMetric: string;
-  slaCardMetricLabel: string;
-  scrollAnchorText: string;
+  primaryCtaText: string;
+  primaryCtaUrl: string;
+  secondaryCtaText: string;
+  secondaryCtaUrl: string;
+  point1: string;
+  point2: string;
+  point3: string;
+  heroImage?: StrapiMedia | string | null;
+  heroImageUrl?: string;
 }
 
-export interface ServicesKpiSection {
+export interface ServicesCardsSection {
   badge: string;
-  title: string;
-  subtitle: string;
+  headline: string;
+  highlight: string;
+  description: string;
 }
 
-export interface ServicesShowcaseSection {
+export interface ServicesFeaturesSection {
   badge: string;
-  subBadge: string;
-  title: string;
-  scrollText: string;
+  headline: string;
+  highlight: string;
+  description: string;
 }
 
 export interface ServicesClosingCtaSection {
   badge: string;
   headline: string;
-  subtitle: string;
-  primaryCta: CtaButton;
-  secondaryCta: CtaButton;
-  copyright: string;
-  standardsNote: string;
+  highlight: string;
+  description: string;
+  primaryCtaText: string;
+  primaryCtaUrl: string;
+  secondaryCtaText: string;
+  secondaryCtaUrl: string;
 }
 
 export interface ServicesPageContent {
   hero: ServicesHeroSection;
-  kpi: ServicesKpiSection;
-  showcase: ServicesShowcaseSection;
+  cards: ServicesCardsSection;
+  features: ServicesFeaturesSection;
   closingCta: ServicesClosingCtaSection;
   metaTitle?: string;
   metaDescription?: string;
@@ -1498,644 +1493,223 @@ export interface ServicesPageContent {
 export interface ServiceItem {
   id: string;
   slug: string;
+  tabLabel: string;
   title: string;
-  order: number;
-  tag: string;
-  subheading: string;
-  shortDescription: string;
-  heroDescription: string;
-  accentColor: string;
-  illustrationType: 'web' | 'ai' | 'saas' | 'design' | 'cloud' | 'other' | string;
+  category: string;
+  shortSummary: string;
+  shortDescription?: string;
+  description: string;
+  icon: string;
+  image?: StrapiMedia | string | null;
+  imageUrl?: string;
+  cardOrder: number;
+  kpiNumber?: string;
+  kpiLabel?: string;
+  deliverables: string[];
+  tags: string[];
+  customUrl?: string;
+
+  // Optional extended compatibility fields for sub-pages
+  tag?: string;
+  subheading?: string;
+  heroDescription?: string;
+  accentColor?: string;
+  illustrationType?: 'web' | 'ai' | 'saas' | 'design' | 'cloud' | 'other' | string;
   iconMedia?: StrapiMedia | string | null;
   coverImage?: StrapiMedia | string | null;
-  deliverables: Deliverable[];
-  metrics: Metric[];
-  technologies: TechGroup[];
-  architecturePoints: ArchitecturePoint[];
-  mermaidGraph: string;
+  metrics?: Metric[];
+  technologies?: TechGroup[];
+  architecturePoints?: ArchitecturePoint[];
+  mermaidGraph?: string;
   gallery?: (StrapiMedia | string)[];
   faqs?: Faq[];
   cta?: CtaButton;
-  metaTitle?: string;
-  metaDescription?: string;
 }
 
 export const DEFAULT_SERVICES_PAGE_CONTENT: ServicesPageContent = {
   hero: {
-    topMetaBadge: 'FULL-CYCLE ENGINEERING • PRODUCTION PODS',
-    countryBadge: '12+ Countries Served',
-    complianceBadge: 'SOC2 & Enterprise Aligned',
-    badge: 'FULL-CYCLE ENGINEERING',
-    headline: 'Services Built to Ship,',
-    highlight: 'Not Just Scope.',
+    badge: 'CORE ENGINEERING & AI CAPABILITIES',
+    headline: 'Architecting High-Throughput Cloud &',
+    highlight: 'Autonomous AI Systems',
     description:
-      'One unified team with zero handoffs, from foundational architecture to global production launch.',
-    primaryCta: {
-      label: 'Start a Project',
-      url: '/contact',
-    },
-    secondaryCta: {
-      label: 'View Our Work',
-      url: '/products',
-    },
-    statItems: [
-      '5 core service lines',
-      '60+ engagements delivered',
-      '100% in-house engineering',
-    ],
-    stackTitle: 'SERVICE STACK',
-    stackBadge: 'Live Pods',
-    stackFooterLeft: 'Direct Access to Senior Architects',
-    stackFooterRight: 'Zero Hand-offs',
-    slaCardTitle: 'Engineering Velocity & SLAs',
-    slaCardDesc: '99.98% Historical Uptime • 2-Week Sprints',
-    slaCardMetric: '98.4%',
-    slaCardMetricLabel: 'Retention Rate',
-    scrollAnchorText: 'Scroll to Explore Disciplines',
+      'We engineer resilient multi-tenant architectures, high-performance web systems, and autonomous agent pipelines for visionary enterprises.',
+    primaryCtaText: 'Schedule Architectural Brief',
+    primaryCtaUrl: '/contact',
+    secondaryCtaText: 'Explore Capabilities',
+    secondaryCtaUrl: '#services-cards-overview',
+    point1: 'Zero Architectural Debt & 99.99% Availability',
+    point2: 'Sub-Second Edge Telemetry & Real-Time Sync',
+    point3: 'Bank-Grade SOC2 Security & Tenant Partitioning',
+    heroImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
   },
-  kpi: {
-    badge: 'PRODUCTION ARCHITECTURE',
-    title: '5 Core Engineering Disciplines',
-    subtitle:
-      'Hover over or tap any card to inspect stack deliverables, verified performance metrics, and system capabilities.',
+  cards: {
+    badge: 'CORE DISCIPLINES',
+    headline: 'Engineering Without Compromise',
+    highlight: 'Pillars of Excellence',
+    description:
+      'Hover or tap each discipline card to inspect deliverables, architecture patterns, and engineering capabilities.',
   },
-  showcase: {
-    badge: '02 / CAPABILITIES & ARCHITECTURE',
-    subBadge: 'HORIZONTAL REVEAL',
-    title: 'Core Engineering Disciplines',
-    scrollText: 'SCROLL DOWN TO REVEAL DISCIPLINES',
+  features: {
+    badge: 'DISCIPLINE DEEP-DIVES',
+    headline: 'Engineered for Extreme Scale',
+    highlight: 'Capabilities in Depth',
+    description:
+      'Navigate through each specialized engineering domain to explore architecture blueprints, tech stacks, and benchmarks.',
   },
   closingCta: {
-    badge: 'DIRECT ACCESS TO LEAD ARCHITECTS',
-    headline: "Let's build what's next.",
-    subtitle:
-      'Eliminate vendor fragmentation. Aprogra takes single-source ownership of your software engineering lifecycle.',
-    primaryCta: {
-      label: 'Start a Project',
-      url: '/contact',
-    },
-    secondaryCta: {
-      label: 'Explore Products',
-      url: '/products',
-    },
-    copyright: '© 2026 Aprogra Engineering Group.',
-    standardsNote: 'SOC2 Type II & ISO 27001 Aligned Process',
+    badge: 'READY TO SHIP?',
+    headline: "Let's build what's next",
+    highlight: 'Together.',
+    description:
+      'Whether you need a dedicated engineering pod or an end-to-end autonomous AI system, we are ready to build.',
+    primaryCtaText: 'Schedule Architecture Review',
+    primaryCtaUrl: '/contact',
+    secondaryCtaText: 'Explore Our Products',
+    secondaryCtaUrl: '/products',
   },
-  metaTitle: 'Software Engineering Services | Aprogra',
+  metaTitle: 'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra',
   metaDescription:
-    'Full-cycle engineering services: Web & Mobile, AI & Agentic Systems, Cloud-Native SaaS, Design Systems, and DevOps Infrastructure.',
+    'Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations.',
 };
 
 export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
   {
-    id: 'web-app',
-    slug: 'web-app',
-    title: 'Web & Mobile Systems',
-    order: 1,
-    tag: '01 / WEB & MOBILE',
-    subheading: 'Sub-45ms Edge Response',
-    shortDescription:
-      'High-speed web platforms and native mobile apps with offline-first synchronization.',
-    heroDescription:
-      'Our Web & Mobile architecture focuses on delivering sub-second edge applications and cross-platform native experiences engineered for instantaneous response and maximum reliability.',
-    accentColor: '#3B82F6',
-    illustrationType: 'web',
+    id: 'web-engineering',
+    slug: 'web-engineering',
+    tabLabel: 'Web',
+    title: 'Modern Web & Distributed Frontends',
+    category: 'Full-Stack Architecture',
+    shortSummary: 'Edge-rendered Next.js 15, sub-second LCP, distributed state, and atomic design systems.',
+    description:
+      'We build ultra-fast, accessible web platforms utilizing modern server components, streaming SSR, and edge execution to deliver sub-second Core Web Vitals at global scale.',
+    icon: 'web',
+    imageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 1,
+    kpiNumber: '< 0.8s',
+    kpiLabel: 'LCP Load Speed',
     deliverables: [
-      { item: 'Next.js & React 19' },
-      { item: 'React Native & Expo' },
-      { item: 'Real-Time WebSockets' },
-      { item: 'CRDT & SQLite Offline Sync' },
+      'Next.js 15 App Router & React Server Components',
+      'Local-First SQLite & CRDT State Sync',
+      'Sub-second LCP & Edge SSR Telemetry',
+      'Custom Design Tokens & W3C Styling',
     ],
-    metrics: [
-      { label: 'P95 Latency', value: '< 45ms' },
-      { label: 'Lighthouse', value: '100/100' },
-    ],
-    technologies: [
-      {
-        category: 'Frontend',
-        items: [
-          { name: 'React 19' },
-          { name: 'Next.js 15 App Router' },
-          { name: 'Tailwind CSS' },
-          { name: 'Framer Motion' },
-        ],
-      },
-      {
-        category: 'Mobile',
-        items: [
-          { name: 'React Native' },
-          { name: 'Expo' },
-          { name: 'Flutter' },
-        ],
-      },
-      {
-        category: 'Edge Computing',
-        items: [
-          { name: 'Vercel Edge Functions' },
-          { name: 'Cloudflare Workers' },
-        ],
-      },
-      {
-        category: 'State & Sync',
-        items: [
-          { name: 'Zustand' },
-          { name: 'CRDTs' },
-          { name: 'SQLite Offline Sync' },
-        ],
-      },
-    ],
-    architecturePoints: [
-      {
-        title: 'Edge-First Rendering',
-        description:
-          'Server components rendered at the edge to guarantee sub-45ms TTFB globally.',
-      },
-      {
-        title: 'Local-First Offline Sync',
-        description:
-          'Data is written locally to SQLite and synced seamlessly in the background using CRDT conflict resolution.',
-      },
-      {
-        title: 'Native Performance',
-        description:
-          'React Native pipelines utilizing the new architecture (Fabric) and JSI for 60fps concurrent rendering.',
-      },
-    ],
-    mermaidGraph: `graph TD
-    Client[Client Device] -->|Edge Request| CDN[Global Edge Network]
-    CDN -->|Cache Miss| EdgeRuntime[Edge Server Components]
-    EdgeRuntime -->|Read/Write| EdgeDB[(Edge Replica DB)]
-    EdgeDB -.->|Sync| PrimaryDB[(Primary Database)]
-    Client -->|Local Mutate| LocalDB[(Local SQLite)]
-    LocalDB -->|Background Sync| PrimaryDB
-    
-    classDef client fill:#f9f9f9,stroke:#333,stroke-width:2px;
-    classDef edge fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
-    classDef db fill:#f3e5f5,stroke:#8e24aa,stroke-width:2px;
-    
-    class Client,LocalDB client;
-    class CDN,EdgeRuntime,EdgeDB edge;
-    class PrimaryDB db;`,
-    faqs: [
-      {
-        question: 'How do you guarantee sub-45ms response times?',
-        answer:
-          'We combine Edge middleware, server-side streaming rendering, and global replica caching on distributed CDNs.',
-      },
-    ],
-    cta: {
-      label: 'Start a Project Brief',
-      url: '/contact',
-    },
-    metaTitle: 'Web & Mobile Engineering | Aprogra',
-    metaDescription:
-      'Sub-45ms edge web applications and cross-platform native mobile experiences.',
+    tags: ['Next.js 15', 'TypeScript', 'Tailwind v4', 'LibSQL'],
+    customUrl: '/services/architecture/web-engineering',
   },
   {
-    id: 'ai-agents',
-    slug: 'ai-agents',
-    title: 'AI Agents & Neural RAG',
-    order: 2,
-    tag: '02 / AI & AGENTIC',
-    subheading: 'Autonomous Workflows',
-    shortDescription:
-      'Multi-agent execution loops with structured schema generation and air-gapped SLMs.',
-    heroDescription:
-      'Moving beyond generic chat wrappers into verifiable tool-calling pipelines, structured schema outputs, and local SLM inference for complex task execution.',
-    accentColor: '#8B5CF6',
-    illustrationType: 'ai',
+    id: 'agentic-ai',
+    slug: 'agentic-ai',
+    tabLabel: 'AI',
+    title: 'Agentic AI & Autonomous Reasoning',
+    category: 'Applied AI & LLMs',
+    shortSummary: 'Multi-agent orchestration, function calling, vector embeddings, and self-correcting pipelines.',
+    description:
+      'We develop domain-specific autonomous agent pipelines capable of multi-step task execution, automated data triage, and human-in-the-loop escalation with deterministic safeguards.',
+    icon: 'ai',
+    imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 2,
+    kpiNumber: '70%',
+    kpiLabel: 'Triage Automation',
     deliverables: [
-      { item: 'Multi-Agent Loops' },
-      { item: 'Dense Vector RAG' },
-      { item: 'Air-Gapped SLMs' },
-      { item: 'Guardrails & Eval Suites' },
+      'Autonomous Multi-Agent Task Orchestration',
+      'Deterministic Function Calling & Schema Validation',
+      'Hybrid Vector Search & RAG Retrieval Engines',
+      'Sub-Second LLM Streaming & Real-Time Sync',
     ],
-    metrics: [
-      { label: 'RAG Retrieval', value: '< 180ms' },
-      { label: 'Accuracy', value: '99.4%' },
-    ],
-    technologies: [
-      {
-        category: 'Language Models',
-        items: [
-          { name: 'Gemini 1.5 Pro/Flash' },
-          { name: 'Claude 3.5 Sonnet' },
-          { name: 'Llama 3' },
-          { name: 'Local SLMs' },
-        ],
-      },
-      {
-        category: 'Frameworks',
-        items: [
-          { name: 'LangChain' },
-          { name: 'LlamaIndex' },
-          { name: 'AutoGen' },
-          { name: 'Custom Reasoning Loops' },
-        ],
-      },
-      {
-        category: 'Vector Stores',
-        items: [
-          { name: 'Pinecone' },
-          { name: 'Qdrant' },
-          { name: 'pgvector' },
-        ],
-      },
-      {
-        category: 'Observability',
-        items: [
-          { name: 'LangSmith' },
-          { name: 'PromptFoo Eval' },
-          { name: 'DataDog' },
-        ],
-      },
-    ],
-    architecturePoints: [
-      {
-        title: 'Multi-Agent Orchestration',
-        description:
-          'Hierarchical agent architectures where planner agents delegate specialized tasks to worker agents with specific tool access.',
-      },
-      {
-        title: 'Structured Output Enforcement',
-        description:
-          'Constrained generation techniques guaranteeing 100% adherence to complex JSON schemas for API ingestion.',
-      },
-      {
-        title: 'Air-Gapped SLM Inference',
-        description:
-          'Locally deployed Small Language Models on secure VPCs ensuring zero data leakage for highly sensitive PII.',
-      },
-    ],
-    mermaidGraph: `graph TD
-    User[User Request] --> Orchestrator[Planner Agent]
-    Orchestrator -->|Decomposes Task| Router{Task Router}
-    
-    Router -->|RAG| WorkerA[Research Agent]
-    Router -->|Code Execution| WorkerB[Code Interpreter Agent]
-    Router -->|External API| WorkerC[Action Agent]
-    
-    WorkerA --> VectorDB[(Vector DB)]
-    WorkerB --> Sandbox[Secure Docker Sandbox]
-    WorkerC --> APIs[External APIs]
-    
-    WorkerA -->|Result| Orchestrator
-    WorkerB -->|Result| Orchestrator
-    WorkerC -->|Result| Orchestrator
-    
-    Orchestrator -->|Synthesized JSON| Output[Structured Response]
-    
-    classDef ai fill:#ede7f6,stroke:#673ab7,stroke-width:2px;
-    classDef data fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    
-    class Orchestrator,WorkerA,WorkerB,WorkerC,Router ai;
-    class VectorDB,Output data;`,
-    faqs: [
-      {
-        question: 'How do you prevent hallucinations in critical business pipelines?',
-        answer:
-          'We implement deterministic validation schemas, dual-pass verification agents, and strict grounding retrieval.',
-      },
-    ],
-    cta: {
-      label: 'Deploy Agentic Architecture',
-      url: '/contact',
-    },
-    metaTitle: 'AI & Agentic Solutions | Aprogra',
-    metaDescription:
-      'Autonomous cognitive workflows, multi-agent loops, and air-gapped SLM deployment.',
+    tags: ['Gemini 1.5', 'LangChain', 'pgvector', 'Agent Swarms'],
+    customUrl: '/services/architecture/agentic-ai',
   },
   {
-    title: 'Cloud-Native SaaS & APIs',
-    slug: 'saas-product',
-    id: 'saas-product',
-    order: 3,
-    tag: '03 / SAAS & APIS',
-    subheading: 'Multi-Tenant Systems',
-    shortDescription:
-      'Multi-tenant platforms with row-level security, event-driven pipelines, and automated metering.',
-    heroDescription:
-      'Full-lifecycle software engineering from raw data schema to scalable multi-tenant execution with automated Stripe metering and subscription logic.',
-    accentColor: '#06B6D4',
-    illustrationType: 'saas',
+    id: 'saas-platforms',
+    slug: 'saas-platforms',
+    tabLabel: 'SaaS',
+    title: 'Enterprise Multi-Tenant SaaS',
+    category: 'Systems Architecture',
+    shortSummary: 'Postgres Row-Level Security, isolated tenant clusters, and high-concurrency billing engines.',
+    description:
+      'Architecting robust, scalable SaaS foundations with hardened multi-tenancy, granular RBAC/ABAC permissions, automated tenant provisioning, and idempotent payment pipelines.',
+    icon: 'saas',
+    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 3,
+    kpiNumber: '10k+',
+    kpiLabel: 'Tenants / Cluster',
     deliverables: [
-      { item: 'Row-Level Security' },
-      { item: 'Stripe Metering' },
-      { item: 'GraphQL & gRPC' },
-      { item: 'PostgreSQL & Distributed DB' },
+      'PostgreSQL Row-Level Security (RLS) Isolation',
+      'Dynamic Subdomain & Custom Domain Routing',
+      'Granular RBAC, ABAC & SAML/SSO Enterprise Auth',
+      'Idempotent Stripe Billing & Usage Metering',
     ],
-    metrics: [
-      { label: 'Daily Ops', value: '25M+' },
-      { label: 'Uptime SLA', value: '99.99%' },
-    ],
-    technologies: [
-      {
-        category: 'Backend Engine',
-        items: [
-          { name: 'Node.js' },
-          { name: 'Go' },
-          { name: 'PostgreSQL' },
-          { name: 'Redis' },
-        ],
-      },
-      {
-        category: 'Billing & Identity',
-        items: [
-          { name: 'Stripe Billing' },
-          { name: 'Clerk / Auth0' },
-          { name: 'RBAC Middleware' },
-        ],
-      },
-      {
-        category: 'Queues & Events',
-        items: [
-          { name: 'RabbitMQ' },
-          { name: 'Kafka' },
-          { name: 'BullMQ' },
-        ],
-      },
-      {
-        category: 'APIs',
-        items: [
-          { name: 'GraphQL' },
-          { name: 'tRPC' },
-          { name: 'RESTful OpenAPI' },
-        ],
-      },
-    ],
-    architecturePoints: [
-      {
-        title: 'Row-Level Security (RLS)',
-        description:
-          'Hardened multi-tenancy utilizing PostgreSQL RLS policies guaranteeing absolute data isolation between tenant organizations.',
-      },
-      {
-        title: 'Event-Driven Microservices',
-        description:
-          'Asynchronous event bus architecture enabling highly decoupled, scalable background processing for intensive tasks.',
-      },
-      {
-        title: 'Real-Time Usage Metering',
-        description:
-          'High-throughput time-series event ingestion engine accurately aggregating tenant consumption for automated tiered billing.',
-      },
-    ],
-    mermaidGraph: `graph TD
-    Client[Web/Mobile Client] --> API[API Gateway / Envoy]
-    API --> Auth[Auth & Tenant Resolver]
-    
-    Auth --> ServiceA[Core SaaS Engine]
-    Auth --> ServiceB[Async Job Workers]
-    
-    ServiceA --> DB[(PostgreSQL with RLS)]
-    ServiceA --> Cache[(Redis Cluster)]
-    
-    ServiceB --> Queue[(BullMQ / Kafka)]
-    ServiceB --> Stripe[Stripe Metering API]
-    
-    classDef saas fill:#e0f7fa,stroke:#00838f,stroke-width:2px;
-    classDef infra fill:#fff3e0,stroke:#e65100,stroke-width:2px;
-    
-    class API,Auth,ServiceA,ServiceB saas;
-    class DB,Cache,Queue,Stripe infra;`,
-    faqs: [
-      {
-        question: 'How is tenant data isolated?',
-        answer:
-          'PostgreSQL Row-Level Security ensures that tenant queries cannot access data belonging to other organizations under any circumstance.',
-      },
-    ],
-    cta: {
-      label: 'Architect SaaS Engine',
-      url: '/contact',
-    },
-    metaTitle: 'Product & SaaS Engines | Aprogra',
-    metaDescription:
-      'Multi-tenant cloud architecture, automated Stripe metering, and high-throughput event processing.',
+    tags: ['Multi-Tenancy', 'PostgreSQL RLS', 'Stripe API', 'Redis'],
+    customUrl: '/services/architecture/saas-platforms',
   },
   {
-    title: 'Mathematical Design Systems',
-    slug: 'design-systems',
     id: 'design-systems',
-    order: 4,
-    tag: '04 / DESIGN SYSTEMS',
-    subheading: 'Systematic Tokens',
-    shortDescription:
-      'Tokenized component ecosystems engineered with fluid typography and WCAG AA accessibility.',
-    heroDescription:
-      'Token-based design infrastructure translating Figma variables directly into cross-platform UI primitives with deterministic typographic hierarchy.',
-    accentColor: '#F43F5E',
-    illustrationType: 'design',
+    slug: 'design-systems',
+    tabLabel: 'Design',
+    title: 'Design Systems & UI Engineering',
+    category: 'Product Design',
+    shortSummary: 'Figma-to-code token pipelines, WCAG AAA accessibility, fluid typography, and motion choreography.',
+    description:
+      'We construct living, unified design token architectures that bridge Figma variables with production code, ensuring uncompromising visual harmony and fluid micro-interactions.',
+    icon: 'design',
+    imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 4,
+    kpiNumber: '500+',
+    kpiLabel: 'Design Tokens',
     deliverables: [
-      { item: 'Token CI/CD' },
-      { item: 'Accessible Primitives' },
-      { item: 'WCAG AA Standard' },
-      { item: 'Fluid Micro-Interactions' },
+      'Figma Tokens to CSS Variable Pipelines',
+      'WCAG 2.2 AAA Accessible Component Systems',
+      'Mathematical Fluid Typography & Dynamic Spacing',
+      'Physics-Based GSAP & Motion Choreography',
     ],
-    metrics: [
-      { label: 'Primitives', value: '120+' },
-      { label: 'Compliance', value: 'WCAG AA' },
-    ],
-    technologies: [
-      {
-        category: 'Design Architecture',
-        items: [
-          { name: 'Figma Variables' },
-          { name: 'Token Studio' },
-          { name: 'Style Dictionary' },
-        ],
-      },
-      {
-        category: 'Component Engine',
-        items: [
-          { name: 'Radix UI' },
-          { name: 'React Aria' },
-          { name: 'Tailwind CSS v4' },
-          { name: 'Storybook 8' },
-        ],
-      },
-      {
-        category: 'Animation & Motion',
-        items: [
-          { name: 'GSAP 3' },
-          { name: 'Framer Motion' },
-          { name: 'Lenis Smooth Scroll' },
-        ],
-      },
-      {
-        category: 'Quality & Testing',
-        items: [
-          { name: 'Axe Core A11y' },
-          { name: 'Chromatic Visual Diff' },
-          { name: 'Playwright E2E' },
-        ],
-      },
-    ],
-    architecturePoints: [
-      {
-        title: 'Automated Token Sync',
-        description:
-          'Bidirectional CI/CD pipeline converting Figma design tokens into production CSS custom properties upon PR merge.',
-      },
-      {
-        title: 'Headless Accessibility',
-        description:
-          'All interactive components built upon battle-tested WAI-ARIA patterns supporting full keyboard navigation and screen readers.',
-      },
-      {
-        title: 'Fluid Typography Scale',
-        description:
-          'Mathematical clamp-based font sizing ensuring smooth responsive scaling without jarring layout shifts across viewport widths.',
-      },
-    ],
-    mermaidGraph: `graph TD
-    Figma[Figma Token Variables] -->|Webhook on Publish| GitHubActions[Token Build Pipeline]
-    GitHubActions --> StyleDictionary[Style Dictionary Engine]
-    
-    StyleDictionary --> CSSTokens[CSS Custom Properties]
-    StyleDictionary --> TSTokens[TypeScript Design Constants]
-    StyleDictionary --> TailwindConfig[Tailwind Preset Plugin]
-    
-    CSSTokens --> UIComponents[React Primitives Kit]
-    TSTokens --> UIComponents
-    TailwindConfig --> UIComponents
-    
-    UIComponents --> Storybook[Visual Regression Tests]
-    UIComponents --> ProductionApp[Production Web & Mobile App]
-    
-    classDef figma fill:#fce4ec,stroke:#c2185b,stroke-width:2px;
-    classDef build fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px;
-    classDef prod fill:#e8f5e9,stroke:#388e3c,stroke-width:2px;
-    
-    class Figma figma;
-    class GitHubActions,StyleDictionary build;
-    class UIComponents,Storybook,ProductionApp prod;`,
-    faqs: [
-      {
-        question: 'How are tokens synced from design to code?',
-        answer:
-          'We set up GitHub Actions that listen to Figma webhooks and automatically transform tokens into CSS/TypeScript variables.',
-      },
-    ],
-    cta: {
-      label: 'Build Design System',
-      url: '/contact',
-    },
-    metaTitle: 'Mathematical Design Systems | Aprogra',
-    metaDescription:
-      'Token-based UI ecosystems, fluid typography scales, and WCAG AA accessible components.',
+    tags: ['Figma Tokens', 'Tailwind CSS', 'GSAP', 'Accessibility'],
+    customUrl: '/services/architecture/design-systems',
   },
   {
-    title: 'Edge & GitOps Infrastructure',
-    slug: 'cloud-devops',
     id: 'cloud-devops',
-    order: 5,
-    tag: '05 / CLOUD & DEVOPS',
-    subheading: 'Zero-Trust Ops',
-    shortDescription:
-      'Resilient cloud infrastructure with declarative IaC, self-healing Kubernetes, and zero-downtime CI.',
-    heroDescription:
-      'Enterprise-grade cloud architectures built on immutable infrastructure-as-code, automated blue-green deployments, and proactive telemetry.',
-    accentColor: '#10B981',
-    illustrationType: 'cloud',
+    slug: 'cloud-devops',
+    tabLabel: 'Cloud',
+    title: 'Cloud Infrastructure & High Concurrency',
+    category: 'DevOps & SRE',
+    shortSummary: 'Zero-downtime Kubernetes deployments, distributed caching, and automated CI/CD pipelines.',
+    description:
+      'Engineering fault-tolerant cloud backbones with automated multi-region scaling, blue-green zero-downtime deployments, distributed caching, and 24/7 observability.',
+    icon: 'cloud',
+    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 5,
+    kpiNumber: '99.99%',
+    kpiLabel: 'System Uptime',
     deliverables: [
-      { item: 'Terraform & Pulumi' },
-      { item: 'Self-Healing K8s' },
-      { item: 'Zero-Downtime CI' },
-      { item: 'Distributed Telemetry' },
+      'Kubernetes Multi-Cluster Orchestration',
+      'Zero-Downtime Blue/Green Database Migrations',
+      'Distributed Edge Caching & Traefik Load Balancing',
+      'Automated Terraform & GitHub Actions CI/CD',
     ],
-    metrics: [
-      { label: 'Deploy Time', value: '< 3m' },
-      { label: 'MTTR Recovery', value: '< 90s' },
+    tags: ['Kubernetes', 'Docker', 'Terraform', 'Prometheus'],
+    customUrl: '/services/architecture/cloud-devops',
+  },
+  {
+    id: 'mobile-engineering',
+    slug: 'mobile-engineering',
+    tabLabel: 'Mobile',
+    title: 'Cross-Platform Mobile Apps',
+    category: 'Mobile Systems',
+    shortSummary: 'High-performance React Native & Flutter applications with offline-first synchronization.',
+    description:
+      'We engineer fluid, native-feeling mobile applications with local-first database replication, push notification pipelines, and background telemetry.',
+    icon: 'mobile',
+    imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 6,
+    kpiNumber: '60 FPS',
+    kpiLabel: 'Native Fluidity',
+    deliverables: [
+      'React Native & Flutter Native Engine Optimization',
+      'Offline-First Local Database & Background Sync',
+      'Biometric Authentication & Secure Enclave Storage',
+      'Automated App Store & Play Store CI/CD Fastlane',
     ],
-    technologies: [
-      {
-        category: 'Infrastructure as Code',
-        items: [
-          { name: 'Terraform' },
-          { name: 'OpenTofu' },
-          { name: 'Pulumi' },
-          { name: 'AWS CDK' },
-        ],
-      },
-      {
-        category: 'Orchestration',
-        items: [
-          { name: 'Kubernetes (EKS/GKE)' },
-          { name: 'Docker' },
-          { name: 'Helm' },
-          { name: 'ArgoCD' },
-        ],
-      },
-      {
-        category: 'CI/CD & GitOps',
-        items: [
-          { name: 'GitHub Actions' },
-          { name: 'GitLab CI' },
-          { name: 'Kaniko' },
-          { name: 'Trivy Security' },
-        ],
-      },
-      {
-        category: 'Monitoring & Telemetry',
-        items: [
-          { name: 'Prometheus' },
-          { name: 'Grafana' },
-          { name: 'OpenTelemetry' },
-          { name: 'Loki' },
-        ],
-      },
-    ],
-    architecturePoints: [
-      {
-        title: 'Declarative GitOps Delivery',
-        description:
-          'ArgoCD reconciling Kubernetes cluster state continuously against version-controlled Git manifests.',
-      },
-      {
-        title: 'Zero-Downtime Deployments',
-        description:
-          'Automated progressive canary releases with metric-based rollbacks on error budget breach.',
-      },
-      {
-        title: 'Zero-Trust Security Mesh',
-        description:
-          'mTLS encrypted inter-service communication with Istio service mesh and automated certificate rotation.',
-      },
-    ],
-    mermaidGraph: `graph TD
-    GitRepo[Git Repository / Main Branch] -->|Commit Push| GitHubActions[CI Pipeline: Lint, Test, Scan]
-    GitHubActions --> ContainerRegistry[ECR / Artifact Registry]
-    GitHubActions -->|Update Manifest| ManifestRepo[GitOps Manifests Repo]
-    
-    ManifestRepo -->|Sync Trigger| ArgoCD[ArgoCD Controller]
-    ArgoCD -->|Progressive Rollout| K8sCluster[Kubernetes Cluster / EKS]
-    
-    K8sCluster --> PromTelemetry[Prometheus & OpenTelemetry]
-    PromTelemetry -->|Alert Breach| ArgoCD
-    ArgoCD -.->|Auto Rollback if Error| K8sCluster
-    
-    classDef git fill:#eceff1,stroke:#455a64,stroke-width:2px;
-    classDef ci fill:#e1f5fe,stroke:#0288d1,stroke-width:2px;
-    classDef k8s fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
-    
-    class GitRepo,ManifestRepo git;
-    class GitHubActions,ContainerRegistry ci;
-    class ArgoCD,K8sCluster,PromTelemetry k8s;`,
-    faqs: [
-      {
-        question: 'How is zero-downtime achieved during deployments?',
-        answer:
-          'We employ canary releases and blue-green clusters managed with ArgoCD and health checks.',
-      },
-    ],
-    cta: {
-      label: 'Modernize Cloud Infra',
-      url: '/contact',
-    },
-    metaTitle: 'Edge & GitOps Infrastructure | Aprogra',
-    metaDescription:
-      'Zero-trust cloud infrastructure, self-healing Kubernetes clusters, and GitOps CI/CD delivery.',
+    tags: ['React Native', 'Flutter', 'SQLite Mobile', 'Fastlane'],
+    customUrl: '/services/architecture/mobile-engineering',
   },
 ];
 
@@ -2146,56 +1720,37 @@ function normalizeService(raw: any): ServiceItem {
   const data = raw.attributes || raw;
   const slug = data.slug || data.id || 'service';
 
+  let deliverables: string[] = [];
+  if (Array.isArray(data.deliverables)) {
+    deliverables = data.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''));
+  }
+
+  let tags: string[] = [];
+  if (Array.isArray(data.tags)) {
+    tags = data.tags.map((t: any) => (typeof t === 'string' ? t : t.name || ''));
+  }
+
   return {
-    id: slug,
+    id: String(raw.documentId || raw.id || slug),
     slug: slug,
+    tabLabel: data.tabLabel || data.title || 'Discipline',
     title: data.title || 'Engineering Discipline',
-    order: typeof data.order === 'number' ? data.order : 0,
-    tag: data.tag || '01 / DISCIPLINE',
-    subheading: data.subheading || 'Enterprise Scale',
-    shortDescription: data.shortDescription || '',
-    heroDescription: data.heroDescription || data.shortDescription || '',
-    accentColor: data.accentColor || '#3B82F6',
-    illustrationType: data.illustrationType || 'web',
-    iconMedia: getStrapiMediaUrl(data.iconMedia),
-    coverImage:
-      getStrapiMediaUrl(data.coverImage) ||
-      data.coverImageUrl ||
-      DEFAULT_SERVICES_LIST.find((s) => s.slug === slug)?.coverImage ||
-      'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
-    deliverables: Array.isArray(data.deliverables)
-      ? data.deliverables.map((d: any) => ({ item: typeof d === 'string' ? d : d.item || '' }))
-      : [],
-    metrics: Array.isArray(data.metrics)
-      ? data.metrics.map((m: any) => ({ label: m.label || '', value: m.value || '' }))
-      : [],
-    technologies: Array.isArray(data.technologies)
-      ? data.technologies.map((t: any) => ({
-          category: t.category || 'Tech Stack',
-          items: Array.isArray(t.items)
-            ? t.items.map((i: any) => ({ name: typeof i === 'string' ? i : i.name || '' }))
-            : [],
-        }))
-      : [],
-    architecturePoints: Array.isArray(data.architecturePoints)
-      ? data.architecturePoints.map((p: any) => ({
-          title: p.title || '',
-          description: p.description || '',
-          iconMedia: getStrapiMediaUrl(p.iconMedia),
-        }))
-      : [],
-    mermaidGraph: data.mermaidGraph || '',
-    gallery: Array.isArray(data.gallery)
-      ? data.gallery.map((g: any) => getStrapiMediaUrl(g)).filter(Boolean)
-      : [],
-    faqs: Array.isArray(data.faqs)
-      ? data.faqs.map((f: any) => ({ question: f.question || '', answer: f.answer || '' }))
-      : [],
-    cta: data.cta
-      ? { label: data.cta.label || 'Start a Project', url: data.cta.url || '/contact' }
-      : undefined,
-    metaTitle: data.metaTitle,
-    metaDescription: data.metaDescription,
+    category: data.category || 'Core Engineering',
+    shortSummary: data.shortSummary || '',
+    description: data.description || data.shortSummary || '',
+    icon: data.icon || 'web',
+    image: data.image,
+    imageUrl: getStrapiMediaUrl(data.image) || data.imageUrl || undefined,
+    cardOrder: typeof data.cardOrder === 'number' ? data.cardOrder : (typeof data.order === 'number' ? data.order : 1),
+    kpiNumber: data.kpiNumber || '',
+    kpiLabel: data.kpiLabel || '',
+    deliverables: deliverables.length > 0 ? deliverables : [
+      'Production Architecture & Scalable Systems',
+      'Sub-Second Performance & Edge Telemetry',
+      'Automated CI/CD & Cloud Infrastructure'
+    ],
+    tags: tags.length > 0 ? tags : ['TypeScript', 'Cloud', 'Architecture'],
+    customUrl: data.customUrl || `/services/architecture/${slug}`,
   };
 }
 
@@ -2204,72 +1759,52 @@ function normalizeService(raw: any): ServiceItem {
  */
 export async function fetchServicesPageContent(): Promise<ServicesPageContent> {
   try {
-    const raw = await fetchFromStrapi<any>(
-      'services-page?populate[hero][populate]=*&populate[kpi][populate]=*&populate[showcase][populate]=*&populate[closingCta][populate]=*'
-    );
+    const raw = await fetchFromStrapi<any>('services-page?populate=*');
     if (!raw) return DEFAULT_SERVICES_PAGE_CONTENT;
 
     const data = raw.attributes || raw;
     const hero = data.hero || {};
-    const kpi = data.kpi || {};
-    const showcase = data.showcase || {};
+    const cards = data.cards || {};
+    const features = data.features || {};
     const closingCta = data.closingCta || {};
 
     return {
       hero: {
-        topMetaBadge: hero.topMetaBadge || DEFAULT_SERVICES_PAGE_CONTENT.hero.topMetaBadge,
-        countryBadge: hero.countryBadge || DEFAULT_SERVICES_PAGE_CONTENT.hero.countryBadge,
-        complianceBadge: hero.complianceBadge || DEFAULT_SERVICES_PAGE_CONTENT.hero.complianceBadge,
         badge: hero.badge || DEFAULT_SERVICES_PAGE_CONTENT.hero.badge,
         headline: hero.headline || DEFAULT_SERVICES_PAGE_CONTENT.hero.headline,
         highlight: hero.highlight || DEFAULT_SERVICES_PAGE_CONTENT.hero.highlight,
         description: hero.description || DEFAULT_SERVICES_PAGE_CONTENT.hero.description,
-        primaryCta: {
-          label: hero.primaryCta?.label || DEFAULT_SERVICES_PAGE_CONTENT.hero.primaryCta.label,
-          url: hero.primaryCta?.url || DEFAULT_SERVICES_PAGE_CONTENT.hero.primaryCta.url,
-        },
-        secondaryCta: {
-          label: hero.secondaryCta?.label || DEFAULT_SERVICES_PAGE_CONTENT.hero.secondaryCta.label,
-          url: hero.secondaryCta?.url || DEFAULT_SERVICES_PAGE_CONTENT.hero.secondaryCta.url,
-        },
-        statItems: Array.isArray(hero.statItems)
-          ? hero.statItems.map((s: any) => (typeof s === 'string' ? s : s.item || ''))
-          : DEFAULT_SERVICES_PAGE_CONTENT.hero.statItems,
-        stackTitle: hero.stackTitle || DEFAULT_SERVICES_PAGE_CONTENT.hero.stackTitle,
-        stackBadge: hero.stackBadge || DEFAULT_SERVICES_PAGE_CONTENT.hero.stackBadge,
-        stackFooterLeft: hero.stackFooterLeft || DEFAULT_SERVICES_PAGE_CONTENT.hero.stackFooterLeft,
-        stackFooterRight: hero.stackFooterRight || DEFAULT_SERVICES_PAGE_CONTENT.hero.stackFooterRight,
-        slaCardTitle: hero.slaCardTitle || DEFAULT_SERVICES_PAGE_CONTENT.hero.slaCardTitle,
-        slaCardDesc: hero.slaCardDesc || DEFAULT_SERVICES_PAGE_CONTENT.hero.slaCardDesc,
-        slaCardMetric: hero.slaCardMetric || DEFAULT_SERVICES_PAGE_CONTENT.hero.slaCardMetric,
-        slaCardMetricLabel: hero.slaCardMetricLabel || DEFAULT_SERVICES_PAGE_CONTENT.hero.slaCardMetricLabel,
-        scrollAnchorText: hero.scrollAnchorText || DEFAULT_SERVICES_PAGE_CONTENT.hero.scrollAnchorText,
+        primaryCtaText: hero.primaryCtaText || DEFAULT_SERVICES_PAGE_CONTENT.hero.primaryCtaText,
+        primaryCtaUrl: hero.primaryCtaUrl || DEFAULT_SERVICES_PAGE_CONTENT.hero.primaryCtaUrl,
+        secondaryCtaText: hero.secondaryCtaText || DEFAULT_SERVICES_PAGE_CONTENT.hero.secondaryCtaText,
+        secondaryCtaUrl: hero.secondaryCtaUrl || DEFAULT_SERVICES_PAGE_CONTENT.hero.secondaryCtaUrl,
+        point1: hero.point1 || DEFAULT_SERVICES_PAGE_CONTENT.hero.point1,
+        point2: hero.point2 || DEFAULT_SERVICES_PAGE_CONTENT.hero.point2,
+        point3: hero.point3 || DEFAULT_SERVICES_PAGE_CONTENT.hero.point3,
+        heroImage: hero.heroImage,
+        heroImageUrl: getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || DEFAULT_SERVICES_PAGE_CONTENT.hero.heroImageUrl,
       },
-      kpi: {
-        badge: kpi.badge || DEFAULT_SERVICES_PAGE_CONTENT.kpi.badge,
-        title: kpi.title || DEFAULT_SERVICES_PAGE_CONTENT.kpi.title,
-        subtitle: kpi.subtitle || DEFAULT_SERVICES_PAGE_CONTENT.kpi.subtitle,
+      cards: {
+        badge: cards.badge || DEFAULT_SERVICES_PAGE_CONTENT.cards.badge,
+        headline: cards.headline || DEFAULT_SERVICES_PAGE_CONTENT.cards.headline,
+        highlight: cards.highlight || DEFAULT_SERVICES_PAGE_CONTENT.cards.highlight,
+        description: cards.description || DEFAULT_SERVICES_PAGE_CONTENT.cards.description,
       },
-      showcase: {
-        badge: showcase.badge || DEFAULT_SERVICES_PAGE_CONTENT.showcase.badge,
-        subBadge: showcase.subBadge || DEFAULT_SERVICES_PAGE_CONTENT.showcase.subBadge,
-        title: showcase.title || DEFAULT_SERVICES_PAGE_CONTENT.showcase.title,
-        scrollText: showcase.scrollText || DEFAULT_SERVICES_PAGE_CONTENT.showcase.scrollText,
+      features: {
+        badge: features.badge || DEFAULT_SERVICES_PAGE_CONTENT.features.badge,
+        headline: features.headline || DEFAULT_SERVICES_PAGE_CONTENT.features.headline,
+        highlight: features.highlight || DEFAULT_SERVICES_PAGE_CONTENT.features.highlight,
+        description: features.description || DEFAULT_SERVICES_PAGE_CONTENT.features.description,
       },
       closingCta: {
         badge: closingCta.badge || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.badge,
         headline: closingCta.headline || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.headline,
-        subtitle: closingCta.subtitle || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.subtitle,
-        primaryCta: {
-          label: closingCta.primaryCta?.label || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.primaryCta.label,
-          url: closingCta.primaryCta?.url || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.primaryCta.url,
-        },
-        secondaryCta: {
-          label: closingCta.secondaryCta?.label || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.secondaryCta.label,
-          url: closingCta.secondaryCta?.url || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.secondaryCta.url,
-        },
-        copyright: closingCta.copyright || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.copyright,
-        standardsNote: closingCta.standardsNote || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.standardsNote,
+        highlight: closingCta.highlight || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.highlight,
+        description: closingCta.description || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.description,
+        primaryCtaText: closingCta.primaryCtaText || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.primaryCtaText,
+        primaryCtaUrl: closingCta.primaryCtaUrl || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.primaryCtaUrl,
+        secondaryCtaText: closingCta.secondaryCtaText || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.secondaryCtaText,
+        secondaryCtaUrl: closingCta.secondaryCtaUrl || DEFAULT_SERVICES_PAGE_CONTENT.closingCta.secondaryCtaUrl,
       },
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
@@ -2281,13 +1816,11 @@ export async function fetchServicesPageContent(): Promise<ServicesPageContent> {
 }
 
 /**
- * Fetches all Services collection items from Strapi ordered by priority
+ * Fetches all Services collection items from Strapi ordered by cardOrder
  */
 export async function fetchServicesList(): Promise<ServiceItem[]> {
   try {
-    const raw = await fetchFromStrapi<any>(
-      'services?populate[technologies][populate]=items&populate[deliverables]=true&populate[metrics]=true&populate[architecturePoints][populate]=iconMedia&populate[faqs]=true&populate[cta]=true&populate[iconMedia]=true&populate[gallery]=true&sort=order:asc'
-    );
+    const raw = await fetchFromStrapi<any>('services?populate=*&sort=cardOrder:asc');
     if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_SERVICES_LIST;
 
     return raw.map(normalizeService);
@@ -2297,22 +1830,16 @@ export async function fetchServicesList(): Promise<ServiceItem[]> {
   }
 }
 
-/**
- * Fetches a single Service by slug
- */
 export async function fetchServiceBySlug(slug: string): Promise<ServiceItem | null> {
   try {
     const raw = await fetchFromStrapi<any>(
-      `services?filters[slug][$eq]=${encodeURIComponent(
-        slug
-      )}&populate[technologies][populate]=items&populate[deliverables]=true&populate[metrics]=true&populate[architecturePoints][populate]=iconMedia&populate[faqs]=true&populate[cta]=true&populate[iconMedia]=true&populate[gallery]=true`
+      `services?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=*`
     );
 
     if (raw && Array.isArray(raw) && raw.length > 0) {
       return normalizeService(raw[0]);
     }
 
-    // Direct single item match in defaults
     const local = DEFAULT_SERVICES_LIST.find((s) => s.slug === slug || s.id === slug);
     return local || null;
   } catch (error) {

@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_sections_services_features_sections",
+  "info": {
+    "displayName": "Services Features Section Settings",
+    "icon": "compass",
+    "description": "Header settings for the deep-dive features and discipline tabs showcase"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "DISCIPLINE DEEP-DIVES"
+    },
+    "headline": {
+      "type": "string",
+      "default": "Engineered for Extreme Scale"
+    },
+    "highlight": {
+      "type": "string",
+      "default": "Capabilities in Depth"
+    },
+    "description": {
+      "type": "text",
+      "default": "Navigate through each specialized engineering domain to explore architecture blueprints, tech stacks, and performance benchmarks."
+    }
+  }
+}

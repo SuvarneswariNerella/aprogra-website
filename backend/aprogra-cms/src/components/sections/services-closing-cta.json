@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_sections_services_closing_ctas",
+  "info": {
+    "displayName": "Services Closing CTA",
+    "icon": "bullhorn",
+    "description": "Closing banner for the Services page with editable headline and CTA buttons"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "READY TO SHIP?"
+    },
+    "headline": {
+      "type": "string",
+      "default": "Let's build what's next"
+    },
+    "highlight": {
+      "type": "string",
+      "default": "Together."
+    },
+    "description": {
+      "type": "text",
+      "default": "Whether you need a dedicated engineering pod or an end-to-end autonomous AI system, we are ready to build."
+    },
+    "primaryCtaText": {
+      "type": "string",
+      "default": "Schedule Architecture Review"
+    },
+    "primaryCtaUrl": {
+      "type": "string",
+      "default": "/contact"
+    },
+    "secondaryCtaText": {
+      "type": "string",
+      "default": "Explore Our Products"
+    },
+    "secondaryCtaUrl": {
+      "type": "string",
+      "default": "/products"
+    }
+  }
+}

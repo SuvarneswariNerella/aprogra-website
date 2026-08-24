@@ -152,6 +152,107 @@ export interface SectionsHeaderConfig extends Struct.ComponentSchema {
   };
 }
 
+export interface SectionsServicesCardsSection extends Struct.ComponentSchema {
+  collectionName: 'components_sections_services_cards_sections';
+  info: {
+    description: 'Header settings for the flip cards section on the Services page';
+    displayName: 'Services Cards Section Settings';
+    icon: 'grid';
+  };
+  attributes: {
+    badge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'CORE DISCIPLINES'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Hover or tap each discipline card to inspect deliverables, architecture patterns, and engineering capabilities.'>;
+    headline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Engineering Without Compromise'>;
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Pillars of Excellence'>;
+  };
+}
+
+export interface SectionsServicesClosingCta extends Struct.ComponentSchema {
+  collectionName: 'components_sections_services_closing_ctas';
+  info: {
+    description: 'Closing banner for the Services page with editable headline and CTA buttons';
+    displayName: 'Services Closing CTA';
+    icon: 'bullhorn';
+  };
+  attributes: {
+    badge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'READY TO SHIP?'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Whether you need a dedicated engineering pod or an end-to-end autonomous AI system, we are ready to build.'>;
+    headline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"Let's build what's next">;
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Together.'>;
+    primaryCtaText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Schedule Architecture Review'>;
+    primaryCtaUrl: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'/contact'>;
+    secondaryCtaText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Explore Our Products'>;
+    secondaryCtaUrl: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'/products'>;
+  };
+}
+
+export interface SectionsServicesFeaturesSection
+  extends Struct.ComponentSchema {
+  collectionName: 'components_sections_services_features_sections';
+  info: {
+    description: 'Header settings for the deep-dive features and discipline tabs showcase';
+    displayName: 'Services Features Section Settings';
+    icon: 'compass';
+  };
+  attributes: {
+    badge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'DISCIPLINE DEEP-DIVES'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Navigate through each specialized engineering domain to explore architecture blueprints, tech stacks, and performance benchmarks.'>;
+    headline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Engineered for Extreme Scale'>;
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Capabilities in Depth'>;
+  };
+}
+
+export interface SectionsServicesHeroSection extends Struct.ComponentSchema {
+  collectionName: 'components_sections_services_hero_sections';
+  info: {
+    description: 'Hero section for the Services page with editable content, points, and right-side image';
+    displayName: 'Services Hero Section';
+    icon: 'layout';
+  };
+  attributes: {
+    badge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'CORE ENGINEERING & AI CAPABILITIES'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'We engineer resilient multi-tenant architectures, high-performance web systems, and autonomous agent pipelines for visionary enterprises.'>;
+    headline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Architecting High-Throughput Cloud &'>;
+    heroImage: Schema.Attribute.Media<'images'>;
+    heroImageUrl: Schema.Attribute.String;
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Autonomous AI Systems'>;
+    point1: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Zero Architectural Debt & 99.99% Availability'>;
+    point2: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Sub-Second Edge Telemetry & Real-Time Sync'>;
+    point3: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Bank-Grade SOC2 Security & Tenant Partitioning'>;
+    primaryCtaText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Schedule Architectural Brief'>;
+    primaryCtaUrl: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'/contact'>;
+    secondaryCtaText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Explore Capabilities'>;
+    secondaryCtaUrl: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'#services-cards-overview'>;
+  };
+}
+
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
@@ -162,6 +263,10 @@ declare module '@strapi/strapi' {
       'sections.blog-hero-section': SectionsBlogHeroSection;
       'sections.footer-config': SectionsFooterConfig;
       'sections.header-config': SectionsHeaderConfig;
+      'sections.services-cards-section': SectionsServicesCardsSection;
+      'sections.services-closing-cta': SectionsServicesClosingCta;
+      'sections.services-features-section': SectionsServicesFeaturesSection;
+      'sections.services-hero-section': SectionsServicesHeroSection;
     }
   }
 }

@@ -661,6 +661,93 @@ export interface ApiGlobalConfigGlobalConfig extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiServiceService extends Struct.CollectionTypeSchema {
+  collectionName: 'services';
+  info: {
+    description: 'Dynamic engineering disciplines, flip cards, and feature showcase tabs on the Services page';
+    displayName: 'Service & Feature Discipline';
+    pluralName: 'services';
+    singularName: 'service';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cardOrder: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    category: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Core Engineering'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    customUrl: Schema.Attribute.String;
+    deliverables: Schema.Attribute.JSON;
+    description: Schema.Attribute.Text;
+    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'web'>;
+    image: Schema.Attribute.Media<'images'>;
+    imageUrl: Schema.Attribute.String;
+    kpiLabel: Schema.Attribute.String;
+    kpiNumber: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::service.service'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    shortSummary: Schema.Attribute.Text;
+    slug: Schema.Attribute.UID<'title'> & Schema.Attribute.Required;
+    tabLabel: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Discipline'>;
+    tags: Schema.Attribute.JSON;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiServicesPageServicesPage extends Struct.SingleTypeSchema {
+  collectionName: 'services_pages';
+  info: {
+    description: 'Global page layout and section configurations for the Services Page';
+    displayName: 'Services Page Settings';
+    pluralName: 'services-pages';
+    singularName: 'services-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    cards: Schema.Attribute.Component<'sections.services-cards-section', false>;
+    closingCta: Schema.Attribute.Component<
+      'sections.services-closing-cta',
+      false
+    >;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    features: Schema.Attribute.Component<
+      'sections.services-features-section',
+      false
+    >;
+    hero: Schema.Attribute.Component<'sections.services-hero-section', false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::services-page.services-page'
+    > &
+      Schema.Attribute.Private;
+    metaDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations.'>;
+    metaTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiTestimonialTestimonial extends Struct.CollectionTypeSchema {
   collectionName: 'testimonials';
   info: {
@@ -1216,6 +1303,8 @@ declare module '@strapi/strapi' {
       'api::brands-section.brands-section': ApiBrandsSectionBrandsSection;
       'api::category.category': ApiCategoryCategory;
       'api::global-config.global-config': ApiGlobalConfigGlobalConfig;
+      'api::service.service': ApiServiceService;
+      'api::services-page.services-page': ApiServicesPageServicesPage;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

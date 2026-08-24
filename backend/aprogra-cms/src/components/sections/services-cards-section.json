@@ -1,0 +1,27 @@
+{
+  "collectionName": "components_sections_services_cards_sections",
+  "info": {
+    "displayName": "Services Cards Section Settings",
+    "icon": "grid",
+    "description": "Header settings for the flip cards section on the Services page"
+  },
+  "options": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "CORE DISCIPLINES"
+    },
+    "headline": {
+      "type": "string",
+      "default": "Engineering Without Compromise"
+    },
+    "highlight": {
+      "type": "string",
+      "default": "Pillars of Excellence"
+    },
+    "description": {
+      "type": "text",
+      "default": "Hover or tap each discipline card to inspect deliverables, architecture patterns, and engineering capabilities."
+    }
+  }
+}

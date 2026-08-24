@@ -1,0 +1,44 @@
+{
+  "kind": "singleType",
+  "collectionName": "services_pages",
+  "info": {
+    "singularName": "services-page",
+    "pluralName": "services-pages",
+    "displayName": "Services Page Settings",
+    "description": "Global page layout and section configurations for the Services Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.services-hero-section"
+    },
+    "cards": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.services-cards-section"
+    },
+    "features": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.services-features-section"
+    },
+    "closingCta": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.services-closing-cta"
+    },
+    "metaTitle": {
+      "type": "string",
+      "default": "Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra"
+    },
+    "metaDescription": {
+      "type": "text",
+      "default": "Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations."
+    }
+  }
+}

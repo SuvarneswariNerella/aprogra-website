@@ -266,7 +266,6 @@ const DEFAULT_BRANDS_SECTION_SEED_DATA = {
 };
 
 const DEFAULT_BRANDS_SEED_DATA = [
-  // Row 1 (Moving Left -> Right)
   { name: 'Noddyy', category: 'Social Platform', location: 'UK', row: 1, order: 1 },
   { name: 'Balcony Originals', category: 'Apparel & Retail', location: 'US', row: 1, order: 2 },
   { name: 'Coventry Strikers', category: 'Sports Tech', location: 'UK', row: 1, order: 3 },
@@ -277,8 +276,6 @@ const DEFAULT_BRANDS_SEED_DATA = [
   { name: 'Vertex Logic', category: 'Logistics SaaS', location: 'US', row: 1, order: 8 },
   { name: 'Kroma Intelligence', category: 'FinTech AI', location: 'UK', row: 1, order: 9 },
   { name: 'Aegis BioSystems', category: 'HealthTech', location: 'India', row: 1, order: 10 },
-
-  // Row 2 (Moving Right -> Left)
   { name: 'EduNura', category: 'EdTech Engine', location: 'Global', row: 2, order: 1 },
   { name: 'SmartSchool ERP', category: 'School Management', location: 'India', row: 2, order: 2 },
   { name: 'Flowdesk', category: 'Workflow Automation', location: 'US', row: 2, order: 3 },
@@ -289,6 +286,176 @@ const DEFAULT_BRANDS_SEED_DATA = [
   { name: 'DataPulse Systems', category: 'Telemetry & BI', location: 'Singapore', row: 2, order: 8 },
   { name: 'FinEdge Wealth', category: 'Digital Banking', location: 'UK', row: 2, order: 9 },
   { name: 'AProgra Studio', category: 'Core Ecosystem', location: 'Global', row: 2, order: 10 },
+];
+
+const DEFAULT_SERVICES_PAGE_SEED_DATA = {
+  hero: {
+    badge: 'CORE ENGINEERING & AI CAPABILITIES',
+    headline: 'Architecting High-Throughput Cloud &',
+    highlight: 'Autonomous AI Systems',
+    description: 'We engineer resilient multi-tenant architectures, high-performance web systems, and autonomous agent pipelines for visionary enterprises.',
+    primaryCtaText: 'Schedule Architectural Brief',
+    primaryCtaUrl: '/contact',
+    secondaryCtaText: 'Explore Capabilities',
+    secondaryCtaUrl: '#services-cards-overview',
+    point1: 'Zero Architectural Debt & 99.99% Availability',
+    point2: 'Sub-Second Edge Telemetry & Real-Time Sync',
+    point3: 'Bank-Grade SOC2 Security & Tenant Partitioning',
+    heroImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
+  },
+  cards: {
+    badge: 'CORE DISCIPLINES',
+    headline: 'Engineering Without Compromise',
+    highlight: 'Pillars of Excellence',
+    description: 'Hover or tap each discipline card to inspect deliverables, architecture patterns, and engineering capabilities.',
+  },
+  features: {
+    badge: 'DISCIPLINE DEEP-DIVES',
+    headline: 'Engineered for Extreme Scale',
+    highlight: 'Capabilities in Depth',
+    description: 'Navigate through each specialized engineering domain to explore architecture blueprints, tech stacks, and benchmarks.',
+  },
+  closingCta: {
+    badge: 'READY TO SHIP?',
+    headline: "Let's build what's next",
+    highlight: 'Together.',
+    description: 'Whether you need a dedicated engineering pod or an end-to-end autonomous AI system, we are ready to build.',
+    primaryCtaText: 'Schedule Architecture Review',
+    primaryCtaUrl: '/contact',
+    secondaryCtaText: 'Explore Our Products',
+    secondaryCtaUrl: '/products',
+  },
+  metaTitle: 'Custom Software, Cloud Architecture & Autonomous AI Services | Aprogra',
+  metaDescription: 'Enterprise software engineering, distributed cloud systems, and autonomous AI agents engineered for hyper-scale operations.',
+};
+
+const DEFAULT_SERVICES_SEED_DATA = [
+  {
+    slug: 'web-engineering',
+    tabLabel: 'Web',
+    title: 'Modern Web & Distributed Frontends',
+    category: 'Full-Stack Architecture',
+    shortSummary: 'Edge-rendered Next.js 15, sub-second LCP, distributed state, and atomic design systems.',
+    description: 'We build ultra-fast, accessible web platforms utilizing modern server components, streaming SSR, and edge execution to deliver sub-second Core Web Vitals at global scale.',
+    icon: 'web',
+    imageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 1,
+    kpiNumber: '< 0.8s',
+    kpiLabel: 'LCP Load Speed',
+    deliverables: [
+      'Next.js 15 App Router & React Server Components',
+      'Local-First SQLite & CRDT State Sync',
+      'Sub-second LCP & Edge SSR Telemetry',
+      'Custom Design Tokens & W3C Styling'
+    ],
+    tags: ['Next.js 15', 'TypeScript', 'Tailwind v4', 'LibSQL'],
+    customUrl: '/services/architecture/web-engineering',
+  },
+  {
+    slug: 'agentic-ai',
+    tabLabel: 'AI',
+    title: 'Agentic AI & Autonomous Reasoning',
+    category: 'Applied AI & LLMs',
+    shortSummary: 'Multi-agent orchestration, function calling, vector embeddings, and self-correcting pipelines.',
+    description: 'We develop domain-specific autonomous agent pipelines capable of multi-step task execution, automated data triage, and human-in-the-loop escalation with deterministic safeguards.',
+    icon: 'ai',
+    imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 2,
+    kpiNumber: '70%',
+    kpiLabel: 'Triage Automation',
+    deliverables: [
+      'Autonomous Multi-Agent Task Orchestration',
+      'Deterministic Function Calling & Schema Validation',
+      'Hybrid Vector Search & RAG Retrieval Engines',
+      'Sub-Second LLM Streaming & Real-Time Sync'
+    ],
+    tags: ['Gemini 1.5', 'LangChain', 'pgvector', 'Agent Swarms'],
+    customUrl: '/services/architecture/agentic-ai',
+  },
+  {
+    slug: 'saas-platforms',
+    tabLabel: 'SaaS',
+    title: 'Enterprise Multi-Tenant SaaS',
+    category: 'Systems Architecture',
+    shortSummary: 'Postgres Row-Level Security, isolated tenant clusters, and high-concurrency billing engines.',
+    description: 'Architecting robust, scalable SaaS foundations with hardened multi-tenancy, granular RBAC/ABAC permissions, automated tenant provisioning, and idempotent payment pipelines.',
+    icon: 'saas',
+    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 3,
+    kpiNumber: '10k+',
+    kpiLabel: 'Tenants / Cluster',
+    deliverables: [
+      'PostgreSQL Row-Level Security (RLS) Isolation',
+      'Dynamic Subdomain & Custom Domain Routing',
+      'Granular RBAC, ABAC & SAML/SSO Enterprise Auth',
+      'Idempotent Stripe Billing & Usage Metering'
+    ],
+    tags: ['Multi-Tenancy', 'PostgreSQL RLS', 'Stripe API', 'Redis'],
+    customUrl: '/services/architecture/saas-platforms',
+  },
+  {
+    slug: 'design-systems',
+    tabLabel: 'Design',
+    title: 'Design Systems & UI Engineering',
+    category: 'Product Design',
+    shortSummary: 'Figma-to-code token pipelines, WCAG AAA accessibility, fluid typography, and motion choreography.',
+    description: 'We construct living, unified design token architectures that bridge Figma variables with production code, ensuring uncompromising visual harmony and fluid micro-interactions.',
+    icon: 'design',
+    imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 4,
+    kpiNumber: '500+',
+    kpiLabel: 'Design Tokens',
+    deliverables: [
+      'Figma Tokens to CSS Variable Pipelines',
+      'WCAG 2.2 AAA Accessible Component Systems',
+      'Mathematical Fluid Typography & Dynamic Spacing',
+      'Physics-Based GSAP & Motion Choreography'
+    ],
+    tags: ['Figma Tokens', 'Tailwind CSS', 'GSAP', 'Accessibility'],
+    customUrl: '/services/architecture/design-systems',
+  },
+  {
+    slug: 'cloud-devops',
+    tabLabel: 'Cloud',
+    title: 'Cloud Infrastructure & High Concurrency',
+    category: 'DevOps & SRE',
+    shortSummary: 'Zero-downtime Kubernetes deployments, distributed caching, and automated CI/CD pipelines.',
+    description: 'Engineering fault-tolerant cloud backbones with automated multi-region scaling, blue-green zero-downtime deployments, distributed caching, and 24/7 observability.',
+    icon: 'cloud',
+    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 5,
+    kpiNumber: '99.99%',
+    kpiLabel: 'System Uptime',
+    deliverables: [
+      'Kubernetes Multi-Cluster Orchestration',
+      'Zero-Downtime Blue/Green Database Migrations',
+      'Distributed Edge Caching & Traefik Load Balancing',
+      'Automated Terraform & GitHub Actions CI/CD'
+    ],
+    tags: ['Kubernetes', 'Docker', 'Terraform', 'Prometheus'],
+    customUrl: '/services/architecture/cloud-devops',
+  },
+  {
+    slug: 'mobile-engineering',
+    tabLabel: 'Mobile',
+    title: 'Cross-Platform Mobile Apps',
+    category: 'Mobile Systems',
+    shortSummary: 'High-performance React Native & Flutter applications with offline-first synchronization.',
+    description: 'We engineer fluid, native-feeling mobile applications with local-first database replication, push notification pipelines, and background telemetry.',
+    icon: 'mobile',
+    imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
+    cardOrder: 6,
+    kpiNumber: '60 FPS',
+    kpiLabel: 'Native Fluidity',
+    deliverables: [
+      'React Native & Flutter Native Engine Optimization',
+      'Offline-First Local Database & Background Sync',
+      'Biometric Authentication & Secure Enclave Storage',
+      'Automated App Store & Play Store CI/CD Fastlane'
+    ],
+    tags: ['React Native', 'Flutter', 'SQLite Mobile', 'Fastlane'],
+    customUrl: '/services/architecture/mobile-engineering',
+  }
 ];
 
 export default {
@@ -314,6 +481,9 @@ export default {
           'api::brands-section.brands-section.find',
           'api::brand.brand.find',
           'api::brand.brand.findOne',
+          'api::services-page.services-page.find',
+          'api::service.service.find',
+          'api::service.service.findOne',
         ];
 
         for (const action of actions) {
@@ -335,7 +505,7 @@ export default {
 
       const strapiAny = strapi as any;
 
-      // 1. Initialize or sync Global Config Single Type
+      // 1. Global Config Single Type
       const existingConfig = await strapiAny.documents('api::global-config.global-config').findFirst();
       if (!existingConfig) {
         await strapiAny.documents('api::global-config.global-config').create({
@@ -345,7 +515,7 @@ export default {
         strapi.log.info('[Bootstrap] Created and published Header & Footer Global Configuration in Strapi.');
       }
 
-      // 2. Initialize or sync Blog Categories
+      // 2. Blog Categories
       for (const cat of DEFAULT_CATEGORIES_SEED_DATA) {
         const existingCat = await strapiAny.documents('api::category.category').findFirst({
           filters: { slug: cat.slug },
@@ -359,7 +529,7 @@ export default {
         }
       }
 
-      // 3. Initialize or sync Blog Page Single Type
+      // 3. Blog Page Single Type
       const existingBlogPage = await strapiAny.documents('api::blog-page.blog-page').findFirst();
       if (!existingBlogPage) {
         await strapiAny.documents('api::blog-page.blog-page').create({
@@ -369,7 +539,7 @@ export default {
         strapi.log.info('[Bootstrap] Created and published Blog Page Settings in Strapi.');
       }
 
-      // 4. Initialize or sync Blog Posts
+      // 4. Blog Posts
       for (const post of DEFAULT_BLOG_POSTS_SEED_DATA) {
         const existingPost = await strapiAny.documents('api::blog-post.blog-post').findFirst({
           filters: { slug: post.slug },
@@ -383,7 +553,7 @@ export default {
         }
       }
 
-      // 5. Initialize or sync Global Testimonials
+      // 5. Global Testimonials
       for (const t of DEFAULT_TESTIMONIALS_SEED_DATA) {
         const existingTestimonial = await strapiAny.documents('api::testimonial.testimonial').findFirst({
           filters: { authorName: t.authorName },
@@ -397,7 +567,7 @@ export default {
         }
       }
 
-      // 6. Initialize or sync Global Brands Section Settings
+      // 6. Global Brands Section Settings
       const existingBrandsSection = await strapiAny.documents('api::brands-section.brands-section').findFirst();
       if (!existingBrandsSection) {
         await strapiAny.documents('api::brands-section.brands-section').create({
@@ -407,7 +577,7 @@ export default {
         strapi.log.info('[Bootstrap] Created and published Brands Section Settings in Strapi.');
       }
 
-      // 7. Initialize or sync Partner Brands
+      // 7. Partner Brands
       for (const b of DEFAULT_BRANDS_SEED_DATA) {
         const existingBrand = await strapiAny.documents('api::brand.brand').findFirst({
           filters: { name: b.name },
@@ -418,6 +588,30 @@ export default {
             status: 'published',
           });
           strapi.log.info(`[Bootstrap] Created Brand: "${b.name}" (${b.location}, Row: ${b.row})`);
+        }
+      }
+
+      // 8. Services Page Settings Single Type
+      const existingServicesPage = await strapiAny.documents('api::services-page.services-page').findFirst();
+      if (!existingServicesPage) {
+        await strapiAny.documents('api::services-page.services-page').create({
+          data: DEFAULT_SERVICES_PAGE_SEED_DATA,
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created and published Services Page Settings in Strapi.');
+      }
+
+      // 9. Services & Feature Disciplines Collection Type
+      for (const s of DEFAULT_SERVICES_SEED_DATA) {
+        const existingService = await strapiAny.documents('api::service.service').findFirst({
+          filters: { slug: s.slug },
+        });
+        if (!existingService) {
+          await strapiAny.documents('api::service.service').create({
+            data: s,
+            status: 'published',
+          });
+          strapi.log.info(`[Bootstrap] Created Service Discipline: "${s.title}" (Tab: ${s.tabLabel}, Order: ${s.cardOrder})`);
         }
       }
 
