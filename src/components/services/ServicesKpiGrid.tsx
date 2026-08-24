@@ -10,11 +10,11 @@ import {
   Cloud, 
   Smartphone,
   Sparkles,
-  Zap,
+  Zap
 } from 'lucide-react';
 import CardFlip from '@/components/ui/flip-card';
 import ScrollReveal from '@/components/animations/ScrollReveal';
-import { ServicesCardsSection, ServiceItem, DEFAULT_SERVICES_PAGE_CONTENT, DEFAULT_SERVICES_LIST } from '@/lib/strapi';
+import { ServicesCardsSection, ServiceItem, DEFAULT_SERVICES_PAGE_CONTENT, DEFAULT_SERVICES_LIST, getStrapiMediaUrl } from '@/lib/strapi';
 
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
@@ -51,6 +51,7 @@ export default function ServicesKpiGrid({
     if (!container || !grid) return;
 
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
     const cardWrappers = grid.querySelectorAll<HTMLElement>('.kpi-card-wrapper');
     if (cardWrappers.length === 0) return;
 
@@ -59,6 +60,7 @@ export default function ServicesKpiGrid({
       return;
     }
 
+    // Set initial hidden states
     gsap.set(cardWrappers, {
       opacity: 0,
       y: 40,
@@ -66,6 +68,7 @@ export default function ServicesKpiGrid({
     });
 
     const ctx = gsap.context(() => {
+      // Use ScrollTrigger.batch() on the card elements
       ScrollTrigger.batch(cardWrappers, {
         start: 'top 85%',
         once: true,
@@ -75,7 +78,7 @@ export default function ServicesKpiGrid({
             y: 0,
             scale: 1,
             duration: 0.8,
-            stagger: 0.1,
+            stagger: 0.12,
             ease: 'power3.out',
             overwrite: 'auto',
           });
@@ -98,61 +101,89 @@ export default function ServicesKpiGrid({
     }
   };
 
+  /**
+   * Calculates symmetric column spans across any number of cards
+   */
+  const getColSpanClass = (index: number, total: number) => {
+    if (total === 5) {
+      return index < 3
+        ? 'lg:col-span-2'
+        : index === 3
+        ? 'lg:col-span-2 lg:col-start-2'
+        : 'lg:col-span-2';
+    }
+    if (total % 3 === 1 && index === total - 1) {
+      // 1 leftover card centered on the last row
+      return 'lg:col-span-2 lg:col-start-3';
+    }
+    if (total % 3 === 2 && index === total - 2) {
+      // 2 leftover cards centered on the last row
+      return 'lg:col-span-2 lg:col-start-2';
+    }
+    return 'lg:col-span-2';
+  };
+
   return (
-    <section 
-      id="services-cards-overview"
+    <section
       ref={containerRef}
-      className="relative z-10 w-full py-20 sm:py-28 px-4 sm:px-6 md:px-12 bg-[#FAF8F5] text-[#0B0D12] border-b border-[#0B0D12]/10"
+      id="services-cards-overview"
+      className="relative z-10 w-full py-16 sm:py-20 lg:py-24 border-b border-[#0B0D12]/10 bg-[#FAF8F5]"
     >
-      <div className="max-w-7xl mx-auto space-y-12">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        {/* ========================================================================= */}
-        {/* SECTION HEADER: Fully Editable from Strapi                                */}
-        {/* ========================================================================= */}
-        <ScrollReveal className="text-center max-w-3xl mx-auto space-y-4">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-[#0B0D12]/15 text-xs font-mono font-bold tracking-wider text-[#0B0D12] uppercase shadow-2xs">
+        {/* Section Header */}
+        <ScrollReveal className="max-w-3xl mb-12 sm:mb-16 text-left">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-[#0B0D12]/15 text-[#0B0D12] text-xs font-mono font-bold tracking-wider uppercase shadow-2xs mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-            <span>{cards.badge}</span>
+            <span>{cards.badge || 'PRODUCTION ARCHITECTURE'}</span>
           </div>
-          
-          <h2 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#0B0D12] font-display">
-            {cards.headline} <span className="text-[#FF4A1C]">{cards.highlight}</span>
+
+          <h2 className="text-3xl sm:text-4xl font-bold font-display tracking-tight text-[#0B0D12]">
+            {cards.headline || `${services.length} Core Engineering Disciplines`}{' '}
+            {cards.highlight && <span className="text-[#FF4A1C]">{cards.highlight}</span>}
           </h2>
-          
-          <p className="text-sm sm:text-base md:text-lg text-[#5A5E6E] font-normal leading-relaxed">
-            {cards.description}
+          <p className="mt-4 text-sm sm:text-base md:text-lg text-[#5A5E6E] font-normal leading-relaxed">
+            {cards.description || 'Hover over or tap any card to inspect stack deliverables, verified performance metrics, and system capabilities.'}
           </p>
         </ScrollReveal>
 
-        {/* ========================================================================= */}
-        {/* DYNAMIC FLIP CARDS GRID (Supports 5, 6, 7, 8+ cards gracefully)            */}
-        {/* ========================================================================= */}
-        <div 
+        {/* Dynamic Responsive Multi-Card Symmetrical Grid */}
+        <div
           ref={gridRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 sm:gap-8 items-stretch justify-items-center"
         >
-          {services.map((service, index) => {
-            const Icon = ICON_MAP[service.icon] || ICON_MAP.web;
-            const imgSrc = service.imageUrl || 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=800&q=80';
+          {services.map((item, index) => {
+            const colSpanClass = getColSpanClass(index, services.length);
+            const IconComponent = ICON_MAP[item.illustrationType || item.icon] || ICON_MAP.web;
+            const iconMediaUrl = getStrapiMediaUrl(item.iconMedia);
+            const coverImageUrl =
+              (item.coverImage ? getStrapiMediaUrl(item.coverImage) : null) ||
+              item.imageUrl ||
+              (typeof item.image === 'string' ? item.image : undefined);
+
+            const deliverableItems = Array.isArray(item.deliverables)
+              ? item.deliverables.map((d: any) => (typeof d === 'string' ? d : d.item || ''))
+              : [];
 
             return (
-              <div 
-                key={service.id || service.slug || index}
-                className="kpi-card-wrapper w-full flex justify-center"
+              <div
+                key={item.slug || item.id || index}
+                className={`kpi-card-wrapper w-full flex justify-center ${colSpanClass}`}
               >
                 <CardFlip
-                  title={service.title}
-                  subtitle={service.shortSummary}
-                  description={service.description}
-                  features={service.deliverables}
-                  color="#FF4A1C"
-                  tag={service.category}
-                  number={`0${service.cardOrder || index + 1}`}
-                  icon={Icon}
-                  coverImageUrl={imgSrc}
-                  actionText="Explore Architecture"
-                  onActionClick={handleCardAction(service.slug, service.customUrl)}
-                  className="w-full max-w-none h-[490px]"
+                  title={item.title}
+                  subtitle={item.subheading || item.shortSummary || 'Enterprise Scale'}
+                  description={item.description || item.shortDescription || item.shortSummary}
+                  features={deliverableItems.length > 0 ? deliverableItems : ['Production Architecture', 'Edge Telemetry', 'Cloud Ops']}
+                  color={item.accentColor || '#3B82F6'}
+                  number={`0${index + 1} /`}
+                  tag={item.tag || `0${index + 1} / ${item.category?.toUpperCase() || 'SERVICE'}`}
+                  icon={IconComponent}
+                  iconMediaUrl={iconMediaUrl}
+                  coverImageUrl={coverImageUrl}
+                  actionText={item.cta?.label || 'Inspect Architecture'}
+                  onActionClick={handleCardAction(item.slug || item.id, item.customUrl || item.cta?.url)}
+                  className="w-full max-w-[340px] h-[400px]"
                 />
               </div>
             );
