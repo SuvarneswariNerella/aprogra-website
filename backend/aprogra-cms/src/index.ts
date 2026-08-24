@@ -254,6 +254,43 @@ const DEFAULT_TESTIMONIALS_SEED_DATA = [
   },
 ];
 
+const DEFAULT_BRANDS_SECTION_SEED_DATA = {
+  badge: 'CLIENTS & COLLABORATORS',
+  headline: 'Brands That Chose to',
+  highlight: 'Build Different',
+  description: 'We partner with ambitious startups, fast-scaling venture firms, and global enterprises to architect robust, resilient, and human-centric software.',
+  footprintText1: 'North America',
+  footprintText2: 'United Kingdom & Europe',
+  footprintText3: 'Middle East & UAE',
+  footprintText4: 'Asia Pacific & India',
+};
+
+const DEFAULT_BRANDS_SEED_DATA = [
+  // Row 1 (Moving Left -> Right)
+  { name: 'Noddyy', category: 'Social Platform', location: 'UK', row: 1, order: 1 },
+  { name: 'Balcony Originals', category: 'Apparel & Retail', location: 'US', row: 1, order: 2 },
+  { name: 'Coventry Strikers', category: 'Sports Tech', location: 'UK', row: 1, order: 3 },
+  { name: 'Aguatise', category: 'CleanTech', location: 'UAE', row: 1, order: 4 },
+  { name: 'PowerTech Global', category: 'Industrial IoT', location: 'Germany', row: 1, order: 5 },
+  { name: 'Star Circle', category: 'Talent Platform', location: 'Singapore', row: 1, order: 6 },
+  { name: 'CyberSecure Mindset', category: 'InfoSec Academy', location: 'India', row: 1, order: 7 },
+  { name: 'Vertex Logic', category: 'Logistics SaaS', location: 'US', row: 1, order: 8 },
+  { name: 'Kroma Intelligence', category: 'FinTech AI', location: 'UK', row: 1, order: 9 },
+  { name: 'Aegis BioSystems', category: 'HealthTech', location: 'India', row: 1, order: 10 },
+
+  // Row 2 (Moving Right -> Left)
+  { name: 'EduNura', category: 'EdTech Engine', location: 'Global', row: 2, order: 1 },
+  { name: 'SmartSchool ERP', category: 'School Management', location: 'India', row: 2, order: 2 },
+  { name: 'Flowdesk', category: 'Workflow Automation', location: 'US', row: 2, order: 3 },
+  { name: 'Nexus Workspace', category: 'Enterprise Collab', location: 'UAE', row: 2, order: 4 },
+  { name: 'samai.guru', category: 'Spiritual Tech', location: 'India', row: 2, order: 5 },
+  { name: 'OmniChat AI', category: 'Omnichannel AI', location: 'Global', row: 2, order: 6 },
+  { name: 'Synthetix Cloud', category: 'Cloud Orchestration', location: 'Germany', row: 2, order: 7 },
+  { name: 'DataPulse Systems', category: 'Telemetry & BI', location: 'Singapore', row: 2, order: 8 },
+  { name: 'FinEdge Wealth', category: 'Digital Banking', location: 'UK', row: 2, order: 9 },
+  { name: 'AProgra Studio', category: 'Core Ecosystem', location: 'Global', row: 2, order: 10 },
+];
+
 export default {
   register(/* { strapi }: { strapi: Core.Strapi } */) {},
 
@@ -274,6 +311,9 @@ export default {
           'api::blog-post.blog-post.findOne',
           'api::testimonial.testimonial.find',
           'api::testimonial.testimonial.findOne',
+          'api::brands-section.brands-section.find',
+          'api::brand.brand.find',
+          'api::brand.brand.findOne',
         ];
 
         for (const action of actions) {
@@ -354,6 +394,30 @@ export default {
             status: 'published',
           });
           strapi.log.info(`[Bootstrap] Created Global Testimonial: "${t.authorName}" (${t.authorCompany})`);
+        }
+      }
+
+      // 6. Initialize or sync Global Brands Section Settings
+      const existingBrandsSection = await strapiAny.documents('api::brands-section.brands-section').findFirst();
+      if (!existingBrandsSection) {
+        await strapiAny.documents('api::brands-section.brands-section').create({
+          data: DEFAULT_BRANDS_SECTION_SEED_DATA,
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created and published Brands Section Settings in Strapi.');
+      }
+
+      // 7. Initialize or sync Partner Brands
+      for (const b of DEFAULT_BRANDS_SEED_DATA) {
+        const existingBrand = await strapiAny.documents('api::brand.brand').findFirst({
+          filters: { name: b.name },
+        });
+        if (!existingBrand) {
+          await strapiAny.documents('api::brand.brand').create({
+            data: b,
+            status: 'published',
+          });
+          strapi.log.info(`[Bootstrap] Created Brand: "${b.name}" (${b.location}, Row: ${b.row})`);
         }
       }
 

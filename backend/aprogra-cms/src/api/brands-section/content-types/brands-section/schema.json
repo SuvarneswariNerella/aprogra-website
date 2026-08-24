@@ -1,0 +1,48 @@
+{
+  "kind": "singleType",
+  "collectionName": "brands_sections",
+  "info": {
+    "singularName": "brands-section",
+    "pluralName": "brands-sections",
+    "displayName": "Brands & Clients Section Settings",
+    "description": "Global settings for the Brands / Clients marquee section used across Homepage, About page, etc."
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "badge": {
+      "type": "string",
+      "default": "CLIENTS & COLLABORATORS"
+    },
+    "headline": {
+      "type": "string",
+      "default": "Brands That Chose to"
+    },
+    "highlight": {
+      "type": "string",
+      "default": "Build Different"
+    },
+    "description": {
+      "type": "text",
+      "default": "We partner with ambitious startups, fast-scaling venture firms, and global enterprises to architect robust, resilient, and human-centric software."
+    },
+    "footprintText1": {
+      "type": "string",
+      "default": "North America"
+    },
+    "footprintText2": {
+      "type": "string",
+      "default": "United Kingdom & Europe"
+    },
+    "footprintText3": {
+      "type": "string",
+      "default": "Middle East & UAE"
+    },
+    "footprintText4": {
+      "type": "string",
+      "default": "Asia Pacific & India"
+    }
+  }
+}

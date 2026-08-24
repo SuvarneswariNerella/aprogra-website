@@ -1,51 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useBrands, useTestimonials } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const ROW1_CLIENTS = [
-  "Noddyy", "Balcony Originals", "Coventry Strikers", "Aguatise", "PowerTech", "Star Circle", "CyberSecure Mindset"
-];
-
-const ROW2_CLIENTS = [
-  "EduNura", "SmartSchool", "Flowdesk", "Nexus Workspace", "samai.guru", "AProgra Tools", "OmniChat"
-];
-
-const ROW3_CLIENTS = [...ROW1_CLIENTS];
-
-const TESTIMONIALS = [
-  {
-    img: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
-    quote: "AProgra delivered our entire school ERP from scratch in 4 months. The quality was exceptional and the team felt like our own.",
-    name: "Ravi K.",
-    role: "Director, SmartSchool",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80",
-    quote: "Working with AProgra transformed how we communicate with customers. OmniChat cut our response time by 60%.",
-    name: "Priya M.",
-    role: "Operations Head, RetailCo",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&auto=format&fit=crop&q=80",
-    quote: "They didn't just build what we asked — they improved on it with deep technical ingenuity. That's the AProgra difference.",
-    name: "James L.",
-    role: "Founder, EdTech Startup UK",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80",
-    quote: "Our web platform went from 3-second load times to under 0.8 seconds. Pure engineering excellence from start to finish.",
-    name: "Ananya S.",
-    role: "CTO, SaaS Company",
-  },
-  {
-    img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80",
-    quote: "The in-house engineering model means zero miscommunication and rapid execution. Simply outstanding results.",
-    name: "Mohammed A.",
-    role: "CEO, Logistics Startup UAE",
-  }
-];
 
 interface CardProps {
   name: string;
@@ -103,6 +61,12 @@ function MagneticClientCard({ name }: CardProps) {
 }
 
 export default function ClientsAndPartnersServices() {
+  const { row1Brands, row2Brands } = useBrands();
+  const { testimonials } = useTestimonials();
+  const row1Names = row1Brands.map(b => b.name);
+  const row2Names = row2Brands.map(b => b.name);
+  const row3Names = [...row1Names];
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const [activeTestimonial, setActiveTestimonial] = useState(0);
 
@@ -112,13 +76,21 @@ export default function ClientsAndPartnersServices() {
   const count3Ref = useRef<HTMLSpanElement>(null);
   const count4Ref = useRef<HTMLSpanElement>(null);
 
+  const testimonialsList = testimonials.map(t => ({
+    img: t.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    quote: t.quote,
+    name: t.authorName,
+    role: t.authorCompany ? `${t.authorRole}, ${t.authorCompany}` : t.authorRole,
+  }));
+
   // Auto rotate testimonials
   useEffect(() => {
+    if (testimonialsList.length === 0) return;
     const timer = setInterval(() => {
-      setActiveTestimonial((prev) => (prev + 1) % TESTIMONIALS.length);
+      setActiveTestimonial((prev) => (prev + 1) % testimonialsList.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [testimonialsList.length]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -157,7 +129,12 @@ export default function ClientsAndPartnersServices() {
     return () => ctx.revert();
   }, []);
 
-  const current = TESTIMONIALS[activeTestimonial];
+  const current = testimonialsList[activeTestimonial] || testimonialsList[0] || {
+    img: '',
+    quote: '',
+    name: '',
+    role: ''
+  };
 
   return (
     <section 
@@ -180,71 +157,73 @@ export default function ClientsAndPartnersServices() {
         </div>
 
         {/* 2. TESTIMONIAL / PROFILE LAYER */}
-        <div className="max-w-3xl mx-auto bg-[#F7F8FF] border border-[#E4E8FF] rounded-3xl p-6 sm:p-10 text-center shadow-sm space-y-6 relative">
-          
-          {/* Avatar Profile Image */}
-          <div className="flex justify-center">
-            <img 
-              src={current.img} 
-              alt={current.name} 
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover ring-4 ring-white shadow-md transition-all duration-300"
-            />
+        {testimonialsList.length > 0 && (
+          <div className="max-w-3xl mx-auto bg-[#F7F8FF] border border-[#E4E8FF] rounded-3xl p-6 sm:p-10 text-center shadow-sm space-y-6 relative">
+            
+            {/* Avatar Profile Image */}
+            <div className="flex justify-center">
+              <img 
+                src={current.img} 
+                alt={current.name} 
+                className="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover ring-4 ring-white shadow-md transition-all duration-300"
+              />
+            </div>
+
+            {/* Testimonial Quote */}
+            <blockquote className="text-lg sm:text-2xl font-bold text-[#0D0F1C] font-space leading-relaxed px-2 sm:px-6 min-h-[80px] sm:min-h-[90px] flex items-center justify-center transition-opacity duration-300">
+              "{current.quote}"
+            </blockquote>
+
+            {/* Author Name and Role */}
+            <div className="space-y-1">
+              <p className="text-base font-bold text-[#3B4FCF] font-space">
+                {current.name}
+              </p>
+              <p className="text-xs sm:text-sm font-semibold text-[#6B7280] font-mono uppercase tracking-wider">
+                {current.role}
+              </p>
+            </div>
+
+            {/* Testimonial Navigation Buttons */}
+            <div className="flex flex-wrap justify-center gap-2 pt-2">
+              {testimonialsList.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setActiveTestimonial(idx)}
+                  className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer ${
+                    activeTestimonial === idx
+                      ? 'bg-[#3B4FCF] text-white font-bold shadow-sm scale-105'
+                      : 'bg-white border border-[#E4E8FF] text-[#6B7280] hover:text-[#0D0F1C] hover:bg-slate-50'
+                  }`}
+                >
+                  {item.name}
+                </button>
+              ))}
+            </div>
+
           </div>
-
-          {/* Testimonial Quote */}
-          <blockquote className="text-lg sm:text-2xl font-bold text-[#0D0F1C] font-space leading-relaxed px-2 sm:px-6 min-h-[80px] sm:min-h-[90px] flex items-center justify-center transition-opacity duration-300">
-            "{current.quote}"
-          </blockquote>
-
-          {/* Author Name and Role */}
-          <div className="space-y-1">
-            <p className="text-base font-bold text-[#3B4FCF] font-space">
-              {current.name}
-            </p>
-            <p className="text-xs sm:text-sm font-semibold text-[#6B7280] font-mono uppercase tracking-wider">
-              {current.role}
-            </p>
-          </div>
-
-          {/* Testimonial Navigation Buttons */}
-          <div className="flex flex-wrap justify-center gap-2 pt-2">
-            {TESTIMONIALS.map((item, idx) => (
-              <button
-                key={idx}
-                onClick={() => setActiveTestimonial(idx)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 cursor-pointer ${
-                  activeTestimonial === idx
-                    ? 'bg-[#3B4FCF] text-white font-bold shadow-sm scale-105'
-                    : 'bg-white border border-[#E4E8FF] text-[#6B7280] hover:text-[#0D0F1C] hover:bg-slate-50'
-                }`}
-              >
-                {item.name}
-              </button>
-            ))}
-          </div>
-
-        </div>
+        )}
 
         {/* 3. CLIENT & PARTNER CARDS LAYER */}
         <div className="space-y-6 overflow-hidden py-4">
           
           {/* ROW 1: Scrolls LEFT */}
           <div className="flex gap-6 animate-marquee-fast hover:[animation-play-state:paused]">
-            {[...ROW1_CLIENTS, ...ROW1_CLIENTS, ...ROW1_CLIENTS].map((client, idx) => (
+            {[...row1Names, ...row1Names, ...row1Names].map((client, idx) => (
               <MagneticClientCard key={`r1-${idx}`} name={client} />
             ))}
           </div>
 
           {/* ROW 2: Scrolls RIGHT */}
           <div className="flex gap-6 animate-marquee-reverse hover:[animation-play-state:paused]">
-            {[...ROW2_CLIENTS, ...ROW2_CLIENTS, ...ROW2_CLIENTS].map((client, idx) => (
+            {[...row2Names, ...row2Names, ...row2Names].map((client, idx) => (
               <MagneticClientCard key={`r2-${idx}`} name={client} />
             ))}
           </div>
 
           {/* ROW 3: Scrolls LEFT */}
           <div className="flex gap-6 animate-marquee-medium hover:[animation-play-state:paused]">
-            {[...ROW3_CLIENTS, ...ROW3_CLIENTS, ...ROW3_CLIENTS].map((client, idx) => (
+            {[...row3Names, ...row3Names, ...row3Names].map((client, idx) => (
               <MagneticClientCard key={`r3-${idx}`} name={client} />
             ))}
           </div>

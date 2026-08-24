@@ -2558,6 +2558,146 @@ export function useTestimonials() {
 }
 
 // ============================================================================
+// PARTNER BRANDS & SCROLLING CLIENT CAROUSEL CMS INTERFACES & HOOKS
+// ============================================================================
+
+export interface PartnerBrand {
+  id: string;
+  name: string;
+  category: string;
+  location: string;
+  logo?: StrapiMedia | string | null;
+  logoUrl?: string;
+  websiteUrl?: string;
+  row?: number;
+  order?: number;
+}
+
+export interface BrandsSectionConfig {
+  badge: string;
+  headline: string;
+  highlight: string;
+  description: string;
+  footprintText1: string;
+  footprintText2: string;
+  footprintText3: string;
+  footprintText4: string;
+}
+
+export const DEFAULT_BRANDS_SECTION: BrandsSectionConfig = {
+  badge: 'CLIENTS & COLLABORATORS',
+  headline: 'Brands That Chose to',
+  highlight: 'Build Different',
+  description: 'We partner with ambitious startups, fast-scaling venture firms, and global enterprises to architect robust, resilient, and human-centric software.',
+  footprintText1: 'North America',
+  footprintText2: 'United Kingdom & Europe',
+  footprintText3: 'Middle East & UAE',
+  footprintText4: 'Asia Pacific & India',
+};
+
+export const DEFAULT_BRANDS_LIST: PartnerBrand[] = [
+  { id: '1', name: 'Noddyy', category: 'Social Platform', location: 'UK', row: 1, order: 1 },
+  { id: '2', name: 'Balcony Originals', category: 'Apparel & Retail', location: 'US', row: 1, order: 2 },
+  { id: '3', name: 'Coventry Strikers', category: 'Sports Tech', location: 'UK', row: 1, order: 3 },
+  { id: '4', name: 'Aguatise', category: 'CleanTech', location: 'UAE', row: 1, order: 4 },
+  { id: '5', name: 'PowerTech Global', category: 'Industrial IoT', location: 'Germany', row: 1, order: 5 },
+  { id: '6', name: 'Star Circle', category: 'Talent Platform', location: 'Singapore', row: 1, order: 6 },
+  { id: '7', name: 'CyberSecure Mindset', category: 'InfoSec Academy', location: 'India', row: 1, order: 7 },
+  { id: '8', name: 'Vertex Logic', category: 'Logistics SaaS', location: 'US', row: 1, order: 8 },
+  { id: '9', name: 'Kroma Intelligence', category: 'FinTech AI', location: 'UK', row: 1, order: 9 },
+  { id: '10', name: 'Aegis BioSystems', category: 'HealthTech', location: 'India', row: 1, order: 10 },
+  { id: '11', name: 'EduNura', category: 'EdTech Engine', location: 'Global', row: 2, order: 1 },
+  { id: '12', name: 'SmartSchool ERP', category: 'School Management', location: 'India', row: 2, order: 2 },
+  { id: '13', name: 'Flowdesk', category: 'Workflow Automation', location: 'US', row: 2, order: 3 },
+  { id: '14', name: 'Nexus Workspace', category: 'Enterprise Collab', location: 'UAE', row: 2, order: 4 },
+  { id: '15', name: 'samai.guru', category: 'Spiritual Tech', location: 'India', row: 2, order: 5 },
+  { id: '16', name: 'OmniChat AI', category: 'Omnichannel AI', location: 'Global', row: 2, order: 6 },
+  { id: '17', name: 'Synthetix Cloud', category: 'Cloud Orchestration', location: 'Germany', row: 2, order: 7 },
+  { id: '18', name: 'DataPulse Systems', category: 'Telemetry & BI', location: 'Singapore', row: 2, order: 8 },
+  { id: '19', name: 'FinEdge Wealth', category: 'Digital Banking', location: 'UK', row: 2, order: 9 },
+  { id: '20', name: 'AProgra Studio', category: 'Core Ecosystem', location: 'Global', row: 2, order: 10 },
+];
+
+export async function fetchBrandsSection(): Promise<BrandsSectionConfig> {
+  try {
+    const raw = await fetchFromStrapi<any>('brands-section');
+    if (!raw) return DEFAULT_BRANDS_SECTION;
+    const data = raw.attributes || raw;
+    return {
+      badge: data.badge || DEFAULT_BRANDS_SECTION.badge,
+      headline: data.headline || DEFAULT_BRANDS_SECTION.headline,
+      highlight: data.highlight || DEFAULT_BRANDS_SECTION.highlight,
+      description: data.description || DEFAULT_BRANDS_SECTION.description,
+      footprintText1: data.footprintText1 || DEFAULT_BRANDS_SECTION.footprintText1,
+      footprintText2: data.footprintText2 || DEFAULT_BRANDS_SECTION.footprintText2,
+      footprintText3: data.footprintText3 || DEFAULT_BRANDS_SECTION.footprintText3,
+      footprintText4: data.footprintText4 || DEFAULT_BRANDS_SECTION.footprintText4,
+    };
+  } catch (err) {
+    console.warn('[Strapi] Could not load brands-section, using defaults:', err);
+    return DEFAULT_BRANDS_SECTION;
+  }
+}
+
+export async function fetchBrands(): Promise<PartnerBrand[]> {
+  try {
+    const raw = await fetchFromStrapi<any>('brands?populate=*&sort=order:asc');
+    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_BRANDS_LIST;
+    return raw.map((item: any, idx: number) => {
+      const data = item.attributes || item;
+      return {
+        id: String(item.documentId || item.id || idx),
+        name: data.name || 'Brand',
+        category: data.category || 'Enterprise SaaS',
+        location: data.location || 'Global',
+        logo: data.logo,
+        logoUrl: getStrapiMediaUrl(data.logo) || data.logoUrl || undefined,
+        websiteUrl: data.websiteUrl || undefined,
+        row: typeof data.row === 'number' ? data.row : (idx % 2 === 0 ? 1 : 2),
+        order: typeof data.order === 'number' ? data.order : idx + 1,
+      };
+    });
+  } catch (err) {
+    console.warn('[Strapi] Could not load brands, using defaults:', err);
+    return DEFAULT_BRANDS_LIST;
+  }
+}
+
+export function useBrands() {
+  const [section, setSection] = useState<BrandsSectionConfig>(DEFAULT_BRANDS_SECTION);
+  const [brands, setBrands] = useState<PartnerBrand[]>(DEFAULT_BRANDS_LIST);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    Promise.all([fetchBrandsSection(), fetchBrands()])
+      .then(([sectionData, brandsData]) => {
+        if (isMounted) {
+          if (sectionData) setSection(sectionData);
+          if (brandsData && brandsData.length > 0) setBrands(brandsData);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  const row1Brands = brands.filter((b) => b.row === 1);
+  const row2Brands = brands.filter((b) => b.row === 2);
+
+  return {
+    section,
+    brands,
+    row1Brands: row1Brands.length > 0 ? row1Brands : brands.slice(0, Math.ceil(brands.length / 2)),
+    row2Brands: row2Brands.length > 0 ? row2Brands : brands.slice(Math.ceil(brands.length / 2)),
+    isLoading,
+  };
+}
 // PRODUCTS CMS INTERFACES, FETCHERS & HOOKS
 // ============================================================================
 

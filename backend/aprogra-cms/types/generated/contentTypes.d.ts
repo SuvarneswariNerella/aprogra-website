@@ -517,6 +517,84 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiBrandBrand extends Struct.CollectionTypeSchema {
+  collectionName: 'brands';
+  info: {
+    description: 'Global client & partner brand logos used in scrolling marquees across all pages';
+    displayName: 'Partner Brand / Client';
+    pluralName: 'brands';
+    singularName: 'brand';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    category: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Enterprise SaaS'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::brand.brand'> &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Global'>;
+    logo: Schema.Attribute.Media<'images'>;
+    logoUrl: Schema.Attribute.String;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    publishedAt: Schema.Attribute.DateTime;
+    row: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    websiteUrl: Schema.Attribute.String;
+  };
+}
+
+export interface ApiBrandsSectionBrandsSection extends Struct.SingleTypeSchema {
+  collectionName: 'brands_sections';
+  info: {
+    description: 'Global settings for the Brands / Clients marquee section used across Homepage, About page, etc.';
+    displayName: 'Brands & Clients Section Settings';
+    pluralName: 'brands-sections';
+    singularName: 'brands-section';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    badge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'CLIENTS & COLLABORATORS'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'We partner with ambitious startups, fast-scaling venture firms, and global enterprises to architect robust, resilient, and human-centric software.'>;
+    footprintText1: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'North America'>;
+    footprintText2: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'United Kingdom & Europe'>;
+    footprintText3: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Middle East & UAE'>;
+    footprintText4: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Asia Pacific & India'>;
+    headline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Brands That Chose to'>;
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Build Different'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::brands-section.brands-section'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -1134,6 +1212,8 @@ declare module '@strapi/strapi' {
       'admin::user': AdminUser;
       'api::blog-page.blog-page': ApiBlogPageBlogPage;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
+      'api::brand.brand': ApiBrandBrand;
+      'api::brands-section.brands-section': ApiBrandsSectionBrandsSection;
       'api::category.category': ApiCategoryCategory;
       'api::global-config.global-config': ApiGlobalConfigGlobalConfig;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;

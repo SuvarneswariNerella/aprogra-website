@@ -1,30 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useBrands } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const ROW1_CLIENTS = [
-  'Noddyy',
-  'Balcony Originals',
-  'Coventry Strikers',
-  'Aguatise',
-  'PowerTech',
-  'Star Circle',
-  'CyberSecure',
-];
-
-const ROW2_CLIENTS = [
-  'EduNura',
-  'SmartSchool',
-  'Flowdesk',
-  'Nexus Workspace',
-  'samai.guru',
-  'OmniChat',
-  'AProgra Tools',
-];
-
-const ROW3_CLIENTS = [...ROW1_CLIENTS];
 
 interface CardProps {
   name: string;
@@ -84,6 +63,11 @@ function MagneticClientCard({ name }: CardProps) {
 }
 
 export default function ClientLogosServices() {
+  const { row1Brands, row2Brands } = useBrands();
+  const row1Names = row1Brands.map(b => b.name);
+  const row2Names = row2Brands.map(b => b.name);
+  const row3Names = [...row1Names];
+
   const sectionRef = useRef<HTMLDivElement>(null);
   const leftCurtainRef = useRef<HTMLDivElement>(null);
   const rightCurtainRef = useRef<HTMLDivElement>(null);
@@ -194,7 +178,7 @@ export default function ClientLogosServices() {
         <div className="space-y-4 overflow-hidden py-2">
           {/* Row 1: Scrolls LEFT (35s) */}
           <div className="flex gap-5 animate-marquee-fast hover:[animation-play-state:paused]">
-            {[...ROW1_CLIENTS, ...ROW1_CLIENTS, ...ROW1_CLIENTS, ...ROW1_CLIENTS].map(
+            {[...row1Names, ...row1Names, ...row1Names, ...row1Names].map(
               (client, idx) => (
                 <MagneticClientCard key={`r1-${idx}`} name={client} />
               )
@@ -203,7 +187,7 @@ export default function ClientLogosServices() {
 
           {/* Row 2: Scrolls RIGHT (45s) */}
           <div className="flex gap-5 animate-marquee-reverse hover:[animation-play-state:paused]">
-            {[...ROW2_CLIENTS, ...ROW2_CLIENTS, ...ROW2_CLIENTS, ...ROW2_CLIENTS].map(
+            {[...row2Names, ...row2Names, ...row2Names, ...row2Names].map(
               (client, idx) => (
                 <MagneticClientCard key={`r2-${idx}`} name={client} />
               )
@@ -212,7 +196,7 @@ export default function ClientLogosServices() {
 
           {/* Row 3: Scrolls LEFT (40s) */}
           <div className="flex gap-5 animate-marquee-medium hover:[animation-play-state:paused]">
-            {[...ROW3_CLIENTS, ...ROW3_CLIENTS, ...ROW3_CLIENTS, ...ROW3_CLIENTS].map(
+            {[...row3Names, ...row3Names, ...row3Names, ...row3Names].map(
               (client, idx) => (
                 <MagneticClientCard key={`r3-${idx}`} name={client} />
               )

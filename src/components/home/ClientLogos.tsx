@@ -1,40 +1,9 @@
 import React, { useRef, useState } from 'react';
-import { Sparkles, Building2 } from 'lucide-react';
-
-interface Client {
-  name: string;
-  category: string;
-  location: string;
-}
-
-const ROW1_CLIENTS: Client[] = [
-  { name: "Noddyy", category: "Social Platform", location: "UK" },
-  { name: "Balcony Originals", category: "Apparel & Retail", location: "US" },
-  { name: "Coventry Strikers", category: "Sports Tech", location: "UK" },
-  { name: "Aguatise", category: "CleanTech", location: "UAE" },
-  { name: "PowerTech Global", category: "Industrial IoT", location: "Germany" },
-  { name: "Star Circle", category: "Talent Platform", location: "Singapore" },
-  { name: "CyberSecure Mindset", category: "InfoSec Academy", location: "India" },
-  { name: "Vertex Logic", category: "Logistics SaaS", location: "US" },
-  { name: "Kroma Intelligence", category: "FinTech AI", location: "UK" },
-  { name: "Aegis BioSystems", category: "HealthTech", location: "India" }
-];
-
-const ROW2_CLIENTS: Client[] = [
-  { name: "EduNura", category: "EdTech Engine", location: "Global" },
-  { name: "SmartSchool ERP", category: "School Management", location: "India" },
-  { name: "Flowdesk", category: "Workflow Automation", location: "US" },
-  { name: "Nexus Workspace", category: "Enterprise Collab", location: "UAE" },
-  { name: "samai.guru", category: "Spiritual Tech", location: "India" },
-  { name: "OmniChat AI", category: "Omnichannel AI", location: "Global" },
-  { name: "Synthetix Cloud", category: "Cloud Orchestration", location: "Germany" },
-  { name: "DataPulse Systems", category: "Telemetry & BI", location: "Singapore" },
-  { name: "FinEdge Wealth", category: "Digital Banking", location: "UK" },
-  { name: "AProgra Studio", category: "Core Ecosystem", location: "Global" }
-];
+import { Building2 } from 'lucide-react';
+import { useBrands, PartnerBrand } from '@/lib/strapi';
 
 interface CardProps {
-  client: Client;
+  client: PartnerBrand;
 }
 
 function ClientCard({ client }: CardProps) {
@@ -82,11 +51,15 @@ function ClientCard({ client }: CardProps) {
     >
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <span className={`font-display font-bold text-sm sm:text-base transition-colors ${
-            isHovered ? 'text-[#FF4A1C]' : 'text-[#0B0D12]'
-          }`}>
-            {client.name}
-          </span>
+          {client.logoUrl ? (
+            <img src={client.logoUrl} alt={client.name} className="h-6 w-auto object-contain max-w-[100px]" />
+          ) : (
+            <span className={`font-display font-bold text-sm sm:text-base transition-colors ${
+              isHovered ? 'text-[#FF4A1C]' : 'text-[#0B0D12]'
+            }`}>
+              {client.name}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-2 text-[11px] font-mono text-[#5A5E6E]">
           <span>{client.category}</span>
@@ -104,9 +77,11 @@ function ClientCard({ client }: CardProps) {
 }
 
 export default function ClientLogos() {
+  const { section, row1Brands, row2Brands } = useBrands();
+
   // Multiply arrays to ensure seamless, infinite looping across all viewport widths
-  const row1List = [...ROW1_CLIENTS, ...ROW1_CLIENTS, ...ROW1_CLIENTS, ...ROW1_CLIENTS];
-  const row2List = [...ROW2_CLIENTS, ...ROW2_CLIENTS, ...ROW2_CLIENTS, ...ROW2_CLIENTS];
+  const row1List = [...row1Brands, ...row1Brands, ...row1Brands, ...row1Brands];
+  const row2List = [...row2Brands, ...row2Brands, ...row2Brands, ...row2Brands];
 
   return (
     <section className="relative w-full bg-[#F4F1EA] text-[#0B0D12] py-20 sm:py-24 overflow-hidden border-b border-[#0B0D12]/10">
@@ -115,15 +90,15 @@ export default function ClientLogos() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 text-center space-y-4 mb-12 sm:mb-16">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-xs font-mono font-bold tracking-wider uppercase shadow-xs">
           <Building2 className="w-3.5 h-3.5 text-[#FF4A1C]" />
-          <span>CLIENTS & COLLABORATORS</span>
+          <span>{section.badge}</span>
         </div>
 
         <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0B0D12] font-display">
-          Brands That Chose to <span className="text-[#FF4A1C]">Build Different</span>
+          {section.headline} <span className="text-[#FF4A1C]">{section.highlight}</span>
         </h2>
         
         <p className="text-sm sm:text-base md:text-lg text-[#5A5E6E] font-normal leading-relaxed font-sans max-w-3xl mx-auto">
-          We partner with ambitious startups, fast-scaling venture firms, and global enterprises to architect robust, resilient, and human-centric software.
+          {section.description}
         </p>
       </div>
 
@@ -138,7 +113,7 @@ export default function ClientLogos() {
         <div className="flex w-full overflow-hidden select-none">
           <div className="flex gap-4 sm:gap-6 animate-marquee-reverse min-w-max">
             {row1List.map((client, idx) => (
-              <ClientCard key={`row1-${idx}`} client={client} />
+              <ClientCard key={`row1-${client.id || idx}-${idx}`} client={client} />
             ))}
           </div>
         </div>
@@ -147,7 +122,7 @@ export default function ClientLogos() {
         <div className="flex w-full overflow-hidden select-none">
           <div className="flex gap-4 sm:gap-6 animate-marquee min-w-max">
             {row2List.map((client, idx) => (
-              <ClientCard key={`row2-${idx}`} client={client} />
+              <ClientCard key={`row2-${client.id || idx}-${idx}`} client={client} />
             ))}
           </div>
         </div>
@@ -157,22 +132,30 @@ export default function ClientLogos() {
       {/* Bottom Global Footprint Micro-Banner */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 mt-12 sm:mt-16">
         <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-xs font-mono font-semibold text-[#5A5E6E] border-t border-[#0B0D12]/10 pt-8">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FF4A1C]" />
-            <span>North America</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0B0D12]" />
-            <span>United Kingdom & Europe</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#FF4A1C]" />
-            <span>Middle East & UAE</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#0B0D12]" />
-            <span>Asia Pacific & India</span>
-          </div>
+          {section.footprintText1 && (
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#FF4A1C]" />
+              <span>{section.footprintText1}</span>
+            </div>
+          )}
+          {section.footprintText2 && (
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#0B0D12]" />
+              <span>{section.footprintText2}</span>
+            </div>
+          )}
+          {section.footprintText3 && (
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#FF4A1C]" />
+              <span>{section.footprintText3}</span>
+            </div>
+          )}
+          {section.footprintText4 && (
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#0B0D12]" />
+              <span>{section.footprintText4}</span>
+            </div>
+          )}
         </div>
       </div>
 
