@@ -1,0 +1,33 @@
+{
+  "collectionName": "components_elements_footer_links",
+  "info": {
+    "displayName": "Footer Link",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "badge": {
+      "type": "string"
+    },
+    "badgeColor": {
+      "type": "string",
+      "default": "orange"
+    },
+    "isExternal": {
+      "type": "boolean",
+      "default": false
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

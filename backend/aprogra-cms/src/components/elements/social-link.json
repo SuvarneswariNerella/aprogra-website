@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_elements_social_links",
+  "info": {
+    "displayName": "Social Link",
+    "icon": "earth"
+  },
+  "options": {},
+  "attributes": {
+    "platform": {
+      "type": "enumeration",
+      "enum": ["github", "linkedin", "twitter", "x", "instagram", "youtube", "discord", "other"],
+      "default": "github"
+    },
+    "label": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    }
+  }
+}

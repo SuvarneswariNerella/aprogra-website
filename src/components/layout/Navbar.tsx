@@ -2,18 +2,11 @@ import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Infinity, Menu, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-
-const navLinks = [
-  { name: 'Home', path: '/' },
-  { name: 'About', path: '/about' },
-  { name: 'Products', path: '/products' },
-  { name: 'Services', path: '/services' },
-  { name: 'Blog', path: '/blog' },
-  { name: 'Contact', path: '/contact' },
-];
+import { useGlobalConfig } from '@/lib/strapi';
 
 export default function Navbar() {
   const location = useLocation();
+  const { header } = useGlobalConfig();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -30,6 +23,11 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  const navLinks = header.navLinks || [];
+  const displayMode = header.displayMode || 'logo_and_text';
+  const showLogo = displayMode === 'logo_and_text' || displayMode === 'logo_only';
+  const showText = displayMode === 'logo_and_text' || displayMode === 'text_only';
+
   return (
     <header
       className={cn(
@@ -40,27 +38,59 @@ export default function Navbar() {
       )}
     >
       <div className="w-full max-w-7xl mx-auto flex items-center justify-between">
+        
+        {/* Brand / Logo Link */}
         <Link to="/" className="flex items-center gap-2.5 group">
-          <div className="p-1 rounded bg-[#0B0D12] text-white transition-transform duration-200 group-hover:bg-[#FF4A1C]">
-            <Infinity className="w-5 h-5 text-white transition-colors duration-200" />
-          </div>
-          <span className="text-lg font-bold tracking-tight text-[#0B0D12]">Aprogra</span>
+          {showLogo && (
+            header.logoUrl ? (
+              <img 
+                src={header.logoUrl} 
+                alt={header.siteTitle || 'Logo'} 
+                className="h-7 w-auto object-contain max-w-[140px] transition-transform duration-200 group-hover:scale-105"
+              />
+            ) : (
+              <div className="p-1 rounded bg-[#0B0D12] text-white transition-transform duration-200 group-hover:bg-[#FF4A1C]">
+                <Infinity className="w-5 h-5 text-white transition-colors duration-200" />
+              </div>
+            )
+          )}
+          {showText && (
+            <span className="text-lg font-bold tracking-tight text-[#0B0D12]">
+              {header.siteTitle || 'Aprogra'}
+            </span>
+          )}
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => {
-            const isActive = location.pathname === link.path;
+            const isExternal = link.isExternal || link.url.startsWith('http://') || link.url.startsWith('https://');
+            const isActive = !isExternal && (location.pathname === link.url || (link.url !== '/' && location.pathname.startsWith(link.url)));
+
+            if (isExternal) {
+              return (
+                <a
+                  key={link.url + link.label}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-nav transition-colors relative py-1 text-[#5A5E6E] hover:text-[#FF4A1C]"
+                >
+                  {link.label}
+                </a>
+              );
+            }
+
             return (
               <Link
-                key={link.path}
-                to={link.path}
+                key={link.url + link.label}
+                to={link.url}
                 className={cn(
                   'text-nav transition-colors relative py-1 hover:text-[#FF4A1C]',
                   isActive ? 'text-[#0B0D12] font-bold' : 'text-[#5A5E6E]'
                 )}
               >
-                {link.name}
+                {link.label}
                 {isActive && (
                   <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#FF4A1C]" />
                 )}
@@ -83,11 +113,27 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 px-6 py-4 bg-[#FAF8F5]/98 backdrop-blur-md border-b border-[#0B0D12]/15 shadow-xl flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-2 duration-150">
           {navLinks.map((link) => {
-            const isActive = location.pathname === link.path;
+            const isExternal = link.isExternal || link.url.startsWith('http://') || link.url.startsWith('https://');
+            const isActive = !isExternal && (location.pathname === link.url || (link.url !== '/' && location.pathname.startsWith(link.url)));
+
+            if (isExternal) {
+              return (
+                <a
+                  key={link.url + link.label}
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-2.5 rounded text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-between text-[#0B0D12] hover:bg-[#0B0D12]/5"
+                >
+                  <span>{link.label}</span>
+                </a>
+              );
+            }
+
             return (
               <Link
-                key={link.path}
-                to={link.path}
+                key={link.url + link.label}
+                to={link.url}
                 className={cn(
                   'px-3.5 py-2.5 rounded text-xs font-semibold uppercase tracking-wider transition-colors flex items-center justify-between',
                   isActive
@@ -95,7 +141,7 @@ export default function Navbar() {
                     : 'text-[#0B0D12] hover:bg-[#0B0D12]/5'
                 )}
               >
-                <span>{link.name}</span>
+                <span>{link.label}</span>
                 {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#FF4A1C]" />}
               </Link>
             );

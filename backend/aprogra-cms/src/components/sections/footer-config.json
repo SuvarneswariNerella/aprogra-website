@@ -1,0 +1,72 @@
+{
+  "collectionName": "components_sections_footer_configs",
+  "info": {
+    "displayName": "Footer Config",
+    "icon": "layout"
+  },
+  "options": {},
+  "attributes": {
+    "brandTitle": {
+      "type": "string",
+      "default": "Aprogra"
+    },
+    "brandSubtitle": {
+      "type": "string",
+      "default": "Technologies"
+    },
+    "displayMode": {
+      "type": "enumeration",
+      "enum": ["logo_and_text", "logo_only", "text_only"],
+      "default": "logo_and_text",
+      "required": true
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "logoUrl": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text",
+      "default": "Engineering Infinite Possibilities. Full-cycle custom software, autonomous AI platforms, and mission-critical cloud systems built for hyper-scale enterprises."
+    },
+    "statusText": {
+      "type": "string",
+      "default": "All Systems Operational • 99.99% Uptime"
+    },
+    "badge1_text": {
+      "type": "string",
+      "default": "SOC2 Type II"
+    },
+    "badge2_text": {
+      "type": "string",
+      "default": "San Francisco & Global"
+    },
+    "columns": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.footer-column"
+    },
+    "socialLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.social-link"
+    },
+    "legalLinks": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.footer-link"
+    },
+    "copyrightText": {
+      "type": "string",
+      "default": "© 2026 Aprogra Technologies Inc. All rights reserved."
+    },
+    "backToTopText": {
+      "type": "string",
+      "default": "Back to top"
+    }
+  }
+}

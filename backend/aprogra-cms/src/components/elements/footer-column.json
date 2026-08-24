@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_footer_columns",
+  "info": {
+    "displayName": "Footer Column",
+    "icon": "bulletList"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    },
+    "links": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.footer-link"
+    }
+  }
+}

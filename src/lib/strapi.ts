@@ -97,6 +97,286 @@ export function getStrapiMediaUrl(media: any): string {
 }
 
 // ============================================================================
+// GLOBAL HEADER & FOOTER CONFIGURATION CMS INTERFACES & DEFAULTS
+// ============================================================================
+
+export type LogoDisplayMode = 'logo_and_text' | 'logo_only' | 'text_only';
+
+export interface NavLinkItem {
+  id?: string | number;
+  label: string;
+  url: string;
+  order?: number;
+  isExternal?: boolean;
+}
+
+export interface HeaderConfig {
+  siteTitle: string;
+  displayMode: LogoDisplayMode;
+  logo?: StrapiMedia | string | null;
+  logoUrl?: string;
+  navLinks: NavLinkItem[];
+}
+
+export interface FooterLinkItem {
+  id?: string | number;
+  label: string;
+  url: string;
+  badge?: string;
+  badgeColor?: string;
+  isExternal?: boolean;
+  order?: number;
+}
+
+export interface FooterColumnItem {
+  id?: string | number;
+  title: string;
+  order?: number;
+  links: FooterLinkItem[];
+}
+
+export interface SocialLinkItem {
+  id?: string | number;
+  platform: 'github' | 'linkedin' | 'twitter' | 'x' | 'instagram' | 'youtube' | 'discord' | 'other' | string;
+  label?: string;
+  url: string;
+  order?: number;
+}
+
+export interface FooterConfig {
+  brandTitle: string;
+  brandSubtitle: string;
+  displayMode: LogoDisplayMode;
+  logo?: StrapiMedia | string | null;
+  logoUrl?: string;
+  description: string;
+  statusText: string;
+  badge1_text: string;
+  badge2_text: string;
+  columns: FooterColumnItem[];
+  socialLinks: SocialLinkItem[];
+  legalLinks: FooterLinkItem[];
+  copyrightText: string;
+  backToTopText: string;
+}
+
+export interface GlobalConfig {
+  header: HeaderConfig;
+  footer: FooterConfig;
+}
+
+export const DEFAULT_HEADER_CONFIG: HeaderConfig = {
+  siteTitle: 'Aprogra',
+  displayMode: 'logo_and_text',
+  logoUrl: '',
+  navLinks: [
+    { label: 'Home', url: '/', order: 1, isExternal: false },
+    { label: 'About', url: '/about', order: 2, isExternal: false },
+    { label: 'Products', url: '/products', order: 3, isExternal: false },
+    { label: 'Services', url: '/services', order: 4, isExternal: false },
+    { label: 'Blog', url: '/blog', order: 5, isExternal: false },
+    { label: 'Contact', url: '/contact', order: 6, isExternal: false },
+  ],
+};
+
+export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
+  brandTitle: 'Aprogra',
+  brandSubtitle: 'Technologies',
+  displayMode: 'logo_and_text',
+  logoUrl: '',
+  description: 'Engineering Infinite Possibilities. Full-cycle custom software, autonomous AI platforms, and mission-critical cloud systems built for hyper-scale enterprises.',
+  statusText: 'All Systems Operational • 99.99% Uptime',
+  badge1_text: 'SOC2 Type II',
+  badge2_text: 'San Francisco & Global',
+  columns: [
+    {
+      title: 'Products & Platforms',
+      order: 1,
+      links: [
+        { label: 'SmartSchool ERP', url: '/products/school-erp', badge: 'v3.2', badgeColor: 'orange', isExternal: false, order: 1 },
+        { label: 'OmniChat AI Suite', url: '/products/omnichat', badge: 'Active', badgeColor: 'green', isExternal: false, order: 2 },
+        { label: 'Enterprise Product Suite', url: '/products', isExternal: false, order: 3 },
+        { label: 'Custom Platform Request', url: '/services', isExternal: false, order: 4 },
+        { label: 'Architecture Sandbox', url: '/contact', isExternal: false, order: 5 },
+      ],
+    },
+    {
+      title: 'Services & Solutions',
+      order: 2,
+      links: [
+        { label: 'Full-Stack Cloud Systems', url: '/services', isExternal: false, order: 1 },
+        { label: 'Autonomous AI & LLM Agents', url: '/services', isExternal: false, order: 2 },
+        { label: 'Native & Cross-Platform Apps', url: '/services', isExternal: false, order: 3 },
+        { label: 'DevOps & Infrastructure', url: '/services', isExternal: false, order: 4 },
+        { label: 'Legacy Modernization Audits', url: '/services', isExternal: false, order: 5 },
+      ],
+    },
+    {
+      title: 'Company',
+      order: 3,
+      links: [
+        { label: 'About Aprogra', url: '/about', isExternal: false, order: 1 },
+        { label: 'Engineering Journal', url: '/blog', isExternal: false, order: 2 },
+        { label: 'Careers', url: '/careers', badge: 'Hiring', badgeColor: 'dark', isExternal: false, order: 3 },
+        { label: 'Contact Architects', url: '/contact', isExternal: false, order: 4 },
+      ],
+    },
+  ],
+  socialLinks: [
+    { platform: 'github', label: 'GitHub', url: 'https://github.com', order: 1 },
+    { platform: 'linkedin', label: 'LinkedIn', url: 'https://linkedin.com', order: 2 },
+    { platform: 'twitter', label: 'X Twitter', url: 'https://twitter.com', order: 3 },
+  ],
+  legalLinks: [
+    { label: 'Privacy Policy', url: '/contact', isExternal: false, order: 1 },
+    { label: 'Terms of Service', url: '/contact', isExternal: false, order: 2 },
+    { label: 'Security & Compliance', url: '/contact', isExternal: false, order: 3 },
+    { label: 'Cookie Settings', url: '/contact', isExternal: false, order: 4 },
+  ],
+  copyrightText: '© 2026 Aprogra Technologies Inc. All rights reserved.',
+  backToTopText: 'Back to top',
+};
+
+export const DEFAULT_GLOBAL_CONFIG: GlobalConfig = {
+  header: DEFAULT_HEADER_CONFIG,
+  footer: DEFAULT_FOOTER_CONFIG,
+};
+
+/**
+ * Fetches Global Header & Footer Configuration from Strapi with immediate fallback
+ */
+export async function fetchGlobalConfig(): Promise<GlobalConfig> {
+  try {
+    const raw = await fetchFromStrapi<any>(
+      'global-config?populate[header][populate]=*&populate[footer][populate][columns][populate]=*&populate[footer][populate][socialLinks]=*&populate[footer][populate][legalLinks]=*'
+    );
+    if (!raw) return DEFAULT_GLOBAL_CONFIG;
+
+    const data = raw.attributes || raw;
+    const headerData = data.header || {};
+    const footerData = data.footer || {};
+
+    // Normalize Header Nav Links
+    const rawNavLinks = Array.isArray(headerData.navLinks) ? headerData.navLinks : DEFAULT_HEADER_CONFIG.navLinks;
+    const sortedNavLinks: NavLinkItem[] = rawNavLinks
+      .map((l: any, idx: number) => ({
+        id: l.id || idx,
+        label: l.label || '',
+        url: l.url || '/',
+        order: typeof l.order === 'number' ? l.order : idx + 1,
+        isExternal: !!l.isExternal,
+      }))
+      .sort((a: NavLinkItem, b: NavLinkItem) => (a.order || 0) - (b.order || 0));
+
+    // Normalize Footer Columns
+    const rawColumns = Array.isArray(footerData.columns) ? footerData.columns : DEFAULT_FOOTER_CONFIG.columns;
+    const sortedColumns: FooterColumnItem[] = rawColumns
+      .map((col: any, colIdx: number) => {
+        const colLinks = Array.isArray(col.links) ? col.links : [];
+        const sortedLinks: FooterLinkItem[] = colLinks
+          .map((link: any, linkIdx: number) => ({
+            id: link.id || linkIdx,
+            label: link.label || '',
+            url: link.url || '/',
+            badge: link.badge || undefined,
+            badgeColor: link.badgeColor || 'orange',
+            isExternal: !!link.isExternal,
+            order: typeof link.order === 'number' ? link.order : linkIdx + 1,
+          }))
+          .sort((a: FooterLinkItem, b: FooterLinkItem) => (a.order || 0) - (b.order || 0));
+
+        return {
+          id: col.id || colIdx,
+          title: col.title || '',
+          order: typeof col.order === 'number' ? col.order : colIdx + 1,
+          links: sortedLinks.length > 0 ? sortedLinks : (DEFAULT_FOOTER_CONFIG.columns[colIdx]?.links || []),
+        };
+      })
+      .sort((a: FooterColumnItem, b: FooterColumnItem) => (a.order || 0) - (b.order || 0));
+
+    // Normalize Social Links
+    const rawSocials = Array.isArray(footerData.socialLinks) ? footerData.socialLinks : DEFAULT_FOOTER_CONFIG.socialLinks;
+    const sortedSocials: SocialLinkItem[] = rawSocials
+      .map((s: any, idx: number) => ({
+        id: s.id || idx,
+        platform: s.platform || 'github',
+        label: s.label || s.platform || '',
+        url: s.url || 'https://github.com',
+        order: typeof s.order === 'number' ? s.order : idx + 1,
+      }))
+      .sort((a: SocialLinkItem, b: SocialLinkItem) => (a.order || 0) - (b.order || 0));
+
+    // Normalize Legal Links
+    const rawLegal = Array.isArray(footerData.legalLinks) ? footerData.legalLinks : DEFAULT_FOOTER_CONFIG.legalLinks;
+    const sortedLegal: FooterLinkItem[] = rawLegal
+      .map((l: any, idx: number) => ({
+        id: l.id || idx,
+        label: l.label || '',
+        url: l.url || '/contact',
+        order: typeof l.order === 'number' ? l.order : idx + 1,
+      }))
+      .sort((a: FooterLinkItem, b: FooterLinkItem) => (a.order || 0) - (b.order || 0));
+
+    return {
+      header: {
+        siteTitle: headerData.siteTitle || DEFAULT_HEADER_CONFIG.siteTitle,
+        displayMode: (headerData.displayMode as LogoDisplayMode) || DEFAULT_HEADER_CONFIG.displayMode,
+        logo: headerData.logo,
+        logoUrl: getStrapiMediaUrl(headerData.logo) || headerData.logoUrl || DEFAULT_HEADER_CONFIG.logoUrl,
+        navLinks: sortedNavLinks.length > 0 ? sortedNavLinks : DEFAULT_HEADER_CONFIG.navLinks,
+      },
+      footer: {
+        brandTitle: footerData.brandTitle || DEFAULT_FOOTER_CONFIG.brandTitle,
+        brandSubtitle: footerData.brandSubtitle || DEFAULT_FOOTER_CONFIG.brandSubtitle,
+        displayMode: (footerData.displayMode as LogoDisplayMode) || DEFAULT_FOOTER_CONFIG.displayMode,
+        logo: footerData.logo,
+        logoUrl: getStrapiMediaUrl(footerData.logo) || footerData.logoUrl || DEFAULT_FOOTER_CONFIG.logoUrl,
+        description: footerData.description || DEFAULT_FOOTER_CONFIG.description,
+        statusText: footerData.statusText || DEFAULT_FOOTER_CONFIG.statusText,
+        badge1_text: footerData.badge1_text || DEFAULT_FOOTER_CONFIG.badge1_text,
+        badge2_text: footerData.badge2_text || DEFAULT_FOOTER_CONFIG.badge2_text,
+        columns: sortedColumns.length > 0 ? sortedColumns : DEFAULT_FOOTER_CONFIG.columns,
+        socialLinks: sortedSocials.length > 0 ? sortedSocials : DEFAULT_FOOTER_CONFIG.socialLinks,
+        legalLinks: sortedLegal.length > 0 ? sortedLegal : DEFAULT_FOOTER_CONFIG.legalLinks,
+        copyrightText: footerData.copyrightText || DEFAULT_FOOTER_CONFIG.copyrightText,
+        backToTopText: footerData.backToTopText || DEFAULT_FOOTER_CONFIG.backToTopText,
+      },
+    };
+  } catch (err) {
+    console.warn('[Strapi] Could not load global-config, using defaults:', err);
+    return DEFAULT_GLOBAL_CONFIG;
+  }
+}
+
+/**
+ * React hook for consuming dynamic Global Header & Footer Configuration
+ */
+export function useGlobalConfig() {
+  const [config, setConfig] = useState<GlobalConfig>(DEFAULT_GLOBAL_CONFIG);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchGlobalConfig()
+      .then((data) => {
+        if (isMounted && data) {
+          setConfig(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { config, header: config.header, footer: config.footer, isLoading };
+}
+
+// ============================================================================
 // STRUCTURED MODULAR CONTACT PAGE CMS INTERFACES & DEFAULTS
 // ============================================================================
 

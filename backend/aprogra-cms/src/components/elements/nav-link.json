@@ -1,0 +1,26 @@
+{
+  "collectionName": "components_elements_nav_links",
+  "info": {
+    "displayName": "Nav Link",
+    "icon": "link"
+  },
+  "options": {},
+  "attributes": {
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "url": {
+      "type": "string",
+      "required": true
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    },
+    "isExternal": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}
