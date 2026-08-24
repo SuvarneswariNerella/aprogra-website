@@ -69,6 +69,35 @@ export interface ElementsSocialLink extends Struct.ComponentSchema {
   };
 }
 
+export interface SectionsBlogHeroSection extends Struct.ComponentSchema {
+  collectionName: 'components_sections_blog_hero_sections';
+  info: {
+    displayName: 'Blog Hero Section';
+    icon: 'layout';
+  };
+  attributes: {
+    badge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'APROGRA TECH RADAR \u2022 ENGINEERING BLOG'>;
+    description: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Deep architectural breakdowns, real-world agentic AI workflows, modern web design systems, and enterprise systems engineering directly from our architects.'>;
+    headline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Engineering, AI &'>;
+    heroImage: Schema.Attribute.Media<'images'>;
+    heroImageUrl: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80'>;
+    highlight: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Product Insights.'>;
+    metric1_text: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'45+ Articles'>;
+    metric2_text: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'12k+ Monthly Readers'>;
+    metric3_text: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Weekly Technical Deep Dives'>;
+    searchPlaceholder: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Search articles by tech stack, topic, or keyword...'>;
+  };
+}
+
 export interface SectionsFooterConfig extends Struct.ComponentSchema {
   collectionName: 'components_sections_footer_configs';
   info: {
@@ -130,6 +159,7 @@ declare module '@strapi/strapi' {
       'elements.footer-link': ElementsFooterLink;
       'elements.nav-link': ElementsNavLink;
       'elements.social-link': ElementsSocialLink;
+      'sections.blog-hero-section': SectionsBlogHeroSection;
       'sections.footer-config': SectionsFooterConfig;
       'sections.header-config': SectionsHeaderConfig;
     }

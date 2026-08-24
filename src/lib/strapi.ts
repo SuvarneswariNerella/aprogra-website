@@ -984,40 +984,16 @@ export interface BlogHeroSection {
   heroImageUrl?: string;
 }
 
-export interface BlogSpotlightSection {
-  headerTitle: string;
-  editionBadge: string;
-  category: string;
-  readTime: string;
-  title: string;
-  excerpt: string;
-  point1: string;
-  point2: string;
-  authorName: string;
-  authorRole: string;
-  authorAvatar?: StrapiMedia | string | null;
-  authorAvatarUrl?: string;
-  buttonText: string;
-}
-
-export interface BlogNavSection {
-  categoriesList?: string[];
-  showingPrefix: string;
-  articlesSuffix: string;
-}
-
-export interface BlogFeaturedSection {
-  badge: string;
-  sideCardTitle: string;
-  sideCardDesc: string;
-  sideCardBadge: string;
+export interface BlogCategory {
+  id?: string | number;
+  name: string;
+  slug: string;
+  order?: number;
+  description?: string;
 }
 
 export interface BlogPageContent {
   hero: BlogHeroSection;
-  spotlight: BlogSpotlightSection;
-  nav: BlogNavSection;
-  featuredSection: BlogFeaturedSection;
   metaTitle?: string;
   metaDescription?: string;
 }
@@ -1032,18 +1008,19 @@ export interface BlogPost {
   readTime: string;
   featured?: boolean;
   coverImage?: StrapiMedia | string | null;
-  author: {
-    name: string;
-    role: string;
-    avatar: string;
-    avatarMedia?: StrapiMedia | string | null;
-  };
+  coverImageUrl?: string;
   tags?: string[];
   content: any; // Strapi Blocks AST array, Markdown/HTML string, or structured object
-  gallery?: (StrapiMedia | string)[];
-  likesCount: number;
+  likesCount?: number;
 }
 
+export const DEFAULT_BLOG_CATEGORIES: BlogCategory[] = [
+  { name: 'AI & Automation', slug: 'ai-automation', order: 1 },
+  { name: 'Engineering & Architecture', slug: 'engineering-architecture', order: 2 },
+  { name: 'Product & Design', slug: 'product-design', order: 3 },
+  { name: 'Cloud & DevOps', slug: 'cloud-devops', order: 4 },
+  { name: 'Case Studies', slug: 'case-studies', order: 5 },
+];
 
 export const DEFAULT_BLOG_PAGE_CONTENT: BlogPageContent = {
   hero: {
@@ -1058,39 +1035,6 @@ export const DEFAULT_BLOG_PAGE_CONTENT: BlogPageContent = {
     metric3_text: 'Weekly Technical Deep Dives',
     heroImageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
   },
-  spotlight: {
-    headerTitle: 'FEATURED SPOTLIGHT',
-    editionBadge: 'Aug 2026 Edition',
-    category: 'AI & Automation',
-    readTime: '6 min read',
-    title: 'Building Production Agentic AI Workflows with TypeScript & Gemini 1.5',
-    excerpt:
-      'How we architect autonomous agentic pipelines that run function calling, multi-step orchestration, and real-time state synchronization with sub-second latency.',
-    point1: 'Decoupling decision loops from execution engines using typed schemas.',
-    point2: 'Implementing exponential backoff and dynamic prompt re-try strategies.',
-    authorName: 'Alex Rivera',
-    authorRole: 'Principal AI Architect',
-    authorAvatarUrl:
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-    buttonText: 'Read Article',
-  },
-  nav: {
-    categoriesList: [
-      'All Articles',
-      'AI & Automation',
-      'Engineering & Architecture',
-      'Product & Design',
-      'Case Studies',
-    ],
-    showingPrefix: 'Showing',
-    articlesSuffix: 'articles',
-  },
-  featuredSection: {
-    badge: 'FEATURED ARTICLE',
-    sideCardTitle: 'ARCHITECTURE INSIGHTS',
-      sideCardDesc: 'Production-tested implementation patterns for engineering teams.',
-    sideCardBadge: 'Verified Code Snippets Included',
-  },
   metaTitle: 'Technical Blog & Engineering Insights | Aprogra',
   metaDescription:
     'Deep architectural breakdowns, AI workflows, web performance, and engineering dispatch from Aprogra.',
@@ -1104,16 +1048,10 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     excerpt:
       'How we architect autonomous agentic pipelines that run function calling, multi-step orchestration, and real-time state synchronization with sub-second latency.',
     category: 'AI & Automation',
-    date: 'Aug 8, 2026',
+    date: 'Aug 24, 2026',
     readTime: '6 min read',
     featured: true,
-    coverImage: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80',
-    author: {
-      name: 'Alex Rivera',
-      role: 'Principal AI Architect',
-      avatar:
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
-    },
+    coverImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80',
     tags: ['AI Agents', 'Gemini API', 'TypeScript', 'LLM Ops'],
     content: [
       {
@@ -1143,515 +1081,128 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
             text: 'A common failure mode in early AI implementations is tightly coupling the reasoning loop directly to business logic execution. In a resilient architecture, the LLM reasoning agent emits strictly typed tool payloads that pass through schema validation and security filters before touching external databases or services.'
           }
         ]
-      },
-      {
-        type: 'image',
-        image: {
-          url: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=1000&auto=format&fit=crop&q=80',
-          caption: 'Figure 1: Decoupled Multi-Agent Decision Engine and Tool Bus Topology'
-        }
-      },
-      {
-        type: 'quote',
-        children: [
-          {
-            type: 'text',
-            text: 'Decoupling reasoning from execution guarantees deterministic retries, strict token budgets, and complete audit trails across high-volume enterprise pipelines.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 3,
-        children: [
-          {
-            type: 'text',
-            text: 'Key Tenets for Production Reliability'
-          }
-        ]
-      },
-      {
-        type: 'list',
-        format: 'unordered',
-        children: [
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Typed Tool Declarations: Strict JSON schema contracts preventing parameter hallucinations.' }]
-          },
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Memory Summarization: Incremental context compression preserving token budget across 50+ turns.' }]
-          },
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Dynamic Backoff & Self-Healing: Automated prompt correction when tool errors occur.' }]
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 3,
-        children: [
-          {
-            type: 'text',
-            text: 'TypeScript Agent Dispatcher Example'
-          }
-        ]
-      },
-      {
-        type: 'code',
-        children: [
-          {
-            type: 'text',
-            text: `import { GoogleGenAI } from '@google/genai';
-
-export async function executeAgentWorkflow(userTask: string) {
-  const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
-  const response = await ai.models.generateContent({
-    model: 'gemini-1.5-pro',
-    contents: [{ role: 'user', parts: [{ text: userTask }] }],
-    config: {
-      tools: [{ functionDeclarations: [queryDatabaseTool, dispatchWebhookTool] }]
-    }
-  });
-  return response;
-}`
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'By adhering to deterministic schema boundaries and client-side guards, you can build enterprise-grade agentic features that scale predictably without operational surprises.'
-          }
-        ]
       }
     ],
-    likesCount: 38,
   },
   {
-    id: 'zero-downtime-kubernetes',
-    slug: 'zero-downtime-kubernetes',
-    title: 'Designing Zero-Downtime Microservices on Kubernetes & GitOps',
+    id: 'edge-rendering-sqlite-sync',
+    slug: 'edge-rendering-sqlite-sync',
+    title: 'Sub-Millisecond Edge Rendering: Next.js 15 & Distributed SQLite Sync',
     excerpt:
-      'How to engineer resilient cloud infrastructures using self-healing Kubernetes clusters, ArgoCD automated canary deployments, and zero-trust Istio service meshes.',
-    category: 'Cloud & DevOps',
-    date: 'Aug 5, 2026',
+      'Deep-dive into local-first architecture, CRDT conflict resolution, and geo-replicated SQLite for instant response web apps.',
+    category: 'Engineering & Architecture',
+    date: 'Aug 22, 2026',
     readTime: '8 min read',
-    featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
-    author: {
-      name: 'Elena Rostova',
-      role: 'Staff Infrastructure Engineer',
-      avatar:
-        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200',
-    },
-    tags: ['Kubernetes', 'GitOps', 'ArgoCD', 'DevOps'],
+    featured: true,
+    coverImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
+    tags: ['Next.js 15', 'Edge Runtime', 'SQLite', 'CRDT'],
     content: [
       {
         type: 'paragraph',
         children: [
           {
             type: 'text',
-            text: 'In high-throughput microservice ecosystems, deploying code without interrupting ongoing client connections requires tight coordination between edge load balancers, container orchestration, and stateful databases.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 2,
-        children: [
-          {
-            type: 'text',
-            text: 'Canary Deployments with Argo Rollouts'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Traditional rolling updates cannot detect subtle error spikes or memory leaks before replacing 100% of pods. With Argo Rollouts and Prometheus metrics analysis, traffic is shifted incrementally (5% -> 20% -> 50% -> 100%) while verifying error rate thresholds.'
-          }
-        ]
-      },
-      {
-        type: 'image',
-        image: {
-          url: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1000&auto=format&fit=crop&q=80',
-          caption: 'Figure 2: Multi-Region Ingress Controller and Canary Traffic Split'
-        }
-      },
-      {
-        type: 'quote',
-        children: [
-          {
-            type: 'text',
-            text: 'Automated rollbacks based on P99 latency and error budgets eliminate manual on-call firefighting during deployment windows.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 3,
-        children: [
-          {
-            type: 'text',
-            text: 'Zero-Downtime Deployment Checklist'
-          }
-        ]
-      },
-      {
-        type: 'list',
-        format: 'unordered',
-        children: [
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Graceful Shutdown (SIGTERM Handling): Allow pods 30s to finish active inflight HTTP/gRPC requests.' }]
-          },
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Readiness Probe Configuration: Guard traffic until internal connection pools and caches are warm.' }]
-          },
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Database Schema Migrations: Follow expand/contract schema evolution to support dual versions concurrently.' }]
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Investing in automated progressive delivery transforms deployments from high-stress late-night events into routine, autonomous background processes.'
+            text: 'Achieving sub-millisecond edge response times requires moving computation and data as close to the client as physically possible. By pairing Next.js edge route handlers with distributed SQLite replicas, user mutations can be committed locally and propagated across regions via CRDT consensus.'
           }
         ]
       }
     ],
-    likesCount: 29,
   },
   {
-    id: 'school-erp-telemetry-architecture',
-    slug: 'school-erp-telemetry-architecture',
-    title: 'Next-Gen School Campus Architecture: RFID Biometrics & Real-Time GPS Sync',
+    id: 'mathematical-token-systems',
+    slug: 'mathematical-token-systems',
+    title: 'Mathematical Token Systems: Deterministic UI Scales in Modern CSS',
     excerpt:
-      'Case study on how Aprogra School ERP processes tens of thousands of daily turnstile taps, live vehicle telemetry feeds, and instant parent notifications with <2s latency.',
-    category: 'Case Studies',
-    date: 'Aug 1, 2026',
-    readTime: '7 min read',
-    featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=1200&auto=format&fit=crop&q=80',
-    author: {
-      name: 'Marcus Vance',
-      role: 'Lead Solutions Architect',
-      avatar:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-    },
-    tags: ['IoT', 'School ERP', 'Telemetry', 'Biometrics'],
-    content: [
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Managing campus safety across thousands of students requires instantaneous hardware integration. Every morning between 7:30 AM and 8:30 AM, our turnstile gates handle over 20,000 biometric and RFID swipe events across 12 branch locations.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 2,
-        children: [
-          {
-            type: 'text',
-            text: 'Hardware Edge Ingestion with MQTT & WebSockets'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Rather than polling central servers, physical gate controllers communicate via lightweight MQTT protocols with local edge micro-gateways. An offline SQLite buffer ensures turnstiles open in under 200 milliseconds even during broadband outages.'
-          }
-        ]
-      },
-      {
-        type: 'image',
-        image: {
-          url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1000&auto=format&fit=crop&q=80',
-          caption: 'Figure 3: Real-Time Fleet Radar and Geofenced Arrival Alert Dispatcher'
-        }
-      },
-      {
-        type: 'quote',
-        children: [
-          {
-            type: 'text',
-            text: 'Parents receive push notifications and WhatsApp messages within 1.8 seconds of their child passing the campus security perimeter.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 3,
-        children: [
-          {
-            type: 'text',
-            text: 'Core Operational Benefits'
-          }
-        ]
-      },
-      {
-        type: 'list',
-        format: 'unordered',
-        children: [
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: '99.8% Biometric and RFID hardware uptime with zero morning attendance bottlenecks.' }]
-          },
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Automated WhatsApp absence alerts eliminating thousands of daily manual phone calls.' }]
-          },
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Live GPS route telemetry with geofenced 5-minute parent pickup warnings.' }]
-          }
-        ]
-      }
-    ],
-    likesCount: 45,
-  },
-  {
-    id: 'scaling-omnichannel-ai-chatbots',
-    slug: 'scaling-omnichannel-ai-chatbots',
-    title: 'Multi-Channel Conversational AI: Scaling WhatsApp & Instagram Meta Graph',
-    excerpt:
-      'Engineering the OmniChat platform to ingest thousands of concurrent WhatsApp, Instagram DM, and Messenger threads with zero response delay and seamless agent takeover.',
-    category: 'AI & Automation',
-    date: 'Jul 28, 2026',
+      'Why hardcoded pixels are obsolete. How we engineer clamp-based typographic scales and variable fluid spacing tokens.',
+    category: 'Product & Design',
+    date: 'Aug 18, 2026',
     readTime: '5 min read',
     featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80',
-    author: {
-      name: 'Priya Patel',
-      role: 'Senior Full-Stack Engineer',
-      avatar:
-        'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&q=80&w=200',
-    },
-    tags: ['WhatsApp API', 'Instagram Graph', 'OmniChat', 'Conversational AI'],
+    coverImageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80',
+    tags: ['Design Systems', 'CSS Tokens', 'Typography', 'Figma'],
     content: [
       {
         type: 'paragraph',
         children: [
           {
             type: 'text',
-            text: 'Social commerce and instant messaging have replaced traditional web contact forms. When an Instagram Reel goes viral, brands receive thousands of comment inquiries within minutes. Converting these interactions into revenue demands instant automated fulfillment.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 2,
-        children: [
-          {
-            type: 'text',
-            text: 'Comment-to-DM Trigger Engine'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'OmniChat connects directly to the Meta Webhook stream. When a keyword like "PRICE" or "DEMO" is detected on an Instagram post or reel, our queue dispatcher immediately triggers a personalized private DM with checkout links and product catalogs.'
-          }
-        ]
-      },
-      {
-        type: 'image',
-        image: {
-          url: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1000&auto=format&fit=crop&q=80',
-          caption: 'Figure 4: Unified Multi-Agent Shared Inbox and Human Escalation Queue'
-        }
-      },
-      {
-        type: 'quote',
-        children: [
-          {
-            type: 'text',
-            text: 'Automated comment-to-DM triggers boost direct social conversion rates by 3.8x compared to standard bio link redirections.'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'With vector-embedded knowledge bases and real-time human agent monitoring, companies maintain 24/7 lead qualification while preserving high-touch customer relationships.'
+            text: 'Design systems often break down when bridging the gap between static Figma artboards and dynamic multi-screen viewport rendering. Fluid typography and clamp-based spacing variables eliminate breakpoint thrashing.'
           }
         ]
       }
     ],
-    likesCount: 52,
   },
   {
-    id: 'design-systems-tokens-tailwind',
-    slug: 'design-systems-tokens-tailwind',
-    title: 'Design Systems at Scale: Bridging Figma Tokens to Tailored Tailwind CSS',
+    id: 'zero-downtime-db-migrations',
+    slug: 'zero-downtime-db-migrations',
+    title: 'Zero-Downtime Database Migrations at 50,000 QPS',
     excerpt:
-      'A practical guide to synchronizing typography, color palettes, motion easing curves, and dark mode tokens across multidisciplinary design and engineering teams.',
-    category: 'Product & Design',
-    date: 'Jul 22, 2026',
-    readTime: '6 min read',
-    featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80',
-    author: {
-      name: 'Jordan Lee',
-      role: 'Staff Product Designer',
-      avatar:
-        'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=200',
-    },
-    tags: ['Design Systems', 'Tailwind CSS', 'Figma', 'UI/UX'],
-    content: [
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Design tokens are the atomic DNA of any scalable enterprise application. Without automated token synchronization, engineering teams constantly battle color drift, inconsistent spacing units, and diverging component variants.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 2,
-        children: [
-          {
-            type: 'text',
-            text: 'Automated Token Pipelines via Style Dictionary'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'We export design tokens directly from Figma using GitHub Actions. The pipeline compiles W3C Design Token JSON into CSS custom properties and typed Tailwind v4 themes, guaranteeing 100% visual consistency between design files and production builds.'
-          }
-        ]
-      },
-      {
-        type: 'image',
-        image: {
-          url: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=1000&auto=format&fit=crop&q=80',
-          caption: 'Figure 5: Design Token Synchronizer from Figma Variables to Production CSS Variables'
-        }
-      },
-      {
-        type: 'quote',
-        children: [
-          {
-            type: 'text',
-            text: 'When design tokens are treated as code, updating global brand aesthetics across 500+ components takes seconds instead of sprints.'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Modern web platforms achieve true craftsmanship when engineering and design collaborate around a shared, immutable vocabulary.'
-          }
-        ]
-      }
-    ],
-    likesCount: 31,
-  },
-  {
-    id: 'high-throughput-edge-databases',
-    slug: 'high-throughput-edge-databases',
-    title: 'High-Throughput Edge Databases & Reactive Real-Time State Management',
-    excerpt:
-      'Deep dive into SQLite at the edge, LibSQL replication, Zustand stores, and optimistic UI updates for hyper-responsive enterprise applications.',
-    category: 'Engineering & Architecture',
-    date: 'Jul 15, 2026',
+      'Step-by-step methodology for executing backward-compatible schema evolutions on PostgreSQL and MySQL in high-throughput production environments.',
+    category: 'Cloud & DevOps',
+    date: 'Aug 14, 2026',
     readTime: '7 min read',
     featured: false,
-    coverImage: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80',
-    author: {
-      name: 'David Chen',
-      role: 'VP of Engineering',
-      avatar:
-        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
-    },
-    tags: ['Edge DB', 'LibSQL', 'Zustand', 'Real-Time'],
+    coverImageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&auto=format&fit=crop&q=80',
+    tags: ['PostgreSQL', 'MySQL', 'DevOps', 'High Concurrency'],
     content: [
       {
         type: 'paragraph',
         children: [
           {
             type: 'text',
-            text: 'Traditional centralized databases introduce latency hurdles for globally distributed users. By placing read replicas at edge points of presence (PoPs) alongside optimistic client-side state engines, web applications achieve instant UI response times.'
-          }
-        ]
-      },
-      {
-        type: 'heading',
-        level: 2,
-        children: [
-          {
-            type: 'text',
-            text: 'Optimistic UI Updates with Zustand'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'By pairing local state transitions with background API sync, user actions (e.g. status changes, filters, live diagram edits) render with 0ms visual latency while reconciliation happens asynchronously.'
-          }
-        ]
-      },
-      {
-        type: 'image',
-        image: {
-          url: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1000&auto=format&fit=crop&q=80',
-          caption: 'Figure 6: Global Edge Replication and Reactive Local Cache Pipeline'
-        }
-      },
-      {
-        type: 'quote',
-        children: [
-          {
-            type: 'text',
-            text: 'Sub-millisecond read access at the edge empowers applications to feel physical and tactile rather than sluggish.'
-          }
-        ]
-      },
-      {
-        type: 'paragraph',
-        children: [
-          {
-            type: 'text',
-            text: 'Embracing distributed SQLite and optimistic state architectures bridges the gap between web applications and native desktop responsiveness.'
+            text: 'Altering high-volume production tables without locks requires a dual-write and shadow validation migration pattern. This guide details how we maintain continuous 99.99% availability throughout non-blocking schema refactors.'
           }
         ]
       }
     ],
-    likesCount: 42,
+  },
+  {
+    id: 'multi-tenant-architecture-guide',
+    slug: 'multi-tenant-architecture-guide',
+    title: 'Multi-Tenant Architecture: Row-Level Security vs Isolated Schemas',
+    excerpt:
+      'Comprehensive comparison of multi-tenant isolation patterns for enterprise SaaS platforms scaling beyond 10,000 customer organizations.',
+    category: 'Engineering & Architecture',
+    date: 'Aug 10, 2026',
+    readTime: '9 min read',
+    featured: false,
+    coverImageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
+    tags: ['SaaS', 'RLS', 'Multi-Tenancy', 'Security'],
+    content: [
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'Security and data isolation are paramount for enterprise multi-tenant systems. Postgres Row-Level Security (RLS) offers an optimal balance between resource utilization, schema maintenance velocity, and bank-grade tenant partitioning.'
+          }
+        ]
+      }
+    ],
+  },
+  {
+    id: 'monolith-to-micro-frontends',
+    slug: 'monolith-to-micro-frontends',
+    title: 'From Monolith to Event-Driven Micro-Frontends: A Year in Review',
+    excerpt:
+      'Lessons learned, pitfalls avoided, and velocity gains realized after migrating a legacy enterprise core into modular autonomous frontend modules.',
+    category: 'Case Studies',
+    date: 'Aug 04, 2026',
+    readTime: '6 min read',
+    featured: false,
+    coverImageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80',
+    tags: ['Micro-Frontends', 'Architecture', 'Case Study', 'Velocity'],
+    content: [
+      {
+        type: 'paragraph',
+        children: [
+          {
+            type: 'text',
+            text: 'Decoupling monolithic web portals into self-contained domain applications allowed dedicated engineering pods to deploy independently without cross-team deployment locks or regression bottlenecks.'
+          }
+        ]
+      }
+    ],
   },
 ];
 
@@ -1661,15 +1212,12 @@ export async function executeAgentWorkflow(userTask: string) {
 export async function fetchBlogPageContent(): Promise<BlogPageContent> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'blog-page?populate[hero][populate]=*&populate[spotlight][populate]=*&populate[nav][populate]=*&populate[featuredSection][populate]=*'
+      'blog-page?populate[hero][populate]=*'
     );
     if (!raw) return DEFAULT_BLOG_PAGE_CONTENT;
 
     const data = raw.attributes || raw;
     const hero = data.hero || {};
-    const spotlight = data.spotlight || {};
-    const nav = data.nav || {};
-    const featuredSection = data.featuredSection || {};
 
     return {
       hero: {
@@ -1681,32 +1229,8 @@ export async function fetchBlogPageContent(): Promise<BlogPageContent> {
         metric1_text: hero.metric1_text || DEFAULT_BLOG_PAGE_CONTENT.hero.metric1_text,
         metric2_text: hero.metric2_text || DEFAULT_BLOG_PAGE_CONTENT.hero.metric2_text,
         metric3_text: hero.metric3_text || DEFAULT_BLOG_PAGE_CONTENT.hero.metric3_text,
-      },
-      spotlight: {
-        headerTitle: spotlight.headerTitle || DEFAULT_BLOG_PAGE_CONTENT.spotlight.headerTitle,
-        editionBadge: spotlight.editionBadge || DEFAULT_BLOG_PAGE_CONTENT.spotlight.editionBadge,
-        category: spotlight.category || DEFAULT_BLOG_PAGE_CONTENT.spotlight.category,
-        readTime: spotlight.readTime || DEFAULT_BLOG_PAGE_CONTENT.spotlight.readTime,
-        title: spotlight.title || DEFAULT_BLOG_PAGE_CONTENT.spotlight.title,
-        excerpt: spotlight.excerpt || DEFAULT_BLOG_PAGE_CONTENT.spotlight.excerpt,
-        point1: spotlight.point1 || DEFAULT_BLOG_PAGE_CONTENT.spotlight.point1,
-        point2: spotlight.point2 || DEFAULT_BLOG_PAGE_CONTENT.spotlight.point2,
-        authorName: spotlight.authorName || DEFAULT_BLOG_PAGE_CONTENT.spotlight.authorName,
-        authorRole: spotlight.authorRole || DEFAULT_BLOG_PAGE_CONTENT.spotlight.authorRole,
-        authorAvatar: spotlight.authorAvatar,
-        authorAvatarUrl: spotlight.authorAvatarUrl || DEFAULT_BLOG_PAGE_CONTENT.spotlight.authorAvatarUrl,
-        buttonText: spotlight.buttonText || DEFAULT_BLOG_PAGE_CONTENT.spotlight.buttonText,
-      },
-      nav: {
-        categoriesList: DEFAULT_BLOG_PAGE_CONTENT.nav.categoriesList,
-        showingPrefix: nav.showingPrefix || DEFAULT_BLOG_PAGE_CONTENT.nav.showingPrefix,
-        articlesSuffix: nav.articlesSuffix || DEFAULT_BLOG_PAGE_CONTENT.nav.articlesSuffix,
-      },
-      featuredSection: {
-        badge: featuredSection.badge || DEFAULT_BLOG_PAGE_CONTENT.featuredSection.badge,
-        sideCardTitle: featuredSection.sideCardTitle || DEFAULT_BLOG_PAGE_CONTENT.featuredSection.sideCardTitle,
-        sideCardDesc: featuredSection.sideCardDesc || DEFAULT_BLOG_PAGE_CONTENT.featuredSection.sideCardDesc,
-        sideCardBadge: featuredSection.sideCardBadge || DEFAULT_BLOG_PAGE_CONTENT.featuredSection.sideCardBadge,
+        heroImage: hero.heroImage,
+        heroImageUrl: getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || DEFAULT_BLOG_PAGE_CONTENT.hero.heroImageUrl,
       },
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
@@ -1718,7 +1242,31 @@ export async function fetchBlogPageContent(): Promise<BlogPageContent> {
 }
 
 /**
- * Fetches all Blog Posts from Strapi
+ * Fetches dynamic Blog Categories from Strapi
+ */
+export async function fetchCategories(): Promise<BlogCategory[]> {
+  try {
+    const raw = await fetchFromStrapi<any>('categories?sort=order:asc');
+    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_BLOG_CATEGORIES;
+
+    return raw.map((item: any) => {
+      const data = item.attributes || item;
+      return {
+        id: item.documentId || item.id,
+        name: data.name || '',
+        slug: data.slug || '',
+        order: typeof data.order === 'number' ? data.order : 1,
+        description: data.description || '',
+      };
+    });
+  } catch (error) {
+    console.warn('[Strapi] Could not load categories, using defaults:', error);
+    return DEFAULT_BLOG_CATEGORIES;
+  }
+}
+
+/**
+ * Fetches all Blog Posts from Strapi (latest to oldest)
  */
 export async function fetchBlogPosts(): Promise<BlogPost[]> {
   try {
@@ -1731,16 +1279,10 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
       const data = item.attributes || item;
       const defaultPost = DEFAULT_BLOG_POSTS.find((p) => p.slug === data.slug);
 
-      const authorAvatarUrl =
-        getStrapiMediaUrl(data.authorAvatar) ||
-        data.authorAvatarUrl ||
-        defaultPost?.author?.avatar ||
-        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200';
-
       const coverImage =
         getStrapiMediaUrl(data.coverImage) ||
         data.coverImageUrl ||
-        defaultPost?.coverImage ||
+        defaultPost?.coverImageUrl ||
         'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80';
 
       const content =
@@ -1770,16 +1312,10 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
             : defaultPost?.date || 'Recent'),
         readTime: data.readTime || defaultPost?.readTime || '5 min read',
         featured: Boolean(data.featured ?? defaultPost?.featured),
-        coverImage: coverImage,
-        author: {
-          name: data.authorName || defaultPost?.author?.name || 'Aprogra Engineering',
-          role: data.authorRole || defaultPost?.author?.role || 'Lead Architect',
-          avatar: authorAvatarUrl,
-          avatarMedia: data.authorAvatar,
-        },
+        coverImage: data.coverImage,
+        coverImageUrl: coverImage,
         tags: tags,
         content: content,
-        gallery: data.gallery,
         likesCount: typeof data.likesCount === 'number' ? data.likesCount : (defaultPost?.likesCount || 0),
       };
     });
@@ -1790,19 +1326,21 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
 }
 
 /**
- * React hook for consuming dynamic Blog Page configuration and Blog Posts
+ * React hook for consuming dynamic Blog Page configuration, Categories, and Blog Posts
  */
 export function useBlogData() {
   const [pageContent, setPageContent] = useState<BlogPageContent>(DEFAULT_BLOG_PAGE_CONTENT);
+  const [categories, setCategories] = useState<BlogCategory[]>(DEFAULT_BLOG_CATEGORIES);
   const [posts, setPosts] = useState<BlogPost[]>(DEFAULT_BLOG_POSTS);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     let isMounted = true;
-    Promise.all([fetchBlogPageContent(), fetchBlogPosts()])
-      .then(([pageData, postsData]) => {
+    Promise.all([fetchBlogPageContent(), fetchCategories(), fetchBlogPosts()])
+      .then(([pageData, categoriesData, postsData]) => {
         if (isMounted) {
           if (pageData) setPageContent(pageData);
+          if (categoriesData && categoriesData.length > 0) setCategories(categoriesData);
           if (postsData && postsData.length > 0) setPosts(postsData);
           setIsLoading(false);
         }
@@ -1816,7 +1354,9 @@ export function useBlogData() {
     };
   }, []);
 
-  return { pageContent, posts, isLoading };
+  const featuredPosts = posts.filter((p) => p.featured);
+
+  return { pageContent, categories, posts, featuredPosts, isLoading };
 }
 
 // ============================================================================

@@ -1,30 +1,33 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion } from 'motion/react';
+import { motion, AnimatePresence } from 'motion/react';
 import { 
-  Sparkles, Search, Calendar, Clock, User, ArrowRight, 
-  ChevronRight, BookOpen, CheckCircle2, 
-  X, ThumbsUp, Code
+  Sparkles, Search, Calendar, Clock, ArrowRight, 
+  ChevronRight, ChevronLeft, BookOpen, 
+  X, ThumbsUp, Layers
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import ScrollReveal from '@/components/animations/ScrollReveal';
 import { useBlogData, BlogPost, getStrapiMediaUrl } from '@/lib/strapi';
 import BlocksRenderer from '@/components/blog/BlocksRenderer';
 
-const CATEGORIES = [
-  'All Articles',
-  'AI & Automation',
-  'Engineering & Architecture',
-  'Product & Design',
-  'Case Studies'
-] as const;
-
 export default function Community() {
-  const { pageContent, posts } = useBlogData();
+  const { pageContent, categories, posts, featuredPosts } = useBlogData();
   const [selectedCategory, setSelectedCategory] = useState<string>('All Articles');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeArticle, setActiveArticle] = useState<BlogPost | null>(null);
   const [likedArticles, setLikedArticles] = useState<Record<string, boolean>>({});
+  const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  const [isSliderHovered, setIsSliderHovered] = useState(false);
   const articleRef = useRef<HTMLDivElement>(null);
+
+  // Auto-advance featured slider every 6 seconds if there are multiple featured posts and not hovered
+  useEffect(() => {
+    if (featuredPosts.length <= 1 || isSliderHovered) return;
+    const timer = setInterval(() => {
+      setCurrentFeaturedIndex((prev) => (prev + 1) % featuredPosts.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [featuredPosts.length, isSliderHovered]);
 
   // Prevent background scrolling and handle Escape key when modal is open
   useEffect(() => {
@@ -49,7 +52,7 @@ export default function Community() {
     };
   }, [activeArticle]);
 
-  // Filter logic
+  // Filter logic for blogs grid
   const filteredPosts = posts.filter((post) => {
     const matchesCategory = selectedCategory === 'All Articles' || post.category === selectedCategory;
     const matchesSearch = 
@@ -59,22 +62,29 @@ export default function Community() {
     return matchesCategory && matchesSearch;
   });
 
-  const featuredPost = posts.find(p => p.featured) || posts[0] || filteredPosts[0];
-
   const handleLike = (id: string) => {
     setLikedArticles(prev => ({ ...prev, [id]: !prev[id] }));
   };
 
+  const handlePrevSlide = () => {
+    setCurrentFeaturedIndex((prev) => (prev - 1 + featuredPosts.length) % featuredPosts.length);
+  };
+
+  const handleNextSlide = () => {
+    setCurrentFeaturedIndex((prev) => (prev + 1) % featuredPosts.length);
+  };
+
   const hero = pageContent.hero;
-  const spotlight = pageContent.spotlight;
-  const nav = pageContent.nav;
-  const featuredSection = pageContent.featuredSection;
+  const currentFeatured = featuredPosts[currentFeaturedIndex] || featuredPosts[0] || posts[0];
+
+  // Derive category list from Strapi with fallback
+  const categoryTabs = ['All Articles', ...categories.map(c => c.name)];
 
   return (
     <div className="w-full min-h-screen bg-[#F4F1EA] text-[#0B0D12] font-sans antialiased pt-16">
       
       {/* ========================================================= */}
-      {/* 1. HERO SECTION (2-PART LEFT & RIGHT LAYOUT - SINGLE SCREEN) */}
+      {/* 1. HERO SECTION (LEFT TEXT & RIGHT SIMPLE IMAGE)          */}
       {/* ========================================================= */}
       <section className="relative px-4 sm:px-6 md:px-10 py-6 sm:py-8 lg:py-4 overflow-hidden border-b border-[#0B0D12]/10 bg-[#F4F1EA] text-[#0B0D12] min-h-[calc(100vh-64px)] lg:h-[calc(100vh-64px)] lg:max-h-[calc(100vh-64px)] flex flex-col justify-center">
         {/* Ambient Engineering Grid & Glow in Background */}
@@ -86,22 +96,18 @@ export default function Community() {
               backgroundSize: '32px 32px'
             }}
           />
-          {/* Soft Radial Ambient Glow */}
           <div className="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-[#FF4A1C]/5 rounded-full blur-3xl pointer-events-none" />
         </div>
 
         <div className="max-w-7xl mx-auto w-full relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
           
-          {/* ======================================================= */}
-          {/* LEFT COLUMN: Headings, Search & Topic Quick Filters    */}
-          {/* ======================================================= */}
+          {/* LEFT COLUMN: Headings, Search & Topic Metrics */}
           <motion.div 
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
             className="lg:col-span-7 space-y-3 sm:space-y-4 text-left"
           >
-            
             {/* Eyebrow Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-white border border-[#0B0D12]/12 text-[#0B0D12] text-xs font-semibold shadow-2xs">
               <span className="relative flex h-2 w-2">
@@ -112,7 +118,7 @@ export default function Community() {
               <span>{hero.badge}</span>
             </div>
 
-            {/* Main Headline (Single H1) */}
+            {/* Main Headline */}
             <div className="space-y-1">
               <h1 className="text-h1 text-[#0B0D12]">
                 {hero.headline} <br />
@@ -141,7 +147,7 @@ export default function Community() {
                 {searchQuery && (
                   <button 
                     onClick={() => setSearchQuery('')}
-                    className="p-1 rounded-full text-[#5A5E6E] hover:text-[#0B0D12] mr-2"
+                    className="p-1 rounded-full text-[#5A5E6E] hover:text-[#0B0D12] mr-2 cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                   </button>
@@ -156,7 +162,7 @@ export default function Community() {
                 <span className="font-bold text-[#0B0D12]">{hero.metric1_text}</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5 text-[#0B0D12]" />
+                <Layers className="w-3.5 h-3.5 text-[#0B0D12]" />
                 <span>{hero.metric2_text}</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -167,9 +173,7 @@ export default function Community() {
 
           </motion.div>
 
-          {/* ======================================================= */}
-          {/* RIGHT COLUMN: Simple Hero Image (No text on it)          */}
-          {/* ======================================================= */}
+          {/* RIGHT COLUMN: Simple Hero Image (No text on it) */}
           <motion.div 
             initial={{ opacity: 0, x: 35 }}
             animate={{ opacity: 1, x: 0 }}
@@ -179,7 +183,7 @@ export default function Community() {
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
               <img 
                 src={getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"}
-                alt="AProgra Tech Radar & Engineering Insights"
+                alt="Tech Radar & Engineering Insights"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
@@ -189,16 +193,15 @@ export default function Community() {
         </div>
       </section>
 
-
       {/* ========================================================= */}
-      {/* 2. BLOGS LIST SECTION                                    */}
+      {/* 2. CATEGORIES & BLOGS LIST SECTION                       */}
       {/* ========================================================= */}
       <section className="py-16 px-6 max-w-7xl mx-auto space-y-12">
         
-        {/* Category Navigation Tabs */}
+        {/* Dynamic Category Navigation Tabs */}
         <div className="flex items-center justify-between flex-wrap gap-4 border-b border-[#0B0D12]/10 pb-4">
           <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none w-full sm:w-auto">
-            {(nav.categoriesList || CATEGORIES).map((cat) => {
+            {categoryTabs.map((cat) => {
               const isActive = selectedCategory === cat;
               return (
                 <button
@@ -217,122 +220,165 @@ export default function Community() {
           </div>
 
           <div className="text-xs font-mono text-[#5A5E6E] font-semibold">
-            {nav.showingPrefix}{' '}
-            <span className="text-[#FF4A1C] font-bold">{filteredPosts.length}</span>{' '}
-            {nav.articlesSuffix}
+            Showing <span className="text-[#FF4A1C] font-bold">{filteredPosts.length}</span> articles
           </div>
         </div>
 
-        {/* Featured Post Card (Shows when 'All Articles' is selected or featured post matches query) */}
-        {selectedCategory === 'All Articles' && !searchQuery && (
+        {/* ======================================================= */}
+        {/* 3. FEATURED POSTS SECTION (MULTI-POST SLIDER)           */}
+        {/* ======================================================= */}
+        {selectedCategory === 'All Articles' && !searchQuery && currentFeatured && (
           <ScrollReveal>
-            <div className="group bg-[#0B0D12] text-[#F4F1EA] rounded-2xl p-6 sm:p-8 lg:p-10 shadow-md relative overflow-hidden border border-[#0B0D12] grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+            <div 
+              onMouseEnter={() => setIsSliderHovered(true)}
+              onMouseLeave={() => setIsSliderHovered(false)}
+              className="group bg-[#0B0D12] text-[#F4F1EA] rounded-2xl p-6 sm:p-8 lg:p-10 shadow-md relative overflow-hidden border border-[#0B0D12]"
+            >
               
-              {/* Left Column: Article Details */}
-              <div className="lg:col-span-7 space-y-4 relative z-10">
-                <div className="flex items-center gap-3">
-                  <span className="px-3 py-1 rounded bg-white/10 text-white border border-white/15 text-xs font-mono font-bold uppercase tracking-wider">
-                    {featuredSection.badge}
-                  </span>
-                  <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
-                    <Calendar className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.date}
-                  </span>
-                  <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
-                    <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.readTime}
-                  </span>
-                </div>
-
-                <h2 
-                  onClick={() => setActiveArticle(featuredPost || posts[0])}
-                  className="text-h2 text-white group-hover:text-[#FF4A1C] transition-colors cursor-pointer"
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentFeatured.id || currentFeatured.slug || currentFeaturedIndex}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -15 }}
+                  transition={{ duration: 0.35, ease: 'easeOut' }}
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center"
                 >
-                  {featuredPost?.title}
-                </h2>
-
-                <p className="text-body text-[#F4F1EA]/80 max-w-2xl">
-                  {featuredPost?.excerpt}
-                </p>
-
-                <div className="flex flex-wrap gap-2 pt-2">
-                  {(featuredPost?.tags || []).map((tag: any) => {
-                    const tagText = typeof tag === 'string' ? tag : tag.name || '';
-                    return (
-                      <span key={tagText} className="px-2.5 py-1 rounded bg-white/10 text-[#F4F1EA] text-caption font-mono border border-white/10">
-                        #{tagText}
+                  {/* Left Column: Article Details */}
+                  <div className="lg:col-span-7 space-y-4 relative z-10">
+                    <div className="flex items-center gap-3">
+                      <span className="px-3 py-1 rounded bg-white/10 text-white border border-white/15 text-xs font-mono font-bold uppercase tracking-wider">
+                        FEATURED ARTICLE
                       </span>
-                    );
-                  })}
-                </div>
+                      <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
+                        <Calendar className="w-3.5 h-3.5 text-[#FF4A1C]" /> {currentFeatured.date}
+                      </span>
+                      <span className="text-xs text-[#F4F1EA]/70 flex items-center gap-1 font-mono">
+                        <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {currentFeatured.readTime}
+                      </span>
+                    </div>
 
-                <div className="pt-4 flex items-center justify-between flex-wrap gap-4">
-                  <div className="flex items-center gap-3">
-                    <img 
-                      src={featuredPost?.author?.avatar || spotlight.authorAvatarUrl} 
-                      alt={featuredPost?.author?.name}
-                      className="w-10 h-10 rounded-full object-cover border border-white/20"
-                    />
-                    <div>
-                      <div className="text-h4 text-white">{featuredPost?.author?.name}</div>
-                      <div className="text-caption text-[#FF4A1C] font-mono">{featuredPost?.author?.role}</div>
+                    <h2 
+                      onClick={() => setActiveArticle(currentFeatured)}
+                      className="text-h2 text-white group-hover:text-[#FF4A1C] transition-colors cursor-pointer"
+                    >
+                      {currentFeatured.title}
+                    </h2>
+
+                    <p className="text-body text-[#F4F1EA]/80 max-w-2xl">
+                      {currentFeatured.excerpt}
+                    </p>
+
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      {(currentFeatured.tags || []).map((tag: any) => {
+                        const tagText = typeof tag === 'string' ? tag : tag.name || '';
+                        return (
+                          <span key={tagText} className="px-2.5 py-1 rounded bg-white/10 text-[#F4F1EA] text-caption font-mono border border-white/10">
+                            #{tagText}
+                          </span>
+                        );
+                      })}
+                    </div>
+
+                    <div className="pt-4 flex items-center justify-between flex-wrap gap-4">
+                      <button
+                        onClick={() => setActiveArticle(currentFeatured)}
+                        className="px-6 py-3 rounded-lg bg-[#FF4A1C] hover:bg-white hover:text-[#0B0D12] text-white text-badge flex items-center gap-2 cursor-pointer shadow-xs transition-all"
+                      >
+                        <span>READ ARTICLE</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+
+                      {/* Slider Navigation Controls (shown if multiple featured posts) */}
+                      {featuredPosts.length > 1 && (
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={handlePrevSlide}
+                            aria-label="Previous featured post"
+                            className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white hover:text-[#0B0D12] text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+                          
+                          {/* Slide indicator dots */}
+                          <div className="flex items-center gap-1.5 px-2">
+                            {featuredPosts.map((_, idx) => (
+                              <button
+                                key={idx}
+                                onClick={() => setCurrentFeaturedIndex(idx)}
+                                aria-label={`Go to slide ${idx + 1}`}
+                                className={`h-2 rounded-full transition-all cursor-pointer ${
+                                  idx === currentFeaturedIndex 
+                                    ? 'w-6 bg-[#FF4A1C]' 
+                                    : 'w-2 bg-white/30 hover:bg-white/60'
+                                }`}
+                              />
+                            ))}
+                          </div>
+
+                          <button
+                            onClick={handleNextSlide}
+                            aria-label="Next featured post"
+                            className="w-9 h-9 rounded-lg bg-white/10 hover:bg-white hover:text-[#0B0D12] text-white border border-white/15 flex items-center justify-center transition-colors cursor-pointer"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => setActiveArticle(featuredPost || posts[0])}
-                    className="px-6 py-3 rounded-lg bg-[#FF4A1C] hover:bg-white hover:text-[#0B0D12] text-white text-badge flex items-center gap-2 cursor-pointer shadow-xs transition-all"
+                  {/* Right Column: Featured Blog Post Cover Image */}
+                  <div 
+                    onClick={() => setActiveArticle(currentFeatured)}
+                    className="lg:col-span-5 relative z-10 w-full h-[240px] sm:h-[280px] lg:h-[320px] rounded-xl overflow-hidden border border-white/15 bg-white/5 cursor-pointer group/img shadow-md"
                   >
-                    <span>READ ARTICLE</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+                    <img 
+                      src={getStrapiMediaUrl(currentFeatured.coverImage) || currentFeatured.coverImageUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'}
+                      alt={currentFeatured.title || 'Featured Article'}
+                      className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500 ease-out brightness-90 group-hover/img:brightness-100"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
+                    
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono font-bold shadow-xs">
+                      {currentFeatured.category || 'AI & AUTOMATION'}
+                    </div>
 
-              {/* Right Column: Featured Blog Post Cover Image */}
-              <div 
-                onClick={() => setActiveArticle(featuredPost || posts[0])}
-                className="lg:col-span-5 relative z-10 w-full h-[240px] sm:h-[280px] lg:h-[320px] rounded-xl overflow-hidden border border-white/15 bg-white/5 cursor-pointer group/img shadow-md"
-              >
-                <img 
-                  src={getStrapiMediaUrl(featuredPost?.coverImage) || (typeof featuredPost?.coverImage === 'string' ? featuredPost?.coverImage : null) || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'}
-                  alt={featuredPost?.title || 'Featured Article'}
-                  className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500 ease-out brightness-90 group-hover/img:brightness-100"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent pointer-events-none" />
-                
-                <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/60 backdrop-blur-md border border-white/20 text-white text-[10px] font-mono font-bold shadow-xs">
-                  {featuredPost?.category || 'AI & AUTOMATION'}
-                </div>
+                    <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-mono bg-black/70 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
+                      <span className="text-white/80 flex items-center gap-1.5">
+                        <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {currentFeatured.readTime || '6 min read'}
+                      </span>
+                      <span className="text-[#FF4A1C] font-bold flex items-center gap-1 group-hover/img:translate-x-1 transition-transform">
+                        Explore Article <ArrowRight className="w-3.5 h-3.5" />
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
 
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white text-[11px] font-mono bg-black/70 backdrop-blur-md px-3 py-2 rounded-lg border border-white/15">
-                  <span className="text-white/80 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#FF4A1C]" /> {featuredPost?.readTime || '6 min read'}
-                  </span>
-                  <span className="text-[#FF4A1C] font-bold flex items-center gap-1 group-hover/img:translate-x-1 transition-transform">
-                    Explore Article <ArrowRight className="w-3.5 h-3.5" />
-                  </span>
-                </div>
-              </div>
             </div>
           </ScrollReveal>
         )}
 
-        {/* Blog Posts Grid */}
+        {/* ======================================================= */}
+        {/* 4. ALL BLOGS LIST (LATEST TO OLDEST)                   */}
+        {/* ======================================================= */}
         <ScrollReveal className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" stagger={0.1}>
           {filteredPosts.map((post) => (
             <article 
-              key={post.id}
+              key={post.id || post.slug}
               className="bg-[#FAF8F5] rounded-lg p-6 sm:p-7 border border-[#0B0D12]/15 shadow-xs hover:shadow-md hover:border-[#0B0D12] transition-all duration-300 flex flex-col justify-between group overflow-hidden"
             >
               <div className="space-y-4">
                 
                 {/* Card Cover Thumbnail */}
-                {post.coverImage && (
+                {(post.coverImage || post.coverImageUrl) && (
                   <div 
                     onClick={() => setActiveArticle(post)}
                     className="h-44 -mx-6 -mt-6 mb-4 overflow-hidden bg-[#0B0D12]/5 cursor-pointer relative"
                   >
                     <img 
-                      src={getStrapiMediaUrl(post.coverImage) || (typeof post.coverImage === 'string' ? post.coverImage : '')}
+                      src={getStrapiMediaUrl(post.coverImage) || post.coverImageUrl || ''}
                       alt={post.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
@@ -379,19 +425,12 @@ export default function Community() {
 
               </div>
 
-              {/* Author Footer & Read Button */}
-              <div className="pt-6 mt-6 border-t border-[#0B0D12]/10 flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <img 
-                    src={post.author.avatar || spotlight.authorAvatarUrl} 
-                    alt={post.author.name} 
-                    className="w-8 h-8 rounded-full object-cover border border-[#0B0D12]/15"
-                  />
-                  <div>
-                    <div className="text-h4 text-[#0B0D12]">{post.author.name}</div>
-                    <div className="text-caption text-[#5A5E6E] font-mono">{post.date}</div>
-                  </div>
-                </div>
+              {/* Card Bottom: Date & Read Button (NO AUTHOR) */}
+              <div className="pt-5 mt-5 border-t border-[#0B0D12]/10 flex items-center justify-between">
+                <span className="text-caption text-[#5A5E6E] font-mono flex items-center gap-1">
+                  <Calendar className="w-3 h-3 text-[#FF4A1C]" />
+                  <span>{post.date}</span>
+                </span>
 
                 <button
                   onClick={() => setActiveArticle(post)}
@@ -425,7 +464,7 @@ export default function Community() {
       </section>
 
       {/* ========================================================= */}
-      {/* READ ARTICLE MODAL                                        */}
+      {/* READ ARTICLE MODAL (NO AUTHOR)                            */}
       {/* ========================================================= */}
       {activeArticle && (
         <div 
@@ -467,18 +506,17 @@ export default function Community() {
               {activeArticle.title}
             </h2>
 
-            {/* Author Bar */}
-            <div className="flex items-center justify-between pb-6 border-b border-[#0B0D12]/10">
-              <div className="flex items-center gap-3">
-                <img 
-                  src={activeArticle.author.avatar || spotlight.authorAvatarUrl} 
-                  alt={activeArticle.author.name}
-                  className="w-10 h-10 rounded-full object-cover border border-[#0B0D12]/15" 
-                />
-                <div>
-                  <div className="text-h4 text-[#0B0D12]">{activeArticle.author.name}</div>
-                  <div className="text-caption text-[#5A5E6E] font-mono">{activeArticle.author.role}</div>
-                </div>
+            {/* Action Bar (Like Button) */}
+            <div className="flex items-center justify-between pb-4 border-b border-[#0B0D12]/10">
+              <div className="flex flex-wrap gap-1.5">
+                {(activeArticle.tags || []).map((tag: any) => {
+                  const tagText = typeof tag === 'string' ? tag : tag.name || '';
+                  return (
+                    <span key={tagText} className="px-2.5 py-0.5 rounded bg-white text-[#5A5E6E] text-caption font-mono border border-[#0B0D12]/10">
+                      #{tagText}
+                    </span>
+                  );
+                })}
               </div>
 
               <div className="flex items-center gap-2">
@@ -497,17 +535,17 @@ export default function Community() {
             </div>
 
             {/* Cover Image (if provided) */}
-            {activeArticle.coverImage && (
+            {(activeArticle.coverImage || activeArticle.coverImageUrl) && (
               <div className="rounded-xl overflow-hidden border border-[#0B0D12]/10 bg-[#0B0D12]/5 max-h-[360px] my-4 shadow-sm">
                 <img
-                  src={getStrapiMediaUrl(activeArticle.coverImage) || (typeof activeArticle.coverImage === 'string' ? activeArticle.coverImage : '')}
+                  src={getStrapiMediaUrl(activeArticle.coverImage) || activeArticle.coverImageUrl || ''}
                   alt={activeArticle.title}
                   className="w-full h-full object-cover max-h-[360px]"
                 />
               </div>
             )}
 
-            {/* Article Content Body via BlocksRenderer (Doc Editor) */}
+            {/* Article Content Body via BlocksRenderer */}
             <div className="pt-2 pb-4">
               <BlocksRenderer content={activeArticle.content} />
             </div>

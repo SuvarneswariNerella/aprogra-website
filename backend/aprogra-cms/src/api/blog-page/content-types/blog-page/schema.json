@@ -1,0 +1,30 @@
+{
+  "kind": "singleType",
+  "collectionName": "blog_pages",
+  "info": {
+    "singularName": "blog-page",
+    "pluralName": "blog-pages",
+    "displayName": "Blog Page Settings",
+    "description": "Hero section and metadata for the Blog / Community page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "hero": {
+      "type": "component",
+      "repeatable": false,
+      "component": "sections.blog-hero-section",
+      "required": true
+    },
+    "metaTitle": {
+      "type": "string",
+      "default": "Technical Blog & Engineering Insights | Aprogra"
+    },
+    "metaDescription": {
+      "type": "text",
+      "default": "Deep architectural breakdowns, AI workflows, web performance, and engineering dispatch from Aprogra."
+    }
+  }
+}
