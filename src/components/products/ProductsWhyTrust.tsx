@@ -63,7 +63,12 @@ const TRUST_ITEMS: KPIItemData[] = [
   }
 ];
 
-export default function ProductsWhyTrust() {
+export default function ProductsWhyTrust({ productsPage }: { productsPage?: any }) {
+  const badge = productsPage?.trustBadge || "Reliability & Craft Standards";
+  const headline = productsPage?.trustHeadline || "Why Teams Trust Aprogra Products";
+  const description = productsPage?.trustDescription || "We don't build vaporware or speculative prototypes. Every system is engineered with founder-level devotion, multi-layered reliability, and real-time observability.";
+  const trustItems = (productsPage?.trustItems && productsPage.trustItems.length > 0) ? productsPage.trustItems : TRUST_ITEMS;
+
   return (
     <section className="py-16 sm:py-20 px-4 sm:px-6 md:px-12 bg-white border-b border-[#0B0D12]/10">
       <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16">
@@ -73,22 +78,22 @@ export default function ProductsWhyTrust() {
           <div>
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#FAF8F5] text-[#0B0D12] text-xs font-semibold border border-[#0B0D12]/10">
               <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-              <span>Reliability &amp; Craft Standards</span>
+              <span>{badge}</span>
             </span>
           </div>
 
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-display text-[#0B0D12] tracking-tight leading-tight">
-            Why Teams Trust Aprogra Products
+            {headline}
           </h2>
 
           <p className="text-sm text-[#5A5E6E] max-w-2xl mx-auto leading-relaxed">
-            We don't build vaporware or speculative prototypes. Every system is engineered with founder-level devotion, multi-layered reliability, and real-time observability.
+            {description}
           </p>
         </ScrollReveal>
 
         {/* Simple Content List with Count-Up Animations */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 text-center">
-          {TRUST_ITEMS.map((item, idx) => (
+          {trustItems.map((item: any, idx: number) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
@@ -103,7 +108,7 @@ export default function ProductsWhyTrust() {
                   <span className="tabular-nums">
                     {item.prefix}
                     <CountingNumber 
-                      target={item.target} 
+                      target={typeof item.target === 'number' ? item.target : parseFloat(item.target) || 0} 
                       transition={{ duration: 2.0, ease: "easeOut", type: "tween" }} 
                     />
                     {item.suffix}
@@ -124,10 +129,10 @@ export default function ProductsWhyTrust() {
               {/* Link */}
               <div className="pt-2">
                 <Link
-                  to={item.href}
+                  to={item.href || '/contact'}
                   className="inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-[#0B0D12] hover:text-[#FF4A1C] transition-colors group"
                 >
-                  <span>{item.actionText}</span>
+                  <span>{item.actionText || 'Learn More'}</span>
                   <ArrowRight className="w-3.5 h-3.5 text-[#5A5E6E] group-hover:text-[#FF4A1C] group-hover:translate-x-0.5 transition-all" />
                 </Link>
               </div>

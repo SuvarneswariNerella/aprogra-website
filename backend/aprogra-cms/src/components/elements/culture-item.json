@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_culture_items",
+  "info": {
+    "displayName": "Culture Item",
+    "icon": "shieldCheck",
+    "description": "Operating principle or culture card"
+  },
+  "options": {},
+  "attributes": {
+    "number": {
+      "type": "string",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

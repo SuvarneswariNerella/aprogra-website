@@ -40,6 +40,20 @@ export interface ElementsContactChannel extends Struct.ComponentSchema {
   };
 }
 
+export interface ElementsCultureItem extends Struct.ComponentSchema {
+  collectionName: 'components_elements_culture_items';
+  info: {
+    description: 'Operating principle or culture card';
+    displayName: 'Culture Item';
+    icon: 'shieldCheck';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    number: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface ElementsDeliverableItem extends Struct.ComponentSchema {
   collectionName: 'components_elements_deliverable_items';
   info: {
@@ -275,6 +289,26 @@ export interface ElementsPillarItem extends Struct.ComponentSchema {
   };
 }
 
+export interface ElementsProductFeature extends Struct.ComponentSchema {
+  collectionName: 'components_elements_product_features';
+  info: {
+    description: 'Product feature / campus module item';
+    displayName: 'Product Feature Module';
+    icon: 'puzzle';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    highlights: Schema.Attribute.Text;
+    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Users'>;
+    image: Schema.Attribute.Media<'images'>;
+    metricLabel: Schema.Attribute.String;
+    metricValue: Schema.Attribute.String;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    tag: Schema.Attribute.String;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface ElementsRoadmapStep extends Struct.ComponentSchema {
   collectionName: 'components_elements_roadmap_steps';
   info: {
@@ -419,6 +453,27 @@ export interface ElementsTechTag extends Struct.ComponentSchema {
   };
   attributes: {
     name: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ElementsTrustItem extends Struct.ComponentSchema {
+  collectionName: 'components_elements_trust_items';
+  info: {
+    description: 'Why Teams Trust Aprogra metric item';
+    displayName: 'Trust Item';
+    icon: 'shieldCheck';
+  };
+  attributes: {
+    actionText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Learn More'>;
+    badge: Schema.Attribute.String;
+    decimals: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    href: Schema.Attribute.String & Schema.Attribute.DefaultTo<'/contact'>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    prefix: Schema.Attribute.String;
+    suffix: Schema.Attribute.String;
+    target: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -997,6 +1052,7 @@ declare module '@strapi/strapi' {
     export interface ComponentSchemas {
       'elements.about-faq-item': ElementsAboutFaqItem;
       'elements.contact-channel': ElementsContactChannel;
+      'elements.culture-item': ElementsCultureItem;
       'elements.deliverable-item': ElementsDeliverableItem;
       'elements.footer-column': ElementsFooterColumn;
       'elements.footer-link': ElementsFooterLink;
@@ -1011,12 +1067,14 @@ declare module '@strapi/strapi' {
       'elements.option-item': ElementsOptionItem;
       'elements.panel-highlight': ElementsPanelHighlight;
       'elements.pillar-item': ElementsPillarItem;
+      'elements.product-feature': ElementsProductFeature;
       'elements.roadmap-step': ElementsRoadmapStep;
       'elements.service-flip-card': ElementsServiceFlipCard;
       'elements.service-showcase-item': ElementsServiceShowcaseItem;
       'elements.social-link': ElementsSocialLink;
       'elements.team-skill': ElementsTeamSkill;
       'elements.tech-tag': ElementsTechTag;
+      'elements.trust-item': ElementsTrustItem;
       'sections.about-contact-cta': SectionsAboutContactCta;
       'sections.about-faq-section': SectionsAboutFaqSection;
       'sections.about-hero': SectionsAboutHero;

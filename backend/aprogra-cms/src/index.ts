@@ -1317,6 +1317,233 @@ export default {
         strapi.log.info('[Bootstrap] Updated Home Page with ServicesSlides & ProductsCards in Strapi.');
       }
 
+      // 16. Products Page Single Type
+      const defaultProductsPageData = {
+        heroBadge: "Proprietary SaaS Ecosystem",
+        heroHeadline: "Software We Built. Powering Real Scale.",
+        heroDescription: "We engineer, operate, and scale proprietary SaaS platforms and AI automation engines running in 24/7 live production.",
+        kpi1Value: "2",
+        kpi1Label: "SAAS ECOSYSTEMS",
+        kpi2Value: "17",
+        kpi2Label: "LIVE MODULES",
+        kpi3Value: "480+",
+        kpi3Label: "CAMPUSES & CLIENTS",
+        trustBadge: "Reliability & Craft Standards",
+        trustHeadline: "Why Teams Trust Aprogra Products",
+        trustDescription: "We don't build vaporware or speculative prototypes. Every system is engineered with founder-level devotion, multi-layered reliability, and real-time observability.",
+        trustItems: [
+          { name: "In-House Codebase", target: 100, suffix: "%", decimals: 0, badge: "Zero Subcontracting", title: "Battle-Tested In Production", href: "/products/school-erp", actionText: "Explore codebase architecture" },
+          { name: "Production SLA", target: 99.98, suffix: "%", decimals: 2, badge: "Cloud-Native HA", title: "Multi-Tenant Architecture", href: "/services", actionText: "View uptime & infra SLA" },
+          { name: "Daily Active Users", target: 120, suffix: "K+", decimals: 0, badge: "Enterprise Scale", title: "Proven Real-World Volume", href: "/products/omnichat", actionText: "View scale benchmarks" },
+          { name: "Response Time SLA", target: 24, suffix: "/7", decimals: 0, badge: "Guaranteed SLA", title: "Direct Core Team Support", href: "/contact", actionText: "Connect with lead architects" }
+        ],
+        contactBadge: "LET'S CONNECT",
+        contactHeadline: "Ready to Build Something Infinite?",
+        contactDescription: "Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.",
+        contactEmail: "hello@aprogra.com",
+        contactPhone: "+1 (800) 555-0199",
+        contactLocation: "Hyderabad, India • Global Remote Pods",
+        inquiryFormTitle: "Quick Inquiry",
+        inquiryFormSubtitle: "Direct line to our technical architecture pod.",
+        inquiryButtonText: "Send Inquiry"
+      };
+
+      const existingProductsPage = await strapiAny.documents('api::products-page.products-page').findFirst();
+      if (!existingProductsPage) {
+        await strapiAny.documents('api::products-page.products-page').create({
+          data: defaultProductsPageData,
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created initial default Products Page in Strapi.');
+      }
+
+      // 17. Products Collection Type (SmartSchool ERP & OmniChat AI)
+      const defaultProducts = [
+          {
+            name: "SmartSchool ERP",
+            slug: "school-erp",
+            tagline: "Education & Daycare SaaS",
+            shortDescription: "A unified multi-tenant campus operating system engineered to digitize admissions CRM, biometric attendance, fee gateways, live GPS fleet telemetry, and Saraswati AI lesson planning.",
+            heroBadgeText: "Product #1 · Education & Daycare SaaS",
+            heroTitle: "SmartSchool ERP",
+            heroSubtitle: "11 Core Modules & Campus OS",
+            order: 1,
+            kpiStats: [
+              { label: "MODULES", value: "11" },
+              { label: "SCREENS", value: "480+" },
+              { label: "UPTIME", value: "99.9%" },
+              { label: "STUDENTS", value: "120K+" }
+            ],
+            features: [
+              { order: 1, icon: "Users", title: "Admissions CRM", description: "Enquiry-to-enrollment pipeline with lead scoring, document verification, and conversion tracking.", tag: "ADMISSIONS & ENROLMENT", metricLabel: "Pipeline Tracking", metricValue: "Lead Scoring", highlights: "End-to-end inquiry-to-enrollment funnel with automated stage updates\nDynamic lead scoring, source attribution & conversion analytics\nDigital document verification & instant seat reservation" },
+              { order: 2, icon: "Clock", title: "Attendance & Biometrics", description: "Daily student registers and staff clock-in with biometric and RFID integration, all in-app.", tag: "HARDWARE INTEGRATED", metricLabel: "Biometric Sync", metricValue: "99.8% Accuracy", highlights: "Real-time student & faculty biometric + RFID hardware synchronization\nAutomated daily SMS, WhatsApp & in-app parent absence alerts\nCBSE/ICSE compliant monthly registers & staff leave logs" },
+              { order: 3, icon: "Calendar", title: "Timetable & Exams", description: "Conflict-free schedules, dynamic seating plans, marks entry, and automated transcripts generation.", tag: "EXAMINATION ENGINE", metricLabel: "Conflict-Free", metricValue: "Auto-Transcripts", highlights: "AI conflict-free scheduling engine for faculty, classrooms & labs\nDynamic hall ticket generator & invigilation seating planner\nContinuous Assessment (CCE) marks entry & automated report cards" },
+              { order: 4, icon: "CreditCard", title: "Fees & Online Payments", description: "Custom fee structures, sibling discounts, instant digital invoices, and secure parent payments in-app.", tag: "PAYMENT GATEWAY", metricLabel: "Razorpay & Stripe", metricValue: "Auto-Receipts", highlights: "Custom recurring fee structures, installments & sibling discounts\nInstant payment links via UPI, NetBanking, Cards & Wallets\nAutomated digital receipts, live fee ledger & auto overdue reminders" },
+              { order: 5, icon: "Bus", title: "Live Transport Tracking", description: "Real-time bus GPS tracking, dynamic routes, geofenced stops, and automated parent arrival alerts.", tag: "FLEET TELEMETRY", metricLabel: "Live Bus GPS", metricValue: "Real-Time Alerts", highlights: "Real-time vehicle GPS telemetry with live map route tracking\nGeofenced bus stops with 5-minute parent arrival push alerts\nDriver speed tracking, SOS emergency triggers & trip logs" },
+              { order: 6, icon: "Smartphone", title: "Student & Parent Mobile Apps", description: "Dedicated native mobile experiences tailored for every stakeholder role with biometric authentication.", tag: "MULTI-STAKEHOLDER", metricLabel: "iOS & Android", metricValue: "Role-Based Access", highlights: "Dedicated native mobile experiences for parents, teachers & students\nRole-based dashboards for homework, fee payments & circulars\nBiometric authentication, multi-child switching & offline cache" },
+              { order: 7, icon: "Users", title: "HR & Staff Payroll", description: "Complete employee directory, multi-tier leave workflows, automated pay scales, and PDF payslips.", tag: "HR MANAGEMENT", metricLabel: "Tax Deductions", metricValue: "1-Click Disbursal", highlights: "Comprehensive employee records, biometric payroll & shift management\nConfigurable salary structures, allowances, PF & tax deductions\nOne-click digital payslip generation & direct bank transfer batches" },
+              { order: 8, icon: "HeartHandshake", title: "Daycare & Creche Care", description: "Real-time meals, nap schedules, restroom logs, secure QR pickup passes, and shared media moments.", tag: "DAYCARE & CRECHE", metricLabel: "Live Media Logs", metricValue: "QR Pickup Check", highlights: "Real-time timeline logs for meals, naps, potty & activity updates\nSecure QR-code authentication for authorized parent/guardian pickups\nDaily shared photo/video moments & direct 1-to-1 teacher messaging" },
+              { order: 9, icon: "UserCheck", title: "Appointments & Gate Pass", description: "Seamless parent-teacher meeting booking with staff, digital reception logs, and visitor pass badges.", tag: "VISITOR SECURITY", metricLabel: "Digital Reception", metricValue: "Staff Sync", highlights: "Self-service parent-teacher meeting (PTM) booking with staff sync\nDigital visitor management with instant thermal badge printing\nGate pass workflows, courier logs & centralized inquiry register" },
+              { order: 10, icon: "Bot", title: "Saraswati AI Assistant", description: "Built-in enterprise AI for syllabus-aligned lesson planning, automated quiz generation, and fast semantic search.", tag: "NEXT-GEN AI", metricLabel: "Autonomous LLM", metricValue: "Instant Planner", highlights: "Syllabus-aligned lesson plan & pedagogical worksheet generator\nAutomated quiz & rubric creator with Bloom's taxonomy mapping\nInstant multi-lingual query resolution across school policies" },
+              { order: 11, icon: "BarChart3", title: "Analytics & Executive Reports", description: "Role-based executive dashboards, customizable KPI widgets, and one-click CBSE/ICSE regulatory exports.", tag: "EXECUTIVE SUITE", metricLabel: "PDF/Excel Exports", metricValue: "CBSE Compliant", highlights: "Executive KPI dashboards for admissions, collections & retention\nOne-click government, CBSE & state board compliance exports\nAutomated scheduled PDF/Excel reports to management & directors" }
+            ]
+          },
+          {
+            name: "OmniChat AI",
+            slug: "omnichat",
+            tagline: "WhatsApp & Omnichannel AI",
+            shortDescription: "Centralize WhatsApp Business API, Instagram DMs, Messenger, and Telegram into a single unified workspace powered by autonomous AI chatbots.",
+            heroBadgeText: "Product #2 · Conversational AI & Telemetry",
+            heroTitle: "OmniChat AI",
+            heroSubtitle: "6 Core Channels & Conversational AI",
+            order: 2,
+            kpiStats: [
+              { label: "CHANNELS", value: "4" },
+              { label: "AUTOMATION", value: "100%" },
+              { label: "RESPONSE TIME", value: "<1s" },
+              { label: "CONVERSIONS", value: "3.4x" }
+            ],
+            features: [
+              { order: 1, icon: "MessageSquare", title: "4 Connected Channels", description: "WhatsApp Business API, Instagram, Messenger, and Telegram centralized into one unified team inbox.", tag: "CHANNEL INTEGRATIONS", metricLabel: "Unified Inbox", metricValue: "Multi-Agent Routing", highlights: "Official WhatsApp Business API integration with verified green tick support\nInstagram DMs, Story replies & Facebook Messenger unified in real-time\nTelegram bot connectivity with multi-agent concurrent assignments" },
+              { order: 2, icon: "Zap", title: "No-Code Automation Builder", description: "Visual drag-and-drop flowchart builder to design complex multi-step customer journeys and triggers.", tag: "VISUAL WORKFLOWS", metricLabel: "Drag & Drop Canvas", metricValue: "Zero Coding", highlights: "Visual flowchart builder with conditional branching & delay timers\nCustom user attributes, tags & auto-assignment to sales agents\nWebhooks & REST API triggers for instant CRM data synchronization" },
+              { order: 3, icon: "Bot", title: "Cross-Channel AI Chatbot", description: "Autonomous conversational AI trained on your custom knowledge base, delivering instant 24/7 answers.", tag: "CONVERSATIONAL AI", metricLabel: "Autonomous LLM", metricValue: "24/7 Instant Answers", highlights: "RAG architecture trained on PDFs, websites & product catalogs\nSmart sentiment analysis with graceful human-agent escalation\nMulti-lingual support across 50+ languages with contextual memory" },
+              { order: 4, icon: "Headphones", title: "AI Call & Chat Answering", description: "Intelligent voice answering and automated chat routing to capture leads even outside business hours.", tag: "INBOUND TELEPHONY", metricLabel: "Zero Missed Leads", metricValue: "Smart Call Routing", highlights: "AI-driven automated voice responses & appointment booking\nInstant transcriptions with automatic customer summary generation\nRound-the-clock lead qualification and CRM contact creation" },
+              { order: 5, icon: "Sparkles", title: "Instagram Comment → DM", description: "Auto-reply to post/reel comments instantly and trigger private DM sequences with special discount links.", tag: "SOCIAL GROWTH", metricLabel: "Instant Comment Capture", metricValue: "High Conversion", highlights: "Keyword-based instant auto-replies to Instagram feed & reels comments\nImmediate private DM dispatch with checkout links or lead magnets\nPrevents comment spam while boosting algorithmic engagement" },
+              { order: 6, icon: "FileText", title: "WhatsApp Meta Template Engine", description: "Design, preview, test, and submit rich WhatsApp templates directly to Meta for rapid compliance approval.", tag: "META BROADCASTS", metricLabel: "Meta Verified", metricValue: "Instant Template Sync", highlights: "Rich media templates with CTA buttons, carousels & quick replies\nOne-click direct submission to Meta Graph API for fast approval\nScheduled bulk promotional broadcasts with delivery analytics" }
+            ]
+          }
+        ];
+
+        for (const prodData of defaultProducts) {
+          const existing = await strapiAny.documents('api::product.product').findFirst({
+            filters: { slug: prodData.slug }
+          });
+          if (!existing) {
+            await strapiAny.documents('api::product.product').create({
+              data: prodData,
+              status: 'published',
+            });
+          }
+        }
+        strapi.log.info('[Bootstrap] Initialized default Products if missing in Strapi.');
+
+      // 18. Career Page Single Type
+      const defaultCareerPageData = {
+        heroBadge: "Careers at Aprogra",
+        heroHeadline: "Build the software that defines the next decade.",
+        heroDescription: "We are a tight-knit collective of systems architects, AI engineers, and product designers obsessed with craftsmanship, performance, and engineering velocity.",
+        positionsBadge: "Open Positions",
+        positionsTitle: "Join our engineering squad",
+        positionsDescription: "We review every submission carefully. All roles are available for high-performing remote contributors globally.",
+        cultureBadge: "Our Operating Principles",
+        cultureTitle: "How we work together",
+        cultureItems: [
+          { number: "01 / FIRST PRINCIPLES", title: "Substance Over Noise", description: "We avoid resume-driven development. Every architectural choice is made for speed, reliability, and real-world user value." },
+          { number: "02 / HIGH AUTONOMY", title: "Ownership Mentality", description: "Engineers own their systems from initial whiteboarding to production telemetry. No bureaucratic layers or endless standups." },
+          { number: "03 / COMPENSATIVE VALUE", title: "Top-of-Market Comp", description: "We offer competitive base salaries, equity participation, top-tier health coverage, and modern home office allowances." }
+        ]
+      };
+
+      const existingCareerPage = await strapiAny.documents('api::career-page.career-page').findFirst();
+      if (!existingCareerPage) {
+        await strapiAny.documents('api::career-page.career-page').create({
+          data: defaultCareerPageData,
+          status: 'published',
+        });
+        strapi.log.info('[Bootstrap] Created initial default Career Page in Strapi.');
+      }
+
+      // 19. Career Collection Type (Job Openings)
+      const defaultCareers = [
+        {
+          slug: 'lead-ai-engineer',
+          title: 'Senior AI & LLM Systems Engineer',
+          team: 'AI & Machine Intelligence',
+          location: 'San Francisco, CA / Remote',
+          type: 'Full-time',
+          description: 'Lead the architecture of our agentic AI infrastructure, multi-agent workflows, and custom enterprise fine-tuning pipelines.',
+          tags: 'Python, PyTorch, LangChain, vLLM, Distributed Systems',
+          order: 1
+        },
+        {
+          slug: 'staff-fullstack-engineer',
+          title: 'Staff Full-Stack Architect (React / Node)',
+          team: 'Core Platform Engineering',
+          location: 'New York, NY / Remote',
+          type: 'Full-time',
+          description: 'Design and scale resilient high-throughput cloud web applications, real-time sync systems, and modular component ecosystems.',
+          tags: 'React, TypeScript, Node.js, PostgreSQL, Tailwind',
+          order: 2
+        },
+        {
+          slug: 'lead-mobile-architect',
+          title: 'Lead Mobile Engineer (React Native / Flutter)',
+          team: 'Mobile Experiences',
+          location: 'Remote (Global)',
+          type: 'Full-time',
+          description: 'Craft buttery-smooth 60fps mobile applications for enterprise clients across iOS and Android with offline-first sync architecture.',
+          tags: 'React Native, Swift, Kotlin, SQLite, WebSockets',
+          order: 3
+        },
+        {
+          slug: 'product-designer',
+          title: 'Senior Product & UI/UX Designer',
+          team: 'Product Design & Brand',
+          location: 'San Francisco, CA / Remote',
+          type: 'Full-time',
+          description: 'Establish thoughtful design systems, spatial layouts, and high-fidelity prototypes for next-generation digital products.',
+          tags: 'Figma, Design Systems, Prototyping, User Research',
+          order: 4
+        }
+      ];
+
+      for (const carData of defaultCareers) {
+        const existing = await strapiAny.documents('api::career.career').findFirst({
+          filters: { slug: carData.slug }
+        });
+        if (!existing) {
+          await strapiAny.documents('api::career.career').create({
+            data: carData,
+            status: 'published',
+          });
+        }
+      }
+      strapi.log.info('[Bootstrap] Initialized default Careers if missing in Strapi.');
+
+      // Auto-configure Public Role permissions for products-page, product, career-page & career
+      try {
+        const publicRole = await strapiAny.query('plugin::users-permissions.role').findOne({
+          where: { type: 'public' },
+          populate: ['permissions'],
+        });
+
+        if (publicRole) {
+          const requiredPermissions = [
+            { action: 'api::products-page.products-page.find' },
+            { action: 'api::product.product.find' },
+            { action: 'api::product.product.findOne' },
+            { action: 'api::career-page.career-page.find' },
+            { action: 'api::career.career.find' },
+            { action: 'api::career.career.findOne' },
+          ];
+
+          for (const perm of requiredPermissions) {
+            const hasPerm = publicRole.permissions?.some((p: any) => p.action === perm.action);
+            if (!hasPerm) {
+              await strapiAny.query('plugin::users-permissions.permission').create({
+                data: {
+                  action: perm.action,
+                  role: publicRole.id,
+                },
+              });
+            }
+          }
+          strapi.log.info('[Bootstrap] Configured Public permissions for products-page, product, career-page, and career.');
+        }
+      } catch (permErr) {
+        strapi.log.warn('[Bootstrap] Public permissions auto-config notice:', permErr);
+      }
+
     } catch (err: any) {
       strapi.log.warn('[Bootstrap] Auto-setup notice:', err?.message || err);
     }

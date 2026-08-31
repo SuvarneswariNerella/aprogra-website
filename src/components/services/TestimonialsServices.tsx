@@ -9,7 +9,7 @@ export default function TestimonialsServices() {
 
   const { testimonials: apiTestimonials } = useTestimonials();
   const TESTIMONIALS = apiTestimonials.map(t => ({
-    img: t.avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80",
+    img: t.avatarUrl || "https://picsum.photos/seed/191650684/1200/800",
     quote: t.quote,
     name: t.authorName,
     role: t.authorCompany ? `${t.authorRole}, ${t.authorCompany}` : t.authorRole,

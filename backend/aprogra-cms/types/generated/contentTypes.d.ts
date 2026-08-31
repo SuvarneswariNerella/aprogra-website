@@ -630,6 +630,88 @@ export interface ApiBrandsSectionBrandsSection extends Struct.SingleTypeSchema {
   };
 }
 
+export interface ApiCareerPageCareerPage extends Struct.SingleTypeSchema {
+  collectionName: 'career_pages';
+  info: {
+    displayName: 'Career Page';
+    pluralName: 'career-pages';
+    singularName: 'career-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    cultureBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Our Operating Principles'>;
+    cultureItems: Schema.Attribute.Component<'elements.culture-item', true>;
+    cultureTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'How we work together'>;
+    heroBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Careers at Aprogra'>;
+    heroDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'We are a tight-knit collective of systems architects, AI engineers, and product designers obsessed with craftsmanship, performance, and engineering velocity.'>;
+    heroHeadline: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Build the software that defines the next decade.'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::career-page.career-page'
+    > &
+      Schema.Attribute.Private;
+    positionsBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Open Positions'>;
+    positionsDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'We review every submission carefully. All roles are available for high-performing remote contributors globally.'>;
+    positionsTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Join our engineering squad'>;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiCareerCareer extends Struct.CollectionTypeSchema {
+  collectionName: 'careers';
+  info: {
+    description: 'Job openings and career positions';
+    displayName: 'Career Role';
+    pluralName: 'careers';
+    singularName: 'career';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::career.career'
+    > &
+      Schema.Attribute.Private;
+    location: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Remote'>;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    tags: Schema.Attribute.Text;
+    team: Schema.Attribute.String & Schema.Attribute.Required;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+    type: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Full-time'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
   collectionName: 'categories';
   info: {
@@ -831,6 +913,116 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     whyStatements: Schema.Attribute.Component<'elements.home-statement', true>;
+  };
+}
+
+export interface ApiProductProduct extends Struct.CollectionTypeSchema {
+  collectionName: 'products';
+  info: {
+    description: 'Product SaaS Platform (SmartSchool ERP, OmniChat AI, etc)';
+    displayName: 'Product';
+    pluralName: 'products';
+    singularName: 'product';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    features: Schema.Attribute.Component<'elements.product-feature', true>;
+    heroBadgeText: Schema.Attribute.String;
+    heroMedia: Schema.Attribute.Media<'images'>;
+    heroSubtitle: Schema.Attribute.Text;
+    heroTitle: Schema.Attribute.String;
+    kpiStats: Schema.Attribute.Component<'elements.kpi-stat', true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::product.product'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
+    publishedAt: Schema.Attribute.DateTime;
+    shortDescription: Schema.Attribute.Text;
+    slug: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    tagline: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiProductsPageProductsPage extends Struct.SingleTypeSchema {
+  collectionName: 'products_pages';
+  info: {
+    displayName: 'Products Page';
+    pluralName: 'products-pages';
+    singularName: 'products-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contactBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<"LET'S CONNECT">;
+    contactDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.'>;
+    contactEmail: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'hello@aprogra.com'>;
+    contactHeadline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Ready to Build Something Infinite?'>;
+    contactLocation: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Hyderabad, India \u2022 Global Remote Pods'>;
+    contactPhone: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'+1 (800) 555-0199'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    heroBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Proprietary SaaS Ecosystem'>;
+    heroDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'We engineer, operate, and scale proprietary SaaS platforms and AI automation engines running in 24/7 live production.'>;
+    heroHeadline: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<'Software We Built. Powering Real Scale.'>;
+    inquiryButtonText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Send Inquiry'>;
+    inquiryFormSubtitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Direct line to our technical architecture pod.'>;
+    inquiryFormTitle: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Quick Inquiry'>;
+    kpi1Label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'SAAS ECOSYSTEMS'>;
+    kpi1Value: Schema.Attribute.String & Schema.Attribute.DefaultTo<'2'>;
+    kpi2Label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'LIVE MODULES'>;
+    kpi2Value: Schema.Attribute.String & Schema.Attribute.DefaultTo<'17'>;
+    kpi3Label: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'CAMPUSES & CLIENTS'>;
+    kpi3Value: Schema.Attribute.String & Schema.Attribute.DefaultTo<'480+'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::products-page.products-page'
+    > &
+      Schema.Attribute.Private;
+    omnichatImage: Schema.Attribute.Media<'images'>;
+    publishedAt: Schema.Attribute.DateTime;
+    smartSchoolImage: Schema.Attribute.Media<'images'>;
+    trustBadge: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Reliability & Craft Standards'>;
+    trustDescription: Schema.Attribute.Text &
+      Schema.Attribute.DefaultTo<"We don't build vaporware or speculative prototypes. Every system is engineered with founder-level devotion, multi-layered reliability, and real-time observability.">;
+    trustHeadline: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'Why Teams Trust Aprogra Products'>;
+    trustItems: Schema.Attribute.Component<'elements.trust-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1472,11 +1664,15 @@ declare module '@strapi/strapi' {
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
       'api::brand.brand': ApiBrandBrand;
       'api::brands-section.brands-section': ApiBrandsSectionBrandsSection;
+      'api::career-page.career-page': ApiCareerPageCareerPage;
+      'api::career.career': ApiCareerCareer;
       'api::category.category': ApiCategoryCategory;
       'api::contact-inquiry.contact-inquiry': ApiContactInquiryContactInquiry;
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::global-config.global-config': ApiGlobalConfigGlobalConfig;
       'api::home-page.home-page': ApiHomePageHomePage;
+      'api::product.product': ApiProductProduct;
+      'api::products-page.products-page': ApiProductsPageProductsPage;
       'api::services-page.services-page': ApiServicesPageServicesPage;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;

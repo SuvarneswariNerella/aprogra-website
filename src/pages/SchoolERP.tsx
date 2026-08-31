@@ -243,31 +243,31 @@ const SCREENSHOTS = [
   {
     title: 'Super Admin Operational Hub',
     category: 'Admin Portal',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/463789605/1200/800',
     desc: 'Real-time telemetry showing total campus attendance, fee collections, route updates, and staff status.'
   },
   {
     title: 'Parent & Student Native Mobile App',
     category: 'Mobile App',
-    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1200&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/31530046/1200/800',
     desc: 'Clean iOS/Android interface for parents to view marks, pay fees via UPI/Credit Card, and chat with teachers.'
   },
   {
     title: 'Live GPS Bus Tracking Radar',
     category: 'Transport App',
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1200&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/533658531/1200/800',
     desc: 'Map display tracking bus route velocity, stop arrival predictions, and automated speed alerts.'
   },
   {
     title: 'Daycare Daily Moments & Activity Feed',
     category: 'Daycare Module',
-    image: 'https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?w=1200&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/486150965/1200/800',
     desc: 'Activity timeline for infant care, meal consumption metrics, nap duration logs, and photo updates.'
   },
   {
     title: 'Saraswati AI Teacher Workspace',
     category: 'AI Suite',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/1502950997/1200/800',
     desc: 'AI studio interface where educators generate lesson plans, unit tests, and personalized remedial notes.'
   }
 ];

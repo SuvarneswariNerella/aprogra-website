@@ -156,7 +156,7 @@ export default function AboutHero() {
         >
           <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
             <img 
-              src={heroData.heroImageUrl || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80"} 
+              src={heroData.heroImageUrl || "https://picsum.photos/seed/1135490967/1200/800"} 
               alt="AProgra Global Engineering Studio"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               loading="lazy"

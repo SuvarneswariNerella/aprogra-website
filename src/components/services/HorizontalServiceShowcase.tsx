@@ -9,21 +9,21 @@ import { ServiceItem, ServicesFeaturesSection, getStrapiMediaUrl } from '@/lib/s
 gsap.registerPlugin(ScrollTrigger);
 
 const SERVICE_IMAGES: Record<string, string> = {
-  web: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80',
-  ai: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
-  saas: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
-  design: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
-  cloud: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
-  mobile: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
+  web: 'https://picsum.photos/seed/1615007644/1200/800',
+  ai: 'https://picsum.photos/seed/646225886/1200/800',
+  saas: 'https://picsum.photos/seed/611021275/1200/800',
+  design: 'https://picsum.photos/seed/468325482/1200/800',
+  cloud: 'https://picsum.photos/seed/54940735/1200/800',
+  mobile: 'https://picsum.photos/seed/1897555988/1200/800',
 };
 
 const DEFAULT_IMAGES_BY_INDEX = [
-  'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80',
-  'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
-  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
-  'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
-  'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
-  'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
+  'https://picsum.photos/seed/1615007644/1200/800',
+  'https://picsum.photos/seed/646225886/1200/800',
+  'https://picsum.photos/seed/611021275/1200/800',
+  'https://picsum.photos/seed/468325482/1200/800',
+  'https://picsum.photos/seed/54940735/1200/800',
+  'https://picsum.photos/seed/1897555988/1200/800',
 ];
 
 interface HorizontalServiceShowcaseProps {

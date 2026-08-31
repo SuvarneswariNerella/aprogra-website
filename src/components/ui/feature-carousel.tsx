@@ -19,7 +19,7 @@ const PLATFORMS = [
     label: "CampusOS ERP",
     category: "Education Management",
     icon: GraduationCap,
-    image: "https://images.unsplash.com/photo-1551288049-bbda38a10ad5?q=80&w=1200",
+    image: "https://picsum.photos/seed/164559160/1200/800",
     description: "A comprehensive operating system for modern educational institutions, managing everything from admissions to alumni relations.",
     features: [
       "Smart attendance & RFID tracking",
@@ -33,7 +33,7 @@ const PLATFORMS = [
     label: "OmniChat CRM",
     category: "Customer Engagement",
     icon: MessageSquare,
-    image: "https://images.unsplash.com/photo-1563986768494-4dee2763ff0f?q=80&w=1200",
+    image: "https://picsum.photos/seed/1293518339/1200/800",
     description: "Unified customer communication platform consolidating WhatsApp, Email, SMS, and Social Media into a single powerful inbox.",
     features: [
       "WhatsApp Business API integration",

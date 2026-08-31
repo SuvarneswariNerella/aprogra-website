@@ -1,0 +1,120 @@
+{
+  "kind": "singleType",
+  "collectionName": "products_pages",
+  "info": {
+    "singularName": "products-page",
+    "pluralName": "products-pages",
+    "displayName": "Products Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "heroBadge": {
+      "type": "string",
+      "default": "Proprietary SaaS Ecosystem"
+    },
+    "heroHeadline": {
+      "type": "text",
+      "default": "Software We Built. Powering Real Scale."
+    },
+    "heroDescription": {
+      "type": "text",
+      "default": "We engineer, operate, and scale proprietary SaaS platforms and AI automation engines running in 24/7 live production."
+    },
+    "kpi1Value": {
+      "type": "string",
+      "default": "2"
+    },
+    "kpi1Label": {
+      "type": "string",
+      "default": "SAAS ECOSYSTEMS"
+    },
+    "kpi2Value": {
+      "type": "string",
+      "default": "17"
+    },
+    "kpi2Label": {
+      "type": "string",
+      "default": "LIVE MODULES"
+    },
+    "kpi3Value": {
+      "type": "string",
+      "default": "480+"
+    },
+    "kpi3Label": {
+      "type": "string",
+      "default": "CAMPUSES & CLIENTS"
+    },
+    "smartSchoolImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "omnichatImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "trustBadge": {
+      "type": "string",
+      "default": "Reliability & Craft Standards"
+    },
+    "trustHeadline": {
+      "type": "string",
+      "default": "Why Teams Trust Aprogra Products"
+    },
+    "trustDescription": {
+      "type": "text",
+      "default": "We don't build vaporware or speculative prototypes. Every system is engineered with founder-level devotion, multi-layered reliability, and real-time observability."
+    },
+    "trustItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.trust-item"
+    },
+    "contactBadge": {
+      "type": "string",
+      "default": "LET'S CONNECT"
+    },
+    "contactHeadline": {
+      "type": "string",
+      "default": "Ready to Build Something Infinite?"
+    },
+    "contactDescription": {
+      "type": "text",
+      "default": "Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision."
+    },
+    "contactEmail": {
+      "type": "string",
+      "default": "hello@aprogra.com"
+    },
+    "contactPhone": {
+      "type": "string",
+      "default": "+1 (800) 555-0199"
+    },
+    "contactLocation": {
+      "type": "string",
+      "default": "Hyderabad, India • Global Remote Pods"
+    },
+    "inquiryFormTitle": {
+      "type": "string",
+      "default": "Quick Inquiry"
+    },
+    "inquiryFormSubtitle": {
+      "type": "string",
+      "default": "Direct line to our technical architecture pod."
+    },
+    "inquiryButtonText": {
+      "type": "string",
+      "default": "Send Inquiry"
+    }
+  }
+}

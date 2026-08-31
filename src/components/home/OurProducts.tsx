@@ -30,7 +30,7 @@ export default function OurProducts({ productsCards = [] }: { productsCards?: Ho
     productUrlText: "View Product Details",
     demoUrl: "/contact",
     demoUrlText: "Request Demo →",
-    imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"
+    imageUrl: "https://picsum.photos/seed/912714368/1200/800"
   };
 
   const card2Data = productsCards[1] || {
@@ -45,7 +45,7 @@ export default function OurProducts({ productsCards = [] }: { productsCards?: Ho
     productUrlText: "View Product Details",
     demoUrl: "/contact",
     demoUrlText: "Request Demo →",
-    imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
+    imageUrl: "https://picsum.photos/seed/862930265/1200/800"
   };
 
   useEffect(() => {
@@ -206,7 +206,7 @@ export default function OurProducts({ productsCards = [] }: { productsCards?: Ho
             <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 lg:gap-10 h-full py-2">
               
               {/* Left Content: Minimalist & Clean */}
-              <div ref={leftContentRef} className="w-full lg:w-[50%] flex flex-col justify-between h-full space-y-4 opacity-0">
+              <div ref={leftContentRef} className="w-full lg:w-[50%] flex flex-col justify-between h-full space-y-4">
                 <div className="space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[#0B0D12] text-white text-caption font-medium">
@@ -261,9 +261,9 @@ export default function OurProducts({ productsCards = [] }: { productsCards?: Ho
 
               {/* Right Mockup: SmartSchool Product Image */}
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
-                <div ref={rightContentRef} className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group opacity-0">
+                <div ref={rightContentRef} className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group">
                   <img 
-                    src={card1Data.imageUrl || "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"} 
+                    src={card1Data.imageUrl || "https://picsum.photos/seed/912714368/1200/800"} 
                     alt={card1Data.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"
@@ -363,7 +363,7 @@ export default function OurProducts({ productsCards = [] }: { productsCards?: Ho
               <div className="w-full lg:w-[50%] hidden sm:flex justify-center items-center">
                 <div className="w-full max-w-[420px] aspect-[4/3] rounded-xl border border-[#0B0D12]/15 shadow-md overflow-hidden bg-white group">
                   <img 
-                    src={card2Data.imageUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"} 
+                    src={card2Data.imageUrl || "https://picsum.photos/seed/862930265/1200/800"} 
                     alt={card2Data.title} 
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     loading="lazy"

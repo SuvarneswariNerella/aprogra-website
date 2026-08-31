@@ -190,7 +190,7 @@ export default function Services({ servicesSlides = [] }: { servicesSlides?: Hom
             </div>
 
             <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 pt-12">
-              <div ref={idx === 0 ? leftContentRef : undefined} className={`space-y-5 ${idx === 0 ? 'opacity-0' : ''}`}>
+              <div ref={idx === 0 ? leftContentRef : undefined} className={`space-y-5`}>
                 <span className="px-2.5 py-0.5 rounded bg-[#0B0D12] text-white text-badge uppercase">
                   {slide.badgeText || "Core Service"}
                 </span>
@@ -218,7 +218,7 @@ export default function Services({ servicesSlides = [] }: { servicesSlides?: Hom
               </div>
 
               {/* Right Image */}
-              <div ref={idx === 0 ? rightContentRef : undefined} className={`w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group ${idx === 0 ? 'opacity-0' : ''}`}>
+              <div ref={idx === 0 ? rightContentRef : undefined} className={`w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group`}>
                 <img 
                   src={slide.imageUrl || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"} 
                   alt={slide.title}

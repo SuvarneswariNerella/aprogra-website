@@ -182,7 +182,7 @@ export default function Community() {
           >
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
               <img 
-                src={getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80"}
+                src={getStrapiMediaUrl(hero.heroImage) || hero.heroImageUrl || "https://picsum.photos/seed/2043984064/1200/800"}
                 alt="Tech Radar & Engineering Insights"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
@@ -334,7 +334,7 @@ export default function Community() {
                     className="lg:col-span-5 relative z-10 w-full h-[240px] sm:h-[280px] lg:h-[320px] rounded-xl overflow-hidden border border-white/15 bg-white/5 cursor-pointer group/img shadow-md"
                   >
                     <img 
-                      src={getStrapiMediaUrl(currentFeatured.coverImage) || currentFeatured.coverImageUrl || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80'}
+                      src={getStrapiMediaUrl(currentFeatured.coverImage) || currentFeatured.coverImageUrl || 'https://picsum.photos/seed/1502950997/1200/800'}
                       alt={currentFeatured.title || 'Featured Article'}
                       className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-500 ease-out brightness-90 group-hover/img:brightness-100"
                     />

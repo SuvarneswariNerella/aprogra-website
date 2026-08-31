@@ -1,0 +1,62 @@
+{
+  "kind": "collectionType",
+  "collectionName": "products",
+  "info": {
+    "singularName": "product",
+    "pluralName": "products",
+    "displayName": "Product",
+    "description": "Product SaaS Platform (SmartSchool ERP, OmniChat AI, etc)"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "slug": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "shortDescription": {
+      "type": "text"
+    },
+    "heroBadgeText": {
+      "type": "string"
+    },
+    "heroTitle": {
+      "type": "string"
+    },
+    "heroSubtitle": {
+      "type": "text"
+    },
+    "heroMedia": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "order": {
+      "type": "integer",
+      "default": 1
+    },
+    "kpiStats": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.kpi-stat"
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.product-feature"
+    }
+  }
+}

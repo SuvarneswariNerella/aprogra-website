@@ -120,7 +120,7 @@ export default function AboutCompany({ storyPhases = [] }: { storyPhases?: HomeS
           
           {/* VISUAL 1: Full-Size Container Image */}
           <div ref={vis1Ref} className="absolute inset-0 transition-opacity">
-            <div ref={vis1ContentRef} className="w-full h-full opacity-0">
+            <div ref={vis1ContentRef} className="w-full h-full">
               <img 
                 src={phase1.imageUrl} 
                 alt={phase1.title}

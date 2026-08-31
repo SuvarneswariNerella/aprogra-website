@@ -34,7 +34,7 @@ import { useTestimonials } from '@/lib/strapi';
 import AboutContact from '@/components/about/AboutContact';
 import { SchoolModulesSection } from '@/components/products/SchoolModulesSection';
 import { OmniChatModulesSection } from '@/components/products/OmniChatModulesSection';
-import { useProduct } from '@/lib/strapi';
+import { useProduct, useProductsPage } from '@/lib/strapi';
 
 const ICON_MAP: Record<string, any> = {
   BookOpen: FileText,
@@ -97,6 +97,7 @@ const SCHOOL_FEATURES = [
     desc: "Enquiry-to-enrollment pipeline with lead scoring, document verification, and conversion tracking.",
     kpi: "Pipeline Tracking · Lead Scoring",
     tag: "Admissions & Enrolment",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "End-to-end inquiry-to-enrollment funnel with automated stage updates",
       "Dynamic lead scoring, source attribution & conversion analytics",
@@ -109,6 +110,7 @@ const SCHOOL_FEATURES = [
     desc: "Daily student registers and staff clock-in with biometric and RFID integration, all in-app.",
     kpi: "Biometric & RFID Sync · 99.8% Accuracy",
     tag: "Hardware Integrated",
+    image: "https://images.unsplash.com/photo-1543286386-2e659306cd6c?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Real-time student & faculty biometric + RFID hardware synchronization",
       "Automated daily SMS, WhatsApp & in-app parent absence alerts",
@@ -121,6 +123,7 @@ const SCHOOL_FEATURES = [
     desc: "Conflict-free schedules, dynamic seating plans, marks entry, and automated transcripts generation.",
     kpi: "Conflict-Free Engine · Auto-Transcripts",
     tag: "Examination Engine",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "AI conflict-free scheduling engine for faculty, classrooms & labs",
       "Dynamic hall ticket generator & invigilation seating planner",
@@ -133,6 +136,7 @@ const SCHOOL_FEATURES = [
     desc: "Custom fee structures, sibling discounts, instant digital invoices, and secure parent payments in-app.",
     kpi: "Razorpay & Stripe Gateway · Auto-Receipts",
     tag: "Payment Gateway",
+    image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Custom recurring fee structures, installments & sibling discounts",
       "Instant payment links via UPI, NetBanking, Cards & Wallets",
@@ -145,6 +149,7 @@ const SCHOOL_FEATURES = [
     desc: "Real-time bus GPS tracking, dynamic routes, geofenced stops, and automated parent arrival alerts.",
     kpi: "Live Bus GPS · Real-Time Parent Alerts",
     tag: "Fleet Telemetry",
+    image: "https://images.unsplash.com/photo-1464219789935-c2d9d9aba644?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Real-time vehicle GPS telemetry with live map route tracking",
       "Geofenced bus stops with 5-minute parent arrival push alerts",
@@ -157,6 +162,7 @@ const SCHOOL_FEATURES = [
     desc: "Dedicated native mobile experiences tailored for every stakeholder role with biometric authentication.",
     kpi: "iOS & Android Native · Role-Based Access",
     tag: "Multi-Stakeholder",
+    image: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Dedicated native mobile experiences for parents, teachers & students",
       "Role-based dashboards for homework, fee payments & circulars",
@@ -169,6 +175,7 @@ const SCHOOL_FEATURES = [
     desc: "Complete employee directory, multi-tier leave workflows, automated pay scales, and PDF payslips.",
     kpi: "Tax Deductions · 1-Click Salary Disbursal",
     tag: "HR Management",
+    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Comprehensive employee records, biometric payroll & shift management",
       "Configurable salary structures, allowances, PF & tax deductions",
@@ -181,6 +188,7 @@ const SCHOOL_FEATURES = [
     desc: "Real-time meals, nap schedules, restroom logs, secure QR pickup passes, and shared media moments.",
     kpi: "Live Media Logs · QR Pickup Verification",
     tag: "Daycare & Creche",
+    image: "https://images.unsplash.com/photo-1502086223501-7ea6ecd79368?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Real-time timeline logs for meals, naps, potty & activity updates",
       "Secure QR-code authentication for authorized parent/guardian pickups",
@@ -193,6 +201,7 @@ const SCHOOL_FEATURES = [
     desc: "Seamless parent-teacher meeting booking with staff, digital reception logs, and visitor pass badges.",
     kpi: "Digital Reception · Staff Calendar Sync",
     tag: "Visitor Security",
+    image: "https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Self-service parent-teacher meeting (PTM) booking with staff sync",
       "Digital visitor management with instant thermal badge printing",
@@ -205,6 +214,7 @@ const SCHOOL_FEATURES = [
     desc: "Built-in enterprise AI for syllabus-aligned lesson planning, automated quiz generation, and fast semantic search.",
     kpi: "Autonomous LLM · Instant Lesson Planner",
     tag: "Next-Gen AI",
+    image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Syllabus-aligned lesson plan & pedagogical worksheet generator",
       "Automated quiz & rubric creator with Bloom's taxonomy mapping",
@@ -217,6 +227,7 @@ const SCHOOL_FEATURES = [
     desc: "Role-based executive dashboards, customizable KPI widgets, and one-click CBSE/ICSE regulatory exports.",
     kpi: "PDF/Excel Exports · CBSE & ICSE Compliant",
     tag: "Executive Suite",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Executive KPI dashboards for admissions, collections & retention",
       "One-click government, CBSE & state board compliance exports",
@@ -235,6 +246,7 @@ const OMNICHAT_FEATURES = [
     desc: "WhatsApp Business API, Instagram, Messenger, and Telegram centralized into one unified team inbox.",
     kpi: "Unified Inbox · Multi-Agent Routing",
     tag: "Channel Integrations",
+    image: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Official WhatsApp Business API integration with verified green tick support",
       "Instagram DMs, Story replies & Facebook Messenger unified in real-time",
@@ -247,6 +259,7 @@ const OMNICHAT_FEATURES = [
     desc: "Visual drag-and-drop flowchart builder to design complex multi-step customer journeys and triggers.",
     kpi: "Drag & Drop Canvas · Zero Coding",
     tag: "Visual Workflows",
+    image: "https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Visual flowchart builder with conditional branching & delay timers",
       "Custom user attributes, tags & auto-assignment to sales agents",
@@ -259,6 +272,7 @@ const OMNICHAT_FEATURES = [
     desc: "Autonomous conversational AI trained on your custom knowledge base, delivering instant 24/7 answers.",
     kpi: "Autonomous LLM · 24/7 Instant Answers",
     tag: "Conversational AI",
+    image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "RAG architecture trained on PDFs, websites & product catalogs",
       "Smart sentiment analysis with graceful human-agent escalation",
@@ -271,6 +285,7 @@ const OMNICHAT_FEATURES = [
     desc: "Intelligent voice answering and automated chat routing to capture leads even outside business hours.",
     kpi: "Zero Missed Leads · Smart Call Routing",
     tag: "Inbound Telephony",
+    image: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "AI-driven automated voice responses & appointment booking",
       "Instant transcriptions with automatic customer summary generation",
@@ -283,6 +298,7 @@ const OMNICHAT_FEATURES = [
     desc: "Auto-reply to post/reel comments instantly and trigger private DM sequences with special discount links.",
     kpi: "Instant Comment Capture · High Conversion",
     tag: "Social Growth",
+    image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Keyword-based instant auto-replies to Instagram feed & reels comments",
       "Immediate private DM dispatch with checkout links or lead magnets",
@@ -295,6 +311,7 @@ const OMNICHAT_FEATURES = [
     desc: "Design, preview, test, and submit rich WhatsApp templates directly to Meta for rapid compliance approval.",
     kpi: "Meta Verified · Instant Template Sync",
     tag: "Meta Broadcasts",
+    image: "https://images.unsplash.com/photo-1590494165264-1ebe3602eb80?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Rich media templates with CTA buttons, carousels & quick replies",
       "One-click direct submission to Meta Graph API for fast approval",
@@ -310,33 +327,36 @@ export default function Products() {
   const { product: schoolProduct } = useProduct('school-erp');
   const { product: omnichatProduct } = useProduct('omnichat');
   const { testimonials: apiTestimonials } = useTestimonials();
+  const { productsPage } = useProductsPage();
 
-  const TESTIMONIALS = apiTestimonials.map(t => ({
-    img: t.avatarUrl || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+  const TESTIMONIALS = apiTestimonials.map((t: any, i: number) => ({
+    img: t.avatarUrl || `https://images.unsplash.com/photo-${['1507003211169-0a1dd7228f2d', '1573496359142-b8d87734a5a2', '1580489944761-15a19d654956'][i % 3]}?auto=format&fit=crop&w=200&q=80`,
     quote: t.quote,
     name: t.authorName,
     role: t.authorCompany ? `${t.authorRole}, ${t.authorCompany}` : t.authorRole,
   }));
 
   const schoolModules = (schoolProduct?.features && schoolProduct.features.length > 0)
-    ? schoolProduct.features.map((f) => ({
+    ? schoolProduct.features.map((f: any) => ({
         icon: getModuleIcon(f.icon),
         title: f.title,
         desc: f.description,
         kpi: f.metricLabel ? `${f.metricLabel} · ${f.metricValue || '100%'}` : (f.metricValue || 'Enterprise Grade'),
         tag: f.tag || 'Module',
-        highlights: f.highlights ? f.highlights.split('\n').map(l => l.trim()).filter(Boolean) : [f.description]
+        image: f.imageUrl,
+        highlights: f.highlights ? f.highlights.split('\n').map((l: string) => l.trim()).filter(Boolean) : [f.description]
       }))
     : SCHOOL_FEATURES;
 
   const omnichatModules = (omnichatProduct?.features && omnichatProduct.features.length > 0)
-    ? omnichatProduct.features.map((f) => ({
+    ? omnichatProduct.features.map((f: any) => ({
         icon: getModuleIcon(f.icon),
         title: f.title,
         desc: f.description,
         kpi: f.metricLabel ? `${f.metricLabel} · ${f.metricValue || '100%'}` : (f.metricValue || 'Official Channel'),
         tag: f.tag || 'Channel',
-        highlights: f.highlights ? f.highlights.split('\n').map(l => l.trim()).filter(Boolean) : [f.description]
+        image: f.imageUrl,
+        highlights: f.highlights ? f.highlights.split('\n').map((l: string) => l.trim()).filter(Boolean) : [f.description]
       }))
     : OMNICHAT_FEATURES;
 
@@ -346,7 +366,11 @@ export default function Products() {
       {/* ---------------------------------------------------- */}
       {/* 1. PRODUCTS HERO                                      */}
       {/* ---------------------------------------------------- */}
-      <ProductsHero />
+      <ProductsHero 
+        productsPage={productsPage} 
+        schoolProduct={schoolProduct} 
+        omnichatProduct={omnichatProduct} 
+      />
 
       {/* ---------------------------------------------------- */}
       {/* 2. SCHOOL ERP & DYNAMIC CORE MODULES                  */}
@@ -365,7 +389,7 @@ export default function Products() {
       {/* ---------------------------------------------------- */}
       {/* 4. WHY TEAMS TRUST OUR PRODUCTS                       */}
       {/* ---------------------------------------------------- */}
-      <ProductsWhyTrust />
+      <ProductsWhyTrust productsPage={productsPage} />
 
       {/* ---------------------------------------------------- */}
       {/* 5. CLIENT TESTIMONIALS (no GSAP pin — avoids conflict */}
@@ -396,7 +420,7 @@ export default function Products() {
       {/* ---------------------------------------------------- */}
       {/* 6. CONTACT SECTION                                    */}
       {/* ---------------------------------------------------- */}
-      <AboutContact />
+      <AboutContact productsPage={productsPage} />
 
     </div>
   );

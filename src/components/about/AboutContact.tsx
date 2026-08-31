@@ -4,10 +4,21 @@ import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { useContactPageContent, useAboutPage, submitInquiry } from '@/lib/strapi';
 
-export default function AboutContact() {
+export default function AboutContact({ productsPage }: { productsPage?: any } = {}) {
   const { content } = useContactPageContent();
   const { aboutPage } = useAboutPage();
   const contactData = aboutPage.contactCta;
+
+  const badge = productsPage?.contactBadge || contactData.badge || "LET'S CONNECT";
+  const headline = productsPage?.contactHeadline || contactData.headline || 'Ready to Build Something Infinite?';
+  const description = productsPage?.contactDescription || contactData.description || 'Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.';
+  const email = productsPage?.contactEmail || contactData?.email || content?.hero?.email || 'hello@aprogra.com';
+  const phone = productsPage?.contactPhone || contactData?.phone || content?.hero?.phone || '+1 (800) 555-0199';
+  const officeLocation = productsPage?.contactLocation || contactData?.officeLocation || content?.hero?.studioHqValue || 'Hyderabad, India • Global Remote Pods';
+
+  const formTitle = productsPage?.inquiryFormTitle || 'Quick Inquiry';
+  const formSubtitle = productsPage?.inquiryFormSubtitle || 'Direct line to our technical architecture pod.';
+  const buttonText = productsPage?.inquiryButtonText || 'Send Inquiry';
 
   const [formState, setFormState] = useState({
     name: '',
@@ -68,15 +79,15 @@ export default function AboutContact() {
         >
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded border border-white/15 bg-white/10 text-white text-badge">
             <MessageSquare className="w-3.5 h-3.5 text-[#FF4A1C]" />
-            <span>{contactData.badge || "LET'S CONNECT"}</span>
+            <span>{badge}</span>
           </div>
 
           <h2 className="text-h2 text-white">
-            {contactData.headline || 'Ready to Build Something Infinite?'}
+            {headline}
           </h2>
 
           <p className="text-white/70 text-body">
-            {contactData.description || 'Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.'}
+            {description}
           </p>
 
           <div className="space-y-4 pt-2">
@@ -86,7 +97,7 @@ export default function AboutContact() {
               </div>
               <div>
                 <span className="text-white/50 block text-caption uppercase font-mono">Direct Inquiry</span>
-                <span className="font-bold text-white text-body">{contactData?.email || content?.hero?.email || 'hello@aprogra.com'}</span>
+                <span className="font-bold text-white text-body">{email}</span>
               </div>
             </div>
 
@@ -96,7 +107,7 @@ export default function AboutContact() {
               </div>
               <div>
                 <span className="text-white/50 block text-caption uppercase font-mono">Phone Support</span>
-                <span className="font-bold text-white text-body">{contactData?.phone || content?.hero?.phone || '+1 (800) 555-0199'}</span>
+                <span className="font-bold text-white text-body">{phone}</span>
               </div>
             </div>
 
@@ -107,7 +118,7 @@ export default function AboutContact() {
               <div>
                 <span className="text-white/50 block text-caption uppercase font-mono">Global Headquarters</span>
                 <span className="font-bold text-white text-body">
-                  {contactData?.officeLocation || content?.hero?.studioHqValue || 'Hyderabad, India • Global Remote Pods'}
+                  {officeLocation}
                 </span>
               </div>
             </div>
@@ -156,8 +167,8 @@ export default function AboutContact() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <h3 className="text-h3 text-[#0B0D12]">Quick Inquiry</h3>
-                <p className="text-caption text-[#5A5E6E]">Direct line to our technical architecture pod.</p>
+                <h3 className="text-h3 text-[#0B0D12]">{formTitle}</h3>
+                <p className="text-caption text-[#5A5E6E]">{formSubtitle}</p>
               </div>
 
               {errorMessage && (
@@ -224,7 +235,7 @@ export default function AboutContact() {
                   <span>Sending...</span>
                 ) : (
                   <>
-                    <span>Send Inquiry</span>
+                    <span>{buttonText}</span>
                     <Send className="w-4 h-4" />
                   </>
                 )}

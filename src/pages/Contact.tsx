@@ -385,7 +385,7 @@ export default function Contact() {
           <div ref={rightColumnRef} className="lg:col-span-5 relative w-full flex items-center justify-center">
             <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#0B0D12]/15 bg-[#FAF8F5] shadow-lg group">
               <img 
-                src={content.hero.heroImageUrl || "https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80"} 
+                src={content.hero.heroImageUrl || "https://picsum.photos/seed/163641868/1200/800"} 
                 alt="Engineering Partnerships & Direct Contact"
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"

@@ -19,7 +19,7 @@ import {
   Lock
 } from 'lucide-react';
 
-export default function ProductsHero() {
+export default function ProductsHero({ productsPage, schoolProduct, omnichatProduct }: { productsPage?: any, schoolProduct?: any, omnichatProduct?: any }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
   
@@ -71,22 +71,33 @@ export default function ProductsHero() {
           {/* Eyebrow Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-lg border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
-            <span>Proprietary SaaS Ecosystem</span>
+            <span>{productsPage?.heroBadge || 'Proprietary SaaS Ecosystem'}</span>
           </div>
 
           {/* Main Display Headline */}
           <div className="space-y-1">
             <h1 className="text-h1 text-[#0B0D12]">
-              Software We Built. <br />
-              <span className="text-[#FF4A1C]">
-                Powering Real Scale.
-              </span>
+              {productsPage?.heroHeadline ? (
+                <>
+                  {productsPage.heroHeadline.split('.')[0]}{productsPage.heroHeadline.includes('.') ? '.' : ''} <br />
+                  <span className="text-[#FF4A1C]">
+                    {productsPage.heroHeadline.split('.').slice(1).join('.').trim()}
+                  </span>
+                </>
+              ) : (
+                <>
+                  Software We Built. <br />
+                  <span className="text-[#FF4A1C]">
+                    Powering Real Scale.
+                  </span>
+                </>
+              )}
             </h1>
           </div>
 
           {/* Subheading / Description */}
           <p className="text-xs sm:text-sm lg:text-[13px] xl:text-[14px] text-[#5A5E6E] max-w-xl leading-relaxed">
-            We engineer, operate, and scale proprietary SaaS platforms and AI automation engines running in 24/7 live production.
+            {productsPage?.heroDescription || "We engineer, operate, and scale proprietary SaaS platforms and AI automation engines running in 24/7 live production."}
           </p>
 
           {/* Jump to Products Quick Switcher */}
@@ -149,16 +160,16 @@ export default function ProductsHero() {
           {/* Micro Telemetry Ticker */}
           <div className="pt-2.5 sm:pt-3 border-t border-[#0B0D12]/10 grid grid-cols-3 gap-2.5 max-w-lg">
             <div>
-              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">2</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">SaaS Ecosystems</span>
+              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">{productsPage?.kpi1Value || '2'}</span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">{productsPage?.kpi1Label || 'SaaS Ecosystems'}</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#FF4A1C]">17</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">Live Modules</span>
+              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#FF4A1C]">{productsPage?.kpi2Value || '17'}</span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">{productsPage?.kpi2Label || 'Live Modules'}</span>
             </div>
             <div>
-              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">480+</span>
-              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">Campuses &amp; Clients</span>
+              <span className="block text-base sm:text-lg lg:text-xl font-bold font-display text-[#0B0D12]">{productsPage?.kpi3Value || '480+'}</span>
+              <span className="text-[9px] sm:text-[10px] font-mono text-[#5A5E6E] uppercase tracking-wider">{productsPage?.kpi3Label || 'Campuses & Clients'}</span>
             </div>
           </div>
         </motion.div>
@@ -216,8 +227,8 @@ export default function ProductsHero() {
               <img 
                 src={
                   activeStageProduct === 'smartschool'
-                    ? "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80"
-                    : "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80"
+                    ? (productsPage?.smartSchoolImageUrl || schoolProduct?.heroMedia || schoolProduct?.screenshots?.[0]?.imageUrl || "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1200&q=80")
+                    : (productsPage?.omnichatImageUrl || omnichatProduct?.heroMedia || omnichatProduct?.screenshots?.[0]?.imageUrl || "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80")
                 }
                 alt={activeStageProduct === 'smartschool' ? "SmartSchool ERP Platform Interface" : "OmniChat AI Communication Hub"}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"

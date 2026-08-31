@@ -16,7 +16,7 @@ const PROJECTS = [
     category: 'Web App',
     categoryColor: 'bg-blue-50 text-blue-700 border-blue-200',
     result: '+180% growth in checkout conversion with 0.4s load speeds.',
-    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/971401438/1200/800',
     tags: ['Next.js', 'Stripe', 'Tailwind']
   },
   {
@@ -25,7 +25,7 @@ const PROJECTS = [
     category: 'Mobile App',
     categoryColor: 'bg-emerald-50 text-emerald-700 border-emerald-200',
     result: 'Real-time telemetry tracking for 15,000+ active logistics vehicles.',
-    image: 'https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?w=800&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/2003684875/1200/800',
     tags: ['React Native', 'GPS', 'WebSockets']
   },
   {
@@ -34,7 +34,7 @@ const PROJECTS = [
     category: 'Website',
     categoryColor: 'bg-purple-50 text-purple-700 border-purple-200',
     result: 'Aesthetically striking 3D web experience with 99.8% retention.',
-    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/2052222832/1200/800',
     tags: ['Three.js', 'WebGL', 'Tailwind']
   },
   {
@@ -43,7 +43,7 @@ const PROJECTS = [
     category: 'Agentic AI',
     categoryColor: 'bg-pink-50 text-pink-700 border-pink-200',
     result: 'Automated 78% of tier-1 customer queries using Gemini agent workflows.',
-    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/1866128676/1200/800',
     tags: ['Gemini 1.5', 'Python', 'FastAPI']
   },
   {
@@ -52,7 +52,7 @@ const PROJECTS = [
     category: 'Web App',
     categoryColor: 'bg-amber-50 text-amber-700 border-amber-200',
     result: 'Unified 12 internal business tools into one lightning-fast web app.',
-    image: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/132147825/1200/800',
     tags: ['React', 'GraphQL', 'Tailwind']
   },
   {
@@ -61,7 +61,7 @@ const PROJECTS = [
     category: 'Mobile App',
     categoryColor: 'bg-indigo-50 text-indigo-700 border-indigo-200',
     result: 'Scaled to 250,000 active creators with sub-100ms feed latency.',
-    image: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&auto=format&fit=crop&q=80',
+    image: 'https://picsum.photos/seed/1208823114/1200/800',
     tags: ['Flutter', 'Firebase', 'CDN']
   }
 ];

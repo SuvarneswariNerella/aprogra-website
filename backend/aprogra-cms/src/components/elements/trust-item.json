@@ -1,0 +1,44 @@
+{
+  "collectionName": "components_elements_trust_items",
+  "info": {
+    "displayName": "Trust Item",
+    "icon": "shieldCheck",
+    "description": "Why Teams Trust Aprogra metric item"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "target": {
+      "type": "decimal",
+      "required": true
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "suffix": {
+      "type": "string"
+    },
+    "decimals": {
+      "type": "integer",
+      "default": 0
+    },
+    "badge": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "href": {
+      "type": "string",
+      "default": "/contact"
+    },
+    "actionText": {
+      "type": "string",
+      "default": "Learn More"
+    }
+  }
+}

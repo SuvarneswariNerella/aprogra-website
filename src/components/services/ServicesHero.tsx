@@ -71,7 +71,7 @@ export default function ServicesHero({
     }
   };
 
-  const heroImageSrc = hero.heroImageUrl || 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80';
+  const heroImageSrc = hero.heroImageUrl || 'https://picsum.photos/seed/834844751/1200/800';
 
   return (
     <section 

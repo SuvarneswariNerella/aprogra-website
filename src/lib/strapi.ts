@@ -622,7 +622,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
     studioHqLabel: 'STUDIO HQ',
     studioHqValue: 'Hyderabad, India • Global Remote Pods',
     bookIntroCallButtonText: 'Book 15-Min Intro Call',
-    heroImageUrl: 'https://images.unsplash.com/photo-1534536281715-e28d76689b4d?auto=format&fit=crop&w=1200&q=80',
+    heroImageUrl: 'https://picsum.photos/seed/163641868/1200/800',
   },
   roadmap: {
     badge: '01 / ENGAGEMENT LIFECYCLE',
@@ -1159,7 +1159,7 @@ export const DEFAULT_BLOG_PAGE_CONTENT: BlogPageContent = {
     metric1_text: '45+ Articles',
     metric2_text: '12k+ Monthly Readers',
     metric3_text: 'Weekly Technical Deep Dives',
-    heroImageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=1200&q=80',
+    heroImageUrl: 'https://picsum.photos/seed/2043984064/1200/800',
   },
   metaTitle: 'Technical Blog & Engineering Insights | Aprogra',
   metaDescription:
@@ -1177,7 +1177,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     date: 'Aug 24, 2026',
     readTime: '6 min read',
     featured: true,
-    coverImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/1502950997/1200/800',
     tags: ['AI Agents', 'Gemini API', 'TypeScript', 'LLM Ops'],
     content: [
       {
@@ -1220,7 +1220,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     date: 'Aug 22, 2026',
     readTime: '8 min read',
     featured: true,
-    coverImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/834844751/1200/800',
     tags: ['Next.js 15', 'Edge Runtime', 'SQLite', 'CRDT'],
     content: [
       {
@@ -1244,7 +1244,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     date: 'Aug 18, 2026',
     readTime: '5 min read',
     featured: false,
-    coverImageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/314078390/1200/800',
     tags: ['Design Systems', 'CSS Tokens', 'Typography', 'Figma'],
     content: [
       {
@@ -1268,7 +1268,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     date: 'Aug 14, 2026',
     readTime: '7 min read',
     featured: false,
-    coverImageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=1200&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/1984026769/1200/800',
     tags: ['PostgreSQL', 'MySQL', 'DevOps', 'High Concurrency'],
     content: [
       {
@@ -1292,7 +1292,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     date: 'Aug 10, 2026',
     readTime: '9 min read',
     featured: false,
-    coverImageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/1495104188/1200/800',
     tags: ['SaaS', 'RLS', 'Multi-Tenancy', 'Security'],
     content: [
       {
@@ -1316,7 +1316,7 @@ export const DEFAULT_BLOG_POSTS: BlogPost[] = [
     date: 'Aug 04, 2026',
     readTime: '6 min read',
     featured: false,
-    coverImageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1200&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/1485262105/1200/800',
     tags: ['Micro-Frontends', 'Architecture', 'Case Study', 'Velocity'],
     content: [
       {
@@ -1409,7 +1409,7 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
         getStrapiMediaUrl(data.coverImage) ||
         data.coverImageUrl ||
         defaultPost?.coverImageUrl ||
-        'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80';
+        'https://picsum.photos/seed/1502950997/1200/800';
 
       const content =
         Array.isArray(data.content) && data.content.length > 0
@@ -1680,7 +1680,7 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
     tag: '01 / WEB & MOBILE',
     color: '#3B82F6',
     cardOrder: 1,
-    coverImageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/1882134225/1200/800',
     deliverables: [
       'Next.js & React 19',
       'React Native & Expo',
@@ -1698,7 +1698,7 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
     tag: '02 / AI & AGENTIC',
     color: '#8B5CF6',
     cardOrder: 2,
-    coverImageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/646225886/1200/800',
     deliverables: [
       'Multi-Agent Loops',
       'Dense Vector RAG',
@@ -1716,7 +1716,7 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
     tag: '03 / SAAS & APIS',
     color: '#06B6D4',
     cardOrder: 3,
-    coverImageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/611021275/1200/800',
     deliverables: [
       'Row-Level Security',
       'Stripe Metering',
@@ -1734,7 +1734,7 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
     tag: '04 / DESIGN SYSTEMS',
     color: '#EC4899',
     cardOrder: 4,
-    coverImageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/468325482/1200/800',
     deliverables: [
       'Fluid Typographic Scales',
       'Design Token Engine',
@@ -1752,7 +1752,7 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
     tag: '05 / CLOUD & DEVOPS',
     color: '#10B981',
     cardOrder: 5,
-    coverImageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+    coverImageUrl: 'https://picsum.photos/seed/54940735/1200/800',
     deliverables: [
       'Terraform & Pulumi',
       'Self-Healing K8s',
@@ -1775,7 +1775,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'We build ultra-fast, accessible web platforms utilizing modern server components, streaming SSR, and edge execution to deliver sub-second Core Web Vitals at global scale.',
     icon: 'web',
-    imageUrl: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://picsum.photos/seed/1615007644/1200/800',
     cardOrder: 1,
     kpiNumber: '< 0.8s',
     kpiLabel: 'LCP Load Speed',
@@ -1798,7 +1798,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'We develop domain-specific autonomous agent pipelines capable of multi-step task execution, automated data triage, and human-in-the-loop escalation with deterministic safeguards.',
     icon: 'ai',
-    imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://picsum.photos/seed/646225886/1200/800',
     cardOrder: 2,
     kpiNumber: '70%',
     kpiLabel: 'Triage Automation',
@@ -1821,7 +1821,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'Architecting robust, scalable SaaS foundations with hardened multi-tenancy, granular RBAC/ABAC permissions, automated tenant provisioning, and idempotent payment pipelines.',
     icon: 'saas',
-    imageUrl: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://picsum.photos/seed/611021275/1200/800',
     cardOrder: 3,
     kpiNumber: '10k+',
     kpiLabel: 'Tenants / Cluster',
@@ -1844,7 +1844,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'We construct living, unified design token architectures that bridge Figma variables with production code, ensuring uncompromising visual harmony and fluid micro-interactions.',
     icon: 'design',
-    imageUrl: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://picsum.photos/seed/468325482/1200/800',
     cardOrder: 4,
     kpiNumber: '500+',
     kpiLabel: 'Design Tokens',
@@ -1867,7 +1867,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'Engineering fault-tolerant cloud backbones with automated multi-region scaling, blue-green zero-downtime deployments, distributed caching, and 24/7 observability.',
     icon: 'cloud',
-    imageUrl: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://picsum.photos/seed/54940735/1200/800',
     cardOrder: 5,
     kpiNumber: '99.99%',
     kpiLabel: 'System Uptime',
@@ -1890,7 +1890,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'We engineer fluid, native-feeling mobile applications with local-first database replication, push notification pipelines, and background telemetry.',
     icon: 'mobile',
-    imageUrl: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://picsum.photos/seed/1897555988/1200/800',
     cardOrder: 6,
     kpiNumber: '60 FPS',
     kpiLabel: 'Native Fluidity',
@@ -1919,7 +1919,7 @@ export const DEFAULT_SERVICES_PAGE_CONTENT: ServicesPageContent = {
     point1: 'Zero Architectural Debt & 99.99% Availability',
     point2: 'Sub-Second Edge Telemetry & Real-Time Sync',
     point3: 'Bank-Grade SOC2 Security & Tenant Partitioning',
-    heroImageUrl: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&auto=format&fit=crop&q=80',
+    heroImageUrl: 'https://picsum.photos/seed/834844751/1200/800',
   },
   cards: {
     badge: 'CORE DISCIPLINES',
@@ -2344,7 +2344,7 @@ export const DEFAULT_TESTIMONIALS_LIST: TestimonialItem[] = [
     authorRole: 'Chief Technology Officer',
     authorCompany: 'SaaSify Platforms',
     quote: 'Aprogra delivered our micro-services backend ahead of schedule with zero architectural debt. Their engineers operated like a natural extension of our staff.',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    avatarUrl: 'https://picsum.photos/seed/524317474/1200/800',
     rating: 5,
     highlight: 'Zero architectural debt & ahead of schedule',
     projectTag: 'Cloud Architecture & Kubernetes',
@@ -2355,7 +2355,7 @@ export const DEFAULT_TESTIMONIALS_LIST: TestimonialItem[] = [
     authorRole: 'Founder & CEO',
     authorCompany: 'Horizon AI',
     quote: 'The agentic AI pipelines built by Aprogra automated 70% of our internal data triage workflows. Their mastery of Gemini 1.5 gave us a massive competitive edge.',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200',
+    avatarUrl: 'https://picsum.photos/seed/310472034/1200/800',
     rating: 5,
     highlight: 'Automated 70% of internal triage workflows',
     projectTag: 'Agentic AI & Function Calling',
@@ -2366,7 +2366,7 @@ export const DEFAULT_TESTIMONIALS_LIST: TestimonialItem[] = [
     authorRole: 'VP of Engineering',
     authorCompany: 'CloudScale Inc',
     quote: 'From initial brief to production launch in just 6 weeks. The team’s velocity, clean React code, and proactive communication set a new benchmark.',
-    avatarUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200',
+    avatarUrl: 'https://picsum.photos/seed/970296839/1200/800',
     rating: 5,
     highlight: 'Production launch in 6 weeks',
     projectTag: 'Full-Stack React & Node.js',
@@ -2377,7 +2377,7 @@ export const DEFAULT_TESTIMONIALS_LIST: TestimonialItem[] = [
     authorRole: 'Head of Digital Products',
     authorCompany: 'FinTech One',
     quote: 'Their design system and Tailwind CSS component library made our web app lightning fast, accessible, and effortlessly maintainable.',
-    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200',
+    avatarUrl: 'https://picsum.photos/seed/1942862530/1200/800',
     rating: 5,
     highlight: 'Lightning fast & accessible design system',
     projectTag: 'Design System & UX/UI',
@@ -2388,7 +2388,7 @@ export const DEFAULT_TESTIMONIALS_LIST: TestimonialItem[] = [
     authorRole: 'Director',
     authorCompany: 'SmartSchool',
     quote: 'AProgra delivered our entire school ERP from scratch in 4 months. The quality was exceptional and the team felt like our own.',
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
+    avatarUrl: 'https://picsum.photos/seed/1557439118/1200/800',
     rating: 5,
     highlight: 'School ERP in 4 months',
     projectTag: 'Enterprise Software',
@@ -2605,6 +2605,7 @@ export interface ProductFeature {
   metricLabel?: string;
   metricValue?: string;
   highlights?: string;
+  imageUrl?: string;
 }
 
 export interface ProductScreenshot {
@@ -2701,6 +2702,7 @@ function normalizeProduct(raw: any): ProductItem {
           metricLabel: f.metricLabel || '',
           metricValue: f.metricValue || '',
           highlights: f.highlights || '',
+          imageUrl: getStrapiMediaUrl(f.image) || f.imageUrl || undefined,
         }))
       : [],
     screenshots: Array.isArray(data.screenshots)
@@ -2757,7 +2759,7 @@ function normalizeProduct(raw: any): ProductItem {
 export async function fetchProducts(): Promise<ProductItem[]> {
   try {
     const raw = await fetchFromStrapi<any>(
-      'products?populate=deep&sort=order:asc'
+      'products?populate[features][populate]=*&populate[kpiStats][populate]=*&populate[heroMedia][populate]=*&sort=order:asc'
     );
     if (!raw || !Array.isArray(raw) || raw.length === 0) return [];
     return raw.map(normalizeProduct);
@@ -2770,7 +2772,7 @@ export async function fetchProducts(): Promise<ProductItem[]> {
 export async function fetchProductBySlug(slug: string): Promise<ProductItem | null> {
   try {
     const raw = await fetchFromStrapi<any>(
-      `products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate=deep`
+      `products?filters[slug][$eq]=${encodeURIComponent(slug)}&populate[features][populate]=*&populate[kpiStats][populate]=*&populate[heroMedia][populate]=*`
     );
     if (!raw || !Array.isArray(raw) || raw.length === 0) return null;
     return normalizeProduct(raw[0]);
@@ -2936,7 +2938,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
         { id: '2', title: 'End-to-end ownership', description: 'Design through deployment' },
         { id: '3', title: 'Hyderabad-based', description: 'Working with clients across 12 countries' },
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: 'https://picsum.photos/seed/1693179706/1200/800',
     },
     {
       id: '2',
@@ -2947,7 +2949,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
         'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.',
       quote: '"To make world-class engineering accessible to every visionary who dares to build."',
       highlights: [],
-      imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: 'https://picsum.photos/seed/160668355/1200/800',
     },
     {
       id: '3',
@@ -2961,7 +2963,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
         { id: '2', title: 'Agentic & Autonomous Speed', description: 'Integrating cutting-edge AI workflows with human craftsmanship' },
         { id: '3', title: 'Infinite Scale', description: 'Architected from day one to handle millions of active users' },
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80',
+      imageUrl: 'https://picsum.photos/seed/1243328472/1200/800',
     },
   ],
   faqSection: {
@@ -3067,7 +3069,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMemberItem[] = [
     name: 'Alexandre Vane',
     role: 'Founder & Chief Architect',
     bio: 'Ex-Google Staff Architect with 12+ years building distributed cloud platforms & high-throughput APIs.',
-    photoUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1887&auto=format&fit=crop',
+    photoUrl: 'https://picsum.photos/seed/2107961656/1200/800',
     skills: ['Cloud Arch', 'Distributed Systems', 'Rust & Go'],
     linkedinUrl: 'https://linkedin.com',
     githubUrl: 'https://github.com',
@@ -3079,7 +3081,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMemberItem[] = [
     name: 'Isabella Chen',
     role: 'Head of Product & Design',
     bio: 'Pioneer in motion graphics & spatial UI design. Transformed digital products for 30+ enterprise firms.',
-    photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1887&auto=format&fit=crop',
+    photoUrl: 'https://picsum.photos/seed/1328796596/1200/800',
     skills: ['Design Systems', 'Motion Graphics', 'UX Strategy'],
     linkedinUrl: 'https://linkedin.com',
     githubUrl: 'https://github.com',
@@ -3091,7 +3093,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMemberItem[] = [
     name: 'Sophia Thorne',
     role: 'Director of AI Research',
     bio: 'Specializing in custom LLM fine-tuning, autonomous agentic workflows, and edge neural deployments.',
-    photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=1964&auto=format&fit=crop',
+    photoUrl: 'https://picsum.photos/seed/2067071718/1200/800',
     skills: ['LLMs & RAG', 'Machine Learning', 'Autonomous Agents'],
     linkedinUrl: 'https://linkedin.com',
     githubUrl: 'https://github.com',
@@ -3103,7 +3105,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMemberItem[] = [
     name: 'Mia Rostova',
     role: 'Lead Full-Stack Engineer',
     bio: 'Polyglot software leader specializing in React 19, TypeScript, WebAudio, and frontend state engines.',
-    photoUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=1961&auto=format&fit=crop',
+    photoUrl: 'https://picsum.photos/seed/240679240/1200/800',
     skills: ['React / Next.js', 'TypeScript', 'State Engines'],
     linkedinUrl: 'https://linkedin.com',
     githubUrl: 'https://github.com',
@@ -3115,7 +3117,7 @@ export const DEFAULT_TEAM_MEMBERS: TeamMemberItem[] = [
     name: 'Charlotte Vance',
     role: 'Principal Infrastructure Lead',
     bio: 'Cloud-native infrastructure specialist building zero-downtime multi-region Kubernetes deployments.',
-    photoUrl: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=1964&auto=format&fit=crop',
+    photoUrl: 'https://picsum.photos/seed/755434489/1200/800',
     skills: ['Kubernetes', 'AWS / GCP', 'Terraform'],
     linkedinUrl: 'https://linkedin.com',
     githubUrl: 'https://github.com',
@@ -3334,7 +3336,7 @@ function normalizeTeamMember(raw: any): TeamMemberItem {
     name: data.name || 'Team Member',
     role: data.role || 'Software Engineer',
     bio: data.bio || '',
-    photoUrl: getStrapiMediaUrl(data.photo) || data.photoUrl || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1887&auto=format&fit=crop',
+    photoUrl: getStrapiMediaUrl(data.photo) || data.photoUrl || 'https://picsum.photos/seed/2107961656/1200/800',
     skills: skillsArray.length > 0 ? skillsArray : ['Engineering', 'Architecture'],
     linkedinUrl: data.linkedinUrl || undefined,
     githubUrl: data.githubUrl || undefined,
@@ -3520,7 +3522,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       title: "Engineering Software Without Limits.",
       subtitle: "Full-cycle software engineering, architectural consulting, and autonomous AI systems for scale-ups and global enterprises.",
       tags: ["High-Performance Computing", "Enterprise AI", "Cloud Native"],
-      imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/2083954623/1200/800",
       imageLabel: "Architecture Stack",
       imageSublabel: "Production Ready",
     },
@@ -3531,7 +3533,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       primaryValue: "40+",
       subtitle: "We don't just build MVPs. We engineer and maintain mission-critical platforms that run real businesses with 99.99% SLA guarantees.",
       tags: ["Multi-Tenant SaaS", "ERP Systems", "High Availability"],
-      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/1243328472/1200/800",
       imageLabel: "Global Footprint",
       imageSublabel: "12 Countries",
     },
@@ -3541,7 +3543,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       title: "Engineered In-House.",
       subtitle: "Every line of code, every system architecture, every pixel—built entirely by our full-stack engineering pods based in our own studios.",
       tags: ["100% In-House", "Dedicated Pods", "Direct Access"],
-      imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/1693179706/1200/800",
       imageLabel: "Engineering Pods",
       imageSublabel: "25+ Specialists",
     }
@@ -3562,7 +3564,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       badgeText: "Our Story",
       title: "Not just another dev shop.",
       description: "AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.",
-      imageUrl: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/1323529153/1200/800",
       showMetricsGrid: false
     },
     {
@@ -3570,7 +3572,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       badgeText: "How We Work",
       title: "Full-stack. Full-cycle. Full-ownership.",
       description: "From the first discovery call to post-launch support, our in-house team owns every layer. Design. Frontend. Backend. QA. DevOps. All under one roof — your one point of contact.",
-      imageUrl: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/1678069599/1200/800",
       showMetricsGrid: false
     },
     {
@@ -3578,7 +3580,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       badgeText: "Our Team",
       title: "25+ specialists. Zero strangers.",
       description: "Designers who code. Engineers who think about UX. PMs who understand business. Everyone at AProgra is a specialist — and everyone cares about your product like it's their own.",
-      imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/1693179706/1200/800",
       showMetricsGrid: false
     },
     {
@@ -3586,7 +3588,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       badgeText: "Our Reach",
       title: "Built here. Shipped everywhere.",
       description: "40+ products live in market. 60+ clients across 12 countries. From Hyderabad to Houston, our software runs real businesses.",
-      imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "https://picsum.photos/seed/1243328472/1200/800",
       showMetricsGrid: true
     }
   ],
@@ -3605,7 +3607,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       tags: ["Discovery", "Architecture", "Development", "QA", "Launch"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/611021275/1200/800"
     },
     {
       id: "2",
@@ -3616,7 +3618,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       tags: ["iOS & Android", "React Native", "Flutter", "Offline-First", "App Store Ops"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/1897555988/1200/800"
     },
     {
       id: "3",
@@ -3627,7 +3629,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       tags: ["LLM Pipelines", "RAG Systems", "Agents & Swarms", "Data Triage", "Fine-Tuning"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/646225886/1200/800"
     },
     {
       id: "4",
@@ -3638,7 +3640,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       tags: ["Design Systems", "Component Libraries", "Wireframing", "Motion Design", "Figma to Code"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/468325482/1200/800"
     },
     {
       id: "5",
@@ -3649,7 +3651,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       tags: ["AWS / GCP", "Docker & K8s", "CI/CD Pipelines", "Zero-Downtime", "24/7 Monitoring"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/54940735/1200/800"
     },
     {
       id: "6",
@@ -3660,7 +3662,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       tags: ["Architecture Audits", "Codebase Refactoring", "Database Migration", "Performance Tuning", "Zero-Downtime"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/1531036511/1200/800"
     }
   ],
   productsCards: [
@@ -3677,7 +3679,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       productUrlText: "View Product Details",
       demoUrl: "/contact",
       demoUrlText: "Request Demo →",
-      imageUrl: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/912714368/1200/800"
     },
     {
       id: "2",
@@ -3692,7 +3694,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       productUrlText: "View Product Details",
       demoUrl: "/contact",
       demoUrlText: "Request Demo →",
-      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://picsum.photos/seed/862930265/1200/800"
     }
   ]
 };
@@ -3711,14 +3713,14 @@ export async function fetchHomePage(): Promise<HomePageData> {
     
     // Normalize heroSlides
     const rawHeroSlides = data.heroSlides;
-    const heroSlides = Array.isArray(rawHeroSlides) && rawHeroSlides.length > 0 ? rawHeroSlides.map((slide: any) => ({
+    const heroSlides = Array.isArray(rawHeroSlides) && rawHeroSlides.length > 0 ? rawHeroSlides.map((slide: any, idx: number) => ({
       id: String(slide.id),
       badgeText: slide.badgeText || '',
       title: slide.title || '',
       subtitle: slide.subtitle || '',
       primaryValue: slide.primaryValue || undefined,
       tags: Array.isArray(slide.tags) ? slide.tags.map((t: any) => t.label || t.name || '').filter(Boolean) : [],
-      imageUrl: getStrapiMediaUrl(slide.image) || slide.imageUrl || undefined,
+      imageUrl: getStrapiMediaUrl(slide.image) || slide.imageUrl || DEFAULT_HOME_PAGE_DATA.heroSlides[idx]?.imageUrl || "https://picsum.photos/seed/default/1200/800",
       imageLabel: slide.imageLabel || undefined,
       imageSublabel: slide.imageSublabel || undefined,
     })) : DEFAULT_HOME_PAGE_DATA.heroSlides;
@@ -3738,12 +3740,12 @@ export async function fetchHomePage(): Promise<HomePageData> {
 
     // Normalize storyPhases
     const rawStoryPhases = data.storyPhases;
-    const storyPhases = Array.isArray(rawStoryPhases) && rawStoryPhases.length > 0 ? rawStoryPhases.map((phase: any) => ({
+    const storyPhases = Array.isArray(rawStoryPhases) && rawStoryPhases.length > 0 ? rawStoryPhases.map((phase: any, idx: number) => ({
       id: String(phase.id),
       badgeText: phase.badgeText || '',
       title: phase.title || '',
       description: phase.description || '',
-      imageUrl: getStrapiMediaUrl(phase.image) || phase.imageUrl || undefined,
+      imageUrl: getStrapiMediaUrl(phase.image) || phase.imageUrl || DEFAULT_HOME_PAGE_DATA.storyPhases[idx]?.imageUrl || "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=1200&q=80",
       showMetricsGrid: !!phase.showMetricsGrid
     })) : DEFAULT_HOME_PAGE_DATA.storyPhases;
 
@@ -3757,7 +3759,7 @@ export async function fetchHomePage(): Promise<HomePageData> {
 
     // Normalize servicesSlides
     const rawServicesSlides = data.servicesSlides;
-    const servicesSlides = Array.isArray(rawServicesSlides) && rawServicesSlides.length > 0 ? rawServicesSlides.map((s: any) => ({
+    const servicesSlides = Array.isArray(rawServicesSlides) && rawServicesSlides.length > 0 ? rawServicesSlides.map((s: any, idx: number) => ({
       id: String(s.id),
       orderNumber: s.orderNumber || '01',
       badgeText: s.badgeText || '',
@@ -3766,12 +3768,12 @@ export async function fetchHomePage(): Promise<HomePageData> {
       tags: Array.isArray(s.tags) ? s.tags.map((t: any) => t.label || t.name || '').filter(Boolean) : [],
       serviceUrl: s.serviceUrl || '/services',
       serviceUrlText: s.serviceUrlText || 'Explore Service',
-      imageUrl: getStrapiMediaUrl(s.image) || s.imageUrl || undefined,
+      imageUrl: getStrapiMediaUrl(s.image) || s.imageUrl || DEFAULT_HOME_PAGE_DATA.servicesSlides[idx]?.imageUrl || "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80",
     })) : DEFAULT_HOME_PAGE_DATA.servicesSlides;
 
     // Normalize productsCards
     const rawProductsCards = data.productsCards;
-    const productsCards = Array.isArray(rawProductsCards) && rawProductsCards.length > 0 ? rawProductsCards.map((p: any) => ({
+    const productsCards = Array.isArray(rawProductsCards) && rawProductsCards.length > 0 ? rawProductsCards.map((p: any, idx: number) => ({
       id: String(p.id),
       badge: p.badge || '',
       versionStatus: p.versionStatus || '',
@@ -3784,7 +3786,7 @@ export async function fetchHomePage(): Promise<HomePageData> {
       productUrlText: p.productUrlText || 'View Product Details',
       demoUrl: p.demoUrl || '/contact',
       demoUrlText: p.demoUrlText || 'Request Demo →',
-      imageUrl: getStrapiMediaUrl(p.image) || p.imageUrl || undefined,
+      imageUrl: getStrapiMediaUrl(p.image) || p.imageUrl || DEFAULT_HOME_PAGE_DATA.productsCards[idx]?.imageUrl || "https://picsum.photos/seed/default/1200/800",
     })) : DEFAULT_HOME_PAGE_DATA.productsCards;
     
     return {
@@ -3829,4 +3831,406 @@ export function useHomePage() {
   }, []);
 
   return { homePage, isLoading, error };
+}
+
+// ---------------------------------------------------------------------------
+// PRODUCTS PAGE
+// ---------------------------------------------------------------------------
+
+export interface TrustItem {
+  name: string;
+  target: number;
+  prefix?: string;
+  suffix?: string;
+  decimals?: number;
+  badge?: string;
+  title: string;
+  href: string;
+  actionText: string;
+}
+
+export interface ProductsPageConfig {
+  heroBadge: string;
+  heroHeadline: string;
+  heroDescription: string;
+  kpi1Value: string;
+  kpi1Label: string;
+  kpi2Value: string;
+  kpi2Label: string;
+  kpi3Value: string;
+  kpi3Label: string;
+  smartSchoolImageUrl?: string;
+  omnichatImageUrl?: string;
+  trustBadge: string;
+  trustHeadline: string;
+  trustDescription: string;
+  trustItems: TrustItem[];
+  contactBadge: string;
+  contactHeadline: string;
+  contactDescription: string;
+  contactEmail: string;
+  contactPhone: string;
+  contactLocation: string;
+  inquiryFormTitle: string;
+  inquiryFormSubtitle: string;
+  inquiryButtonText: string;
+}
+
+const DEFAULT_PRODUCTS_PAGE: ProductsPageConfig = {
+  heroBadge: "Proprietary SaaS Ecosystem",
+  heroHeadline: "Software We Built. Powering Real Scale.",
+  heroDescription: "We engineer, operate, and scale proprietary SaaS platforms and AI automation engines running in 24/7 live production.",
+  kpi1Value: "2",
+  kpi1Label: "SAAS ECOSYSTEMS",
+  kpi2Value: "17",
+  kpi2Label: "LIVE MODULES",
+  kpi3Value: "480+",
+  kpi3Label: "CAMPUSES & CLIENTS",
+  trustBadge: "Reliability & Craft Standards",
+  trustHeadline: "Why Teams Trust Aprogra Products",
+  trustDescription: "We don't build vaporware or speculative prototypes. Every system is engineered with founder-level devotion, multi-layered reliability, and real-time observability.",
+  trustItems: [
+    {
+      name: "In-House Codebase",
+      target: 100,
+      suffix: "%",
+      decimals: 0,
+      badge: "Zero Subcontracting",
+      title: "Battle-Tested In Production",
+      href: "/products/school-erp",
+      actionText: "Explore codebase architecture",
+    },
+    {
+      name: "Production SLA",
+      target: 99.98,
+      suffix: "%",
+      decimals: 2,
+      badge: "Cloud-Native HA",
+      title: "Multi-Tenant Architecture",
+      href: "/services",
+      actionText: "View uptime & infra SLA",
+    },
+    {
+      name: "Daily Active Users",
+      target: 120,
+      suffix: "K+",
+      decimals: 0,
+      badge: "Enterprise Scale",
+      title: "Proven Real-World Volume",
+      href: "/products/omnichat",
+      actionText: "View scale benchmarks",
+    },
+    {
+      name: "Response Time SLA",
+      target: 24,
+      suffix: "/7",
+      decimals: 0,
+      badge: "Guaranteed SLA",
+      title: "Direct Core Team Support",
+      href: "/contact",
+      actionText: "Connect with lead architects",
+    }
+  ],
+  contactBadge: "LET'S CONNECT",
+  contactHeadline: "Ready to Build Something Infinite?",
+  contactDescription: "Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.",
+  contactEmail: "hello@aprogra.com",
+  contactPhone: "+1 (800) 555-0199",
+  contactLocation: "Hyderabad, India • Global Remote Pods",
+  inquiryFormTitle: "Quick Inquiry",
+  inquiryFormSubtitle: "Direct line to our technical architecture pod.",
+  inquiryButtonText: "Send Inquiry"
+};
+
+export async function fetchProductsPage(): Promise<ProductsPageConfig> {
+  try {
+    const raw = await fetchFromStrapi<any>('products-page?populate[trustItems][populate]=*&populate[smartSchoolImage][populate]=*&populate[omnichatImage][populate]=*');
+    if (!raw) return DEFAULT_PRODUCTS_PAGE;
+    
+    const data = raw.attributes || raw;
+    
+    const rawTrustItems = data.trustItems;
+    const trustItems = Array.isArray(rawTrustItems) && rawTrustItems.length > 0 ? rawTrustItems.map((item: any, idx: number) => ({
+      name: item.name || DEFAULT_PRODUCTS_PAGE.trustItems[idx]?.name || 'Metric',
+      target: typeof item.target === 'number' ? item.target : (parseFloat(item.target) || 100),
+      prefix: item.prefix || '',
+      suffix: item.suffix || '',
+      decimals: typeof item.decimals === 'number' ? item.decimals : 0,
+      badge: item.badge || '',
+      title: item.title || '',
+      href: item.href || '/contact',
+      actionText: item.actionText || 'Learn More',
+    })) : DEFAULT_PRODUCTS_PAGE.trustItems;
+
+    return {
+      heroBadge: data.heroBadge || DEFAULT_PRODUCTS_PAGE.heroBadge,
+      heroHeadline: data.heroHeadline || DEFAULT_PRODUCTS_PAGE.heroHeadline,
+      heroDescription: data.heroDescription || DEFAULT_PRODUCTS_PAGE.heroDescription,
+      kpi1Value: data.kpi1Value || DEFAULT_PRODUCTS_PAGE.kpi1Value,
+      kpi1Label: data.kpi1Label || DEFAULT_PRODUCTS_PAGE.kpi1Label,
+      kpi2Value: data.kpi2Value || DEFAULT_PRODUCTS_PAGE.kpi2Value,
+      kpi2Label: data.kpi2Label || DEFAULT_PRODUCTS_PAGE.kpi2Label,
+      kpi3Value: data.kpi3Value || DEFAULT_PRODUCTS_PAGE.kpi3Value,
+      kpi3Label: data.kpi3Label || DEFAULT_PRODUCTS_PAGE.kpi3Label,
+      smartSchoolImageUrl: getStrapiMediaUrl(data.smartSchoolImage) || undefined,
+      omnichatImageUrl: getStrapiMediaUrl(data.omnichatImage) || undefined,
+      trustBadge: data.trustBadge || DEFAULT_PRODUCTS_PAGE.trustBadge,
+      trustHeadline: data.trustHeadline || DEFAULT_PRODUCTS_PAGE.trustHeadline,
+      trustDescription: data.trustDescription || DEFAULT_PRODUCTS_PAGE.trustDescription,
+      trustItems,
+      contactBadge: data.contactBadge || DEFAULT_PRODUCTS_PAGE.contactBadge,
+      contactHeadline: data.contactHeadline || DEFAULT_PRODUCTS_PAGE.contactHeadline,
+      contactDescription: data.contactDescription || DEFAULT_PRODUCTS_PAGE.contactDescription,
+      contactEmail: data.contactEmail || DEFAULT_PRODUCTS_PAGE.contactEmail,
+      contactPhone: data.contactPhone || DEFAULT_PRODUCTS_PAGE.contactPhone,
+      contactLocation: data.contactLocation || DEFAULT_PRODUCTS_PAGE.contactLocation,
+      inquiryFormTitle: data.inquiryFormTitle || DEFAULT_PRODUCTS_PAGE.inquiryFormTitle,
+      inquiryFormSubtitle: data.inquiryFormSubtitle || DEFAULT_PRODUCTS_PAGE.inquiryFormSubtitle,
+      inquiryButtonText: data.inquiryButtonText || DEFAULT_PRODUCTS_PAGE.inquiryButtonText,
+    };
+  } catch (error) {
+    console.warn('[Strapi] Could not load Products Page content, using defaults:', error);
+    return DEFAULT_PRODUCTS_PAGE;
+  }
+}
+
+export function useProductsPage() {
+  const [productsPage, setProductsPage] = useState<ProductsPageConfig>(DEFAULT_PRODUCTS_PAGE);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchProductsPage()
+      .then((data) => {
+        if (isMounted) {
+          if (data) setProductsPage(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { productsPage, isLoading };
+}
+
+// ============================================================================
+// CAREERS & CAREER PAGE CMS INTERFACES & HOOKS
+// ============================================================================
+
+export interface CultureItem {
+  number: string;
+  title: string;
+  description: string;
+}
+
+export interface CareerPageConfig {
+  heroBadge: string;
+  heroHeadline: string;
+  heroDescription: string;
+  positionsBadge: string;
+  positionsTitle: string;
+  positionsDescription: string;
+  cultureBadge: string;
+  cultureTitle: string;
+  cultureItems: CultureItem[];
+}
+
+export interface CareerRole {
+  id: string | number;
+  slug: string;
+  title: string;
+  team: string;
+  location: string;
+  type: string;
+  description: string;
+  tags: string[];
+  order: number;
+}
+
+const DEFAULT_CAREER_PAGE: CareerPageConfig = {
+  heroBadge: "Careers at Aprogra",
+  heroHeadline: "Build the software that defines the next decade.",
+  heroDescription: "We are a tight-knit collective of systems architects, AI engineers, and product designers obsessed with craftsmanship, performance, and engineering velocity.",
+  positionsBadge: "Open Positions",
+  positionsTitle: "Join our engineering squad",
+  positionsDescription: "We review every submission carefully. All roles are available for high-performing remote contributors globally.",
+  cultureBadge: "Our Operating Principles",
+  cultureTitle: "How we work together",
+  cultureItems: [
+    { number: "01 / FIRST PRINCIPLES", title: "Substance Over Noise", description: "We avoid resume-driven development. Every architectural choice is made for speed, reliability, and real-world user value." },
+    { number: "02 / HIGH AUTONOMY", title: "Ownership Mentality", description: "Engineers own their systems from initial whiteboarding to production telemetry. No bureaucratic layers or endless standups." },
+    { number: "03 / COMPENSATIVE VALUE", title: "Top-of-Market Comp", description: "We offer competitive base salaries, equity participation, top-tier health coverage, and modern home office allowances." }
+  ]
+};
+
+const DEFAULT_CAREERS: CareerRole[] = [
+  {
+    id: 'lead-ai-engineer',
+    slug: 'lead-ai-engineer',
+    title: 'Senior AI & LLM Systems Engineer',
+    team: 'AI & Machine Intelligence',
+    location: 'San Francisco, CA / Remote',
+    type: 'Full-time',
+    description: 'Lead the architecture of our agentic AI infrastructure, multi-agent workflows, and custom enterprise fine-tuning pipelines.',
+    tags: ['Python', 'PyTorch', 'LangChain', 'vLLM', 'Distributed Systems'],
+    order: 1
+  },
+  {
+    id: 'staff-fullstack-engineer',
+    slug: 'staff-fullstack-engineer',
+    title: 'Staff Full-Stack Architect (React / Node)',
+    team: 'Core Platform Engineering',
+    location: 'New York, NY / Remote',
+    type: 'Full-time',
+    description: 'Design and scale resilient high-throughput cloud web applications, real-time sync systems, and modular component ecosystems.',
+    tags: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'Tailwind'],
+    order: 2
+  },
+  {
+    id: 'lead-mobile-architect',
+    slug: 'lead-mobile-architect',
+    title: 'Lead Mobile Engineer (React Native / Flutter)',
+    team: 'Mobile Experiences',
+    location: 'Remote (Global)',
+    type: 'Full-time',
+    description: 'Craft buttery-smooth 60fps mobile applications for enterprise clients across iOS and Android with offline-first sync architecture.',
+    tags: ['React Native', 'Swift', 'Kotlin', 'SQLite', 'WebSockets'],
+    order: 3
+  },
+  {
+    id: 'product-designer',
+    slug: 'product-designer',
+    title: 'Senior Product & UI/UX Designer',
+    team: 'Product Design & Brand',
+    location: 'San Francisco, CA / Remote',
+    type: 'Full-time',
+    description: 'Establish thoughtful design systems, spatial layouts, and high-fidelity prototypes for next-generation digital products.',
+    tags: ['Figma', 'Design Systems', 'Prototyping', 'User Research'],
+    order: 4
+  }
+];
+
+export async function fetchCareerPage(): Promise<CareerPageConfig> {
+  try {
+    const raw = await fetchFromStrapi<any>('career-page?populate[cultureItems][populate]=*');
+    if (!raw) return DEFAULT_CAREER_PAGE;
+
+    const data = raw.attributes || raw;
+    const rawCultureItems = data.cultureItems;
+    const cultureItems = Array.isArray(rawCultureItems) && rawCultureItems.length > 0
+      ? rawCultureItems.map((c: any, idx: number) => ({
+          number: c.number || DEFAULT_CAREER_PAGE.cultureItems[idx]?.number || `0${idx + 1}`,
+          title: c.title || DEFAULT_CAREER_PAGE.cultureItems[idx]?.title || 'Principle',
+          description: c.description || DEFAULT_CAREER_PAGE.cultureItems[idx]?.description || '',
+        }))
+      : DEFAULT_CAREER_PAGE.cultureItems;
+
+    return {
+      heroBadge: data.heroBadge || DEFAULT_CAREER_PAGE.heroBadge,
+      heroHeadline: data.heroHeadline || DEFAULT_CAREER_PAGE.heroHeadline,
+      heroDescription: data.heroDescription || DEFAULT_CAREER_PAGE.heroDescription,
+      positionsBadge: data.positionsBadge || DEFAULT_CAREER_PAGE.positionsBadge,
+      positionsTitle: data.positionsTitle || DEFAULT_CAREER_PAGE.positionsTitle,
+      positionsDescription: data.positionsDescription || DEFAULT_CAREER_PAGE.positionsDescription,
+      cultureBadge: data.cultureBadge || DEFAULT_CAREER_PAGE.cultureBadge,
+      cultureTitle: data.cultureTitle || DEFAULT_CAREER_PAGE.cultureTitle,
+      cultureItems,
+    };
+  } catch (error) {
+    console.warn('[Strapi] Could not load Career Page content, using defaults:', error);
+    return DEFAULT_CAREER_PAGE;
+  }
+}
+
+export async function fetchCareers(): Promise<CareerRole[]> {
+  try {
+    const raw = await fetchFromStrapi<any>('careers?sort=order:asc');
+    if (!raw || !Array.isArray(raw) || raw.length === 0) return DEFAULT_CAREERS;
+
+    return raw.map((item: any, idx: number) => {
+      const data = item.attributes || item;
+      const rawTags = data.tags;
+      let tags: string[] = [];
+      if (Array.isArray(rawTags)) {
+        tags = rawTags.map((t: any) => (typeof t === 'string' ? t : t.label || t.name || String(t)));
+      } else if (typeof rawTags === 'string') {
+        tags = rawTags.split(',').map((t) => t.trim()).filter(Boolean);
+      } else {
+        tags = DEFAULT_CAREERS[idx]?.tags || [];
+      }
+
+      return {
+        id: data.id || item.id || data.slug || idx,
+        slug: data.slug || `role-${idx}`,
+        title: data.title || 'Career Role',
+        team: data.team || 'Engineering',
+        location: data.location || 'Remote',
+        type: data.type || 'Full-time',
+        description: data.description || '',
+        tags,
+        order: typeof data.order === 'number' ? data.order : idx + 1,
+      };
+    });
+  } catch (error) {
+    console.warn('[Strapi] Could not load Careers list, using defaults:', error);
+    return DEFAULT_CAREERS;
+  }
+}
+
+export function useCareerPage() {
+  const [careerPage, setCareerPage] = useState<CareerPageConfig>(DEFAULT_CAREER_PAGE);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchCareerPage()
+      .then((data) => {
+        if (isMounted) {
+          if (data) setCareerPage(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { careerPage, isLoading };
+}
+
+export function useCareers() {
+  const [careers, setCareers] = useState<CareerRole[]>(DEFAULT_CAREERS);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    fetchCareers()
+      .then((data) => {
+        if (isMounted) {
+          if (data && data.length > 0) setCareers(data);
+          setIsLoading(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setIsLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  return { careers, isLoading };
 }

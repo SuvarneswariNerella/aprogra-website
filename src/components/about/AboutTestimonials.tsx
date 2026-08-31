@@ -22,7 +22,7 @@ export default function AboutTestimonials() {
     name: t.authorName,
     role: t.authorRole,
     company: t.authorCompany,
-    avatar: t.avatarUrl || 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200',
+    avatar: t.avatarUrl || 'https://picsum.photos/seed/524317474/1200/800',
     content: t.quote,
     rating: t.rating,
     highlight: t.highlight,

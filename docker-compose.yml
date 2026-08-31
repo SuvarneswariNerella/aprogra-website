@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  cms:
+    build:
+      context: ./backend/aprogra-cms
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      - HOST=0.0.0.0
+      - PORT=1337
+      - APP_KEYS=Tob81V/zMh2fWjD99VlBsg==,HlE+l6jF1Jz1+9xK23L0Lg==,eZ00q33uYjD+n3n344LL1g==,44Kk22lLmMnN00pPqQrRsS==
+      - API_TOKEN_SALT=salt1234567890abcdef123456
+      - ADMIN_JWT_SECRET=adminsecret1234567890abcdef1234
+      - TRANSFER_TOKEN_SALT=transfersalt1234567890abcdef12
+      - JWT_SECRET=jwtsecret1234567890abcdef123456
+      - DATABASE_CLIENT=sqlite
+      - DATABASE_FILENAME=.tmp/data.db
+    ports:
+      - "1337:1337"
+    volumes:
+      - cms_data:/opt/app/.tmp
+      - cms_uploads:/opt/app/public/uploads
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - cms
+
+volumes:
+  cms_data:
+  cms_uploads:

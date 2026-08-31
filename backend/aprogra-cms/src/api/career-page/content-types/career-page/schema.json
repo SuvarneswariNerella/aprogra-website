@@ -1,0 +1,52 @@
+{
+  "kind": "singleType",
+  "collectionName": "career_pages",
+  "info": {
+    "singularName": "career-page",
+    "pluralName": "career-pages",
+    "displayName": "Career Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "heroBadge": {
+      "type": "string",
+      "default": "Careers at Aprogra"
+    },
+    "heroHeadline": {
+      "type": "text",
+      "default": "Build the software that defines the next decade."
+    },
+    "heroDescription": {
+      "type": "text",
+      "default": "We are a tight-knit collective of systems architects, AI engineers, and product designers obsessed with craftsmanship, performance, and engineering velocity."
+    },
+    "positionsBadge": {
+      "type": "string",
+      "default": "Open Positions"
+    },
+    "positionsTitle": {
+      "type": "string",
+      "default": "Join our engineering squad"
+    },
+    "positionsDescription": {
+      "type": "text",
+      "default": "We review every submission carefully. All roles are available for high-performing remote contributors globally."
+    },
+    "cultureBadge": {
+      "type": "string",
+      "default": "Our Operating Principles"
+    },
+    "cultureTitle": {
+      "type": "string",
+      "default": "How we work together"
+    },
+    "cultureItems": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.culture-item"
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "collectionName": "components_elements_product_features",
+  "info": {
+    "displayName": "Product Feature Module",
+    "icon": "puzzle",
+    "description": "Product feature / campus module item"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "icon": {
+      "type": "string",
+      "default": "Users"
+    },
+    "tag": {
+      "type": "string"
+    },
+    "metricLabel": {
+      "type": "string"
+    },
+    "metricValue": {
+      "type": "string"
+    },
+    "highlights": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "order": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

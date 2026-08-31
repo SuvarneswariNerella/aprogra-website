@@ -20,21 +20,21 @@ const slides: Slide[] = [
   {
     id: 1,
     image:
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&q=80",
+      "https://picsum.photos/seed/925901845/1200/800",
     title: "Minimalist Design",
     description: "Clean lines and simple forms create timeless elegance.",
   },
   {
     id: 2,
     image:
-      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80",
+      "https://picsum.photos/seed/775903733/1200/800",
     title: "Modern Simplicity",
     description: "Less is more in contemporary visual language.",
   },
   {
     id: 3,
     image:
-      "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=800&q=80",
+      "https://picsum.photos/seed/5695764/1200/800",
     title: "Pure Essence",
     description: "Stripped down to the essential elements.",
   },
