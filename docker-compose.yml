@@ -36,6 +36,7 @@ services:
       - DATABASE_USERNAME=strapi
       - DATABASE_PASSWORD=strapi_secure_password_2026
       - DATABASE_SSL=false
+      - PUBLIC_URL=https://aprogra-cms-7b98bb-31-97-102-80.sslip.io
     volumes:
       - cms_uploads:/opt/app/public/uploads
     depends_on:

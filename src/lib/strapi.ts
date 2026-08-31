@@ -99,33 +99,56 @@ export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Pr
 /**
  * Resolves a full media URL for images/files stored in Strapi.
  * Supports strings, Strapi 4/5 media objects, and nested media attributes.
+ * Always resolves to relative /uploads/... in the browser so it loads through the current domain.
  */
 export function getStrapiMediaUrl(media: any): string {
   if (!media) return '';
 
-  const base = getStrapiBaseUrl() || ENV_STRAPI_URL;
-  
+  let rawUrl = '';
   if (typeof media === 'string') {
-    if (!media.trim()) return '';
-    if (media.startsWith('http://') || media.startsWith('https://') || media.startsWith('data:')) return media;
-    return `${base}${media.startsWith('/') ? media : `/${media}`}`;
+    rawUrl = media.trim();
+  } else {
+    rawUrl =
+      media.url ||
+      media.data?.attributes?.url ||
+      media.data?.url ||
+      media.attributes?.url ||
+      (Array.isArray(media) && media[0]?.url) ||
+      (Array.isArray(media?.data) && media.data[0]?.attributes?.url) ||
+      '';
   }
 
-  // Strapi 5 direct object / format
-  const url =
-    media.url ||
-    media.data?.attributes?.url ||
-    media.data?.url ||
-    media.attributes?.url ||
-    (Array.isArray(media) && media[0]?.url) ||
-    (Array.isArray(media?.data) && media.data[0]?.attributes?.url);
+  if (!rawUrl || typeof rawUrl !== 'string') return '';
 
-  if (url && typeof url === 'string') {
-    if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) return url;
-    return `${base}${url.startsWith('/') ? url : `/${url}`}`;
+  // Handle data or blob URIs
+  if (rawUrl.startsWith('data:') || rawUrl.startsWith('blob:')) {
+    return rawUrl;
   }
 
-  return '';
+  // Strip localhost:1337, 127.0.0.1:1337, or 0.0.0.0:1337 if present in media URL
+  if (
+    rawUrl.startsWith('http://localhost:1337') ||
+    rawUrl.startsWith('http://127.0.0.1:1337') ||
+    rawUrl.startsWith('http://0.0.0.0:1337')
+  ) {
+    rawUrl = rawUrl.replace(/^http:\/\/(localhost|127\.0\.0\.1|0\.0\.0\.0):1337/, '');
+  }
+
+  // If it's an external URL (e.g., Unsplash, Cloudinary, AWS S3, Picsum)
+  if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) {
+    return rawUrl;
+  }
+
+  // Ensure leading slash
+  const cleanPath = rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`;
+
+  // In the browser, return cleanPath so it loads seamlessly from the current origin (e.g. /uploads/...)
+  if (typeof window !== 'undefined') {
+    return cleanPath;
+  }
+
+  const base = ENV_STRAPI_URL && !ENV_STRAPI_URL.includes('localhost') ? ENV_STRAPI_URL : '';
+  return base ? `${base}${cleanPath}` : cleanPath;
 }
 
 // ============================================================================
