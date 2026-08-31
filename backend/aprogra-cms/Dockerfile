@@ -5,7 +5,7 @@ ENV NODE_ENV=production
 WORKDIR /opt/app
 
 COPY package*.json ./
-RUN npm config set fetch-retry-maxtimeout 600000 -g && npm ci
+RUN npm config set fetch-retry-maxtimeout 600000 -g && npm install
 
 COPY . .
 RUN npm run build
