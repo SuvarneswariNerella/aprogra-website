@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi
+      POSTGRES_PASSWORD: strapi_secure_password_2026
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U strapi -d strapi"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
   cms:
     build:
       context: ./backend/aprogra-cms
@@ -14,24 +29,27 @@ services:
       - ADMIN_JWT_SECRET=adminsecret1234567890abcdef1234
       - TRANSFER_TOKEN_SALT=transfersalt1234567890abcdef12
       - JWT_SECRET=jwtsecret1234567890abcdef123456
-      - DATABASE_CLIENT=sqlite
-      - DATABASE_FILENAME=.tmp/data.db
-    ports:
-      - "1337:1337"
+      - DATABASE_CLIENT=postgres
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_NAME=strapi
+      - DATABASE_USERNAME=strapi
+      - DATABASE_PASSWORD=strapi_secure_password_2026
+      - DATABASE_SSL=false
     volumes:
-      - cms_data:/opt/app/.tmp
       - cms_uploads:/opt/app/public/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   frontend:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
-    ports:
-      - "3001:80"
     depends_on:
       - cms
 
 volumes:
-  cms_data:
+  postgres_data:
   cms_uploads:
