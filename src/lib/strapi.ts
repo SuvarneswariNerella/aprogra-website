@@ -20,13 +20,14 @@ function getStrapiBaseUrl(): string {
       return sessionStrapiUrl.replace(/\/$/, '');
     }
 
-    // 2. If running locally on localhost/127.0.0.1 and target is localhost, use relative '' (Vite proxy)
+    // 2. If running in browser and VITE_STRAPI_API_URL is not set to an external remote host (e.g. localhost or default),
+    // always use relative '' so Nginx in production or Vite dev server proxies /api/ seamlessly
     const host = window.location.hostname;
     const isLocalHost = host === 'localhost' || host === '127.0.0.1';
     const isLocalTarget = ENV_STRAPI_URL.includes('localhost') || ENV_STRAPI_URL.includes('127.0.0.1');
 
-    if (isLocalHost && isLocalTarget) {
-      return ''; // -> fetch('/api/...') via Vite proxy
+    if (isLocalHost || isLocalTarget) {
+      return ''; // -> fetch('/api/...') via Nginx in prod or Vite proxy in dev
     }
   }
   return ENV_STRAPI_URL;
