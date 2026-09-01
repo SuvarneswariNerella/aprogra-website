@@ -1,0 +1,30 @@
+{
+  "collectionName": "components_elements_erp_screenshots",
+  "info": {
+    "displayName": "ERP Screenshot",
+    "icon": "picture",
+    "description": "A screenshot showcase for the ERP"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "category": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    }
+  }
+}

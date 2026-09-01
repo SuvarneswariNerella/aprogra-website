@@ -1,0 +1,160 @@
+{
+  "kind": "singleType",
+  "collectionName": "omnichat_pages",
+  "info": {
+    "singularName": "omnichat-page",
+    "pluralName": "omnichat-pages",
+    "displayName": "OmniChat Page",
+    "description": "Content for the OmniChat Multichannel AI Platform Product Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "heroBadge": {
+      "type": "string",
+      "required": true
+    },
+    "heroTitle": {
+      "type": "text",
+      "required": true
+    },
+    "heroHighlight": {
+      "type": "string"
+    },
+    "heroDescription": {
+      "type": "text",
+      "required": true
+    },
+    "primaryButtonText": {
+      "type": "string"
+    },
+    "primaryButtonLink": {
+      "type": "string"
+    },
+    "secondaryButtonText": {
+      "type": "string"
+    },
+    "secondaryButtonLink": {
+      "type": "string"
+    },
+    "heroMetrics": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.erp-metric"
+    },
+    "channelsBadge": {
+      "type": "string"
+    },
+    "channelsTitle": {
+      "type": "string"
+    },
+    "channelsDescription": {
+      "type": "text"
+    },
+    "channels": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.omnichat-channel"
+    },
+    "automationBadge": {
+      "type": "string"
+    },
+    "automationTitle": {
+      "type": "string"
+    },
+    "automationDescription": {
+      "type": "text"
+    },
+    "automationNodes": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.omnichat-feature-card"
+    },
+    "aiBadge": {
+      "type": "string"
+    },
+    "aiTitle": {
+      "type": "string"
+    },
+    "aiDescription": {
+      "type": "text"
+    },
+    "aiCapabilities": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.omnichat-feature-card"
+    },
+    "pricingBadge": {
+      "type": "string"
+    },
+    "pricingTitle": {
+      "type": "string"
+    },
+    "pricingDescription": {
+      "type": "text"
+    },
+    "pricingTiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.erp-pricing-tier"
+    },
+    "faqsBadge": {
+      "type": "string"
+    },
+    "faqsTitle": {
+      "type": "string"
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.about-faq-item"
+    },
+    "contactCtaBadge": {
+      "type": "string"
+    },
+    "contactCtaTitle": {
+      "type": "string"
+    },
+    "contactCtaHighlight": {
+      "type": "string"
+    },
+    "contactCtaDescription": {
+      "type": "text"
+    },
+    "contactFormTitle": {
+      "type": "string"
+    },
+    "contactFormSubtitle": {
+      "type": "string"
+    },
+    "contactFormStatus": {
+      "type": "string"
+    },
+    "contactEmail": {
+      "type": "string"
+    },
+    "contactPhone": {
+      "type": "string"
+    },
+    "contactPhoneHours": {
+      "type": "string"
+    },
+    "contactAddress": {
+      "type": "string"
+    },
+    "contactCity": {
+      "type": "string"
+    },
+    "contactPresenceBadge": {
+      "type": "string"
+    },
+    "contactPresenceTitle": {
+      "type": "string"
+    },
+    "contactPresenceDescription": {
+      "type": "text"
+    }
+  }
+}

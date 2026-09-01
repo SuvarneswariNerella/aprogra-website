@@ -1510,35 +1510,378 @@ export default {
       }
       strapi.log.info('[Bootstrap] Initialized default Careers if missing in Strapi.');
 
-      // Auto-configure Public Role permissions for products-page, product, career-page & career
+      // --- NEW SCHOOL ERP PAGE SEEDING ---
+      const schoolErpCount = await strapiAny.documents('api::school-erp-page.school-erp-page').count();
+      let shouldSeedData = false;
+
+      if (schoolErpCount === 0) {
+        shouldSeedData = true;
+      }
+
+      if (shouldSeedData) {
+        const dataPayload = {
+            heroBadge: 'SmartSchool ERP · Unified Campus OS',
+            heroTitle: 'The Complete Multi-Tenant Operating System for Modern Schools & Daycares.',
+            heroHighlight: 'Modern Schools & Daycares.',
+            heroDescription: 'Digitize every campus touchpoint — admissions CRM, attendance automation, fee collections, live GPS transport tracking, daycare logs, and AI-powered Saraswati lesson planning in one unified platform.',
+            primaryButtonText: 'Request Campus Demo',
+            primaryButtonLink: '/contact',
+            secondaryButtonText: 'Explore 11 Core Modules',
+            secondaryButtonLink: '#module-breakdown',
+            heroMetrics: [
+              { value: '480+', label: 'Campus Screens', isPrimary: false },
+              { value: '120K+', label: 'Active Students', isPrimary: true },
+              { value: '99.9%', label: 'Uptime SLA', isPrimary: false },
+              { value: '60+', label: 'Institutions', isPrimary: false }
+            ],
+            modulesBadge: 'Comprehensive Feature Architecture',
+            modulesTitle: '8 Specialized Modules for Every Department',
+            modulesDescription: 'Click through the modules below to explore how SmartSchool ERP transforms every aspect of campus management.',
+            modules: [
+              { title: 'Academics & Exams', description: 'Digitize timetable allocation, syllabus progress tracking, digital report card generation, and online examination workflows.', icon: 'BookOpen', tag: 'Core Academic Engine', metricLabel: 'Report Card Generation', metricValue: '100% Automated', highlights: 'Interactive Timetable Generator: Auto-resolve teacher clashes and room capacity constraints instantly.\nSyllabus & Lesson Progress Tracker: Real-time visibility into curriculum completion across classes and branches.\nDigital Exam & Grading Matrix: Supports CBSE, ICSE, IB, and custom weighted grading standards.\nOnline Assessment & Quiz Portal: Students submit assignments and take timed online quizzes via web or app.' },
+              { title: 'Admissions CRM', description: 'Streamline prospective student inquiries, online application forms, document verification, interview scheduling, and fee deposits.', icon: 'Users', tag: 'Student Acquisition', metricLabel: 'Higher Lead Conversion', metricValue: '+38%', highlights: 'Multi-Channel Lead Capture: Auto-ingest inquiries from website forms, social campaigns, and walk-ins.\nDigital Document Verification: Parents upload birth certificates and past transcripts securely.\nAutomated Interview Scheduling: Parents pick interview time slots with instant SMS/WhatsApp reminders.\nDirect Deposit Gateway: Collect application and seat reservation fees online immediately.' },
+              { title: 'Attendance & Tracking', description: 'Real-time student and staff attendance monitoring with instant parent notification triggers for absentees.', icon: 'UserCheck', tag: 'Campus Security', metricLabel: 'Parent Absence Alert Speed', metricValue: '< 2 Sec', highlights: 'Biometric & RFID Turnstile Sync: Automated gate check-in logs hardware data directly to cloud servers.\nTeacher One-Tap App Attendance: Classroom teachers log daily attendance in seconds from mobile devices.\nAutomated SMS / WhatsApp Alerts: Instant automated notification sent to parents if a student is marked absent.\nStaff Leave & Shift Management: Track teacher leaves, substitute allocations, and monthly attendance logs.' },
+              { title: 'Fees & Online Payments', description: 'Eliminate manual ledger errors with recurring fee structures, online payment gateway integrations, and instant digital receipts.', icon: 'CreditCard', tag: 'Financial Operations', metricLabel: 'On-Time Fee Collections', metricValue: '99.4%', highlights: 'Customizable Fee Structures: Support installment plans, sibling discounts, and late payment penalties.\nIntegrated Payment Gateway: Collect fees via Credit Card, Debit, UPI, NetBanking, and Stripe.\nAutomated Digital Receipts: Parents instantly receive official PDF fee receipts via email & app.\nDefaulter Tracking & Reminders: Automated scheduled payment reminder broadcasts prior to due dates.' },
+              { title: 'Live GPS Transport', description: 'Live GPS vehicle tracking for parents and transport managers, with speed alerts and geo-fenced arrival notifications.', icon: 'Bus', tag: 'Fleet Telemetry', metricLabel: 'Fleet GPS Visibility', metricValue: '100% Live', highlights: 'Parent Live Bus Radar App: Parents view real-time vehicle movement on map as the bus approaches.\nDriver Mobile Assistant: Driver receives route stop lists and student boarding/drop checklists.\nGeo-Fence Proximity Alerts: Automated alert sent 5 minutes before bus arrives at student stop.\nSpeeding & Delay Warnings: Transport manager receives instant alerts for over-speeding or delays.' },
+              { title: 'HR & Staff Payroll', description: 'Manage employee profiles, leave applications, monthly salary slip calculation, tax deductions, and performance reviews.', icon: 'Building2', tag: 'Staff Operations', metricLabel: 'Automated Payroll Engine', metricValue: 'Zero Error', highlights: 'One-Click Monthly Payroll: Automatically compute salary based on attendance, allowances, and taxes.\nEmployee Self-Service Portal: Staff apply for leaves, view payslips, and check PF balances directly.\nRole-Based Granular Security: Control precise viewing and editing permissions across departments.\nPerformance & Training Logs: Maintain annual staff appraisal records and professional certification histories.' },
+              { title: 'Daycare & Early Childhood', description: 'Specialized early childhood care module for meal tracking, nap logs, diaper changes, photo moments, and authorized pickup passes.', icon: 'HeartHandshake', tag: 'Childcare Management', metricLabel: 'Parent Satisfaction Score', metricValue: '4.9★', highlights: 'Real-Time Activity Timeline: Caregivers post meal consumption, sleep times, and potty activities.\nMedia Moments Gallery: Share high-resolution daily activity photos and videos securely with parents.\nAuthorized Pickup Passcode: QR code verification system to ensure children leave only with approved guardians.\nInfant Health & Feeding Tracker: Log bottle times, medication schedules, and temperature checks.' },
+              { title: 'Saraswati AI Assistant', description: 'Built-in Gemini 1.5 powered AI assistant helping teachers craft lesson plans, generate quizzes, and answer parent policy queries.', icon: 'Bot', tag: 'Generative AI', metricLabel: 'Lesson Plan Creation', metricValue: '10x Faster', highlights: 'Instant Lesson Plan Generation: Input topic and grade level to generate structured pedagogical plans in seconds.\nCustom Quiz & Question Bank Engine: Create multiple-choice and descriptive questions tailored to curriculum.\nCampus Policy Q&A Bot: Instant answers for parents and staff regarding fee rules, leaves, and dress codes.\nMulti-Lingual Translation: Translates school notices and reports into 15+ regional languages automatically.' }
+            ],
+            screenshotsBadge: 'Interface Showcase',
+            screenshotsTitle: 'Designed for Speed & Clarity',
+            screenshotsDescription: 'Explore actual operational screens from the SmartSchool ERP ecosystem.',
+            screenshots: [
+              { title: 'Super Admin Operational Hub', category: 'Admin Portal', description: 'Real-time telemetry showing total campus attendance, fee collections, route updates, and staff status.' },
+              { title: 'Parent & Student Native Mobile App', category: 'Mobile App', description: 'Clean iOS/Android interface for parents to view marks, pay fees via UPI/Credit Card, and chat with teachers.' },
+              { title: 'Live GPS Bus Tracking Radar', category: 'Transport App', description: 'Map display tracking bus route velocity, stop arrival predictions, and automated speed alerts.' },
+              { title: 'Daycare Daily Moments & Activity Feed', category: 'Daycare Module', description: 'Activity timeline for infant care, meal consumption metrics, nap duration logs, and photo updates.' },
+              { title: 'Saraswati AI Teacher Workspace', category: 'AI Suite', description: 'AI studio interface where educators generate lesson plans, unit tests, and personalized remedial notes.' }
+            ],
+            pricingBadge: 'Flexible Subscriptions',
+            pricingTitle: 'Simple, Transparent Pricing',
+            pricingDescription: 'Choose the plan that fits your campus size. All plans include automated cloud updates and SSL encryption.',
+            pricingTiers: [
+              { name: 'Starter School', price: '$299', period: '/ month', tagline: 'Ideal for single campuses up to 500 students.', badge: 'Single Campus', isPopular: false, cta: 'Get Started Starter', features: [{label:'Up to 500 Active Students'},{label:'Admissions CRM & Student Records'},{label:'Student & Staff Attendance Module'},{label:'Fees & Online Payment Gateway'},{label:'Parent & Student Mobile Apps'},{label:'Standard Email & Ticket Support'},{label:'99.5% Uptime SLA Guarantee'}] },
+              { name: 'Professional Campus', price: '$699', period: '/ month', tagline: 'Comprehensive suite for growing institutions up to 2,500 students.', badge: 'Most Popular Choice', isPopular: true, cta: 'Request Demo & Quote', features: [{label:'Up to 2,500 Active Students'},{label:'All Starter School Features'},{label:'Live GPS Bus Tracking & Driver App'},{label:'Daycare & Early Childhood Module'},{label:'Saraswati AI Lesson Plan Assistant'},{label:'Exams, Grading & Digital Report Cards'},{label:'Payroll & HR Operations Module'},{label:'24/7 Priority Phone & WhatsApp Support'}] },
+              { name: 'Enterprise Network', price: 'Custom', period: '', tagline: 'Designed for multi-branch school groups & daycare chains.', badge: 'Multi-Branch Group', isPopular: false, cta: 'Contact Enterprise Sales', features: [{label:'Unlimited Students & Multi-Branches'},{label:'All Professional Features Included'},{label:'Dedicated Isolated Cloud Instance'},{label:'White-Label Custom Branded Mobile Apps'},{label:'Custom API Integrations & Webhooks'},{label:'Dedicated Account Manager & SLA'},{label:'On-Site Staff Training & Data Migration'}] }
+            ],
+            faqsBadge: 'Got Questions?',
+            faqsTitle: 'Frequently Asked Questions',
+            faqsDescription: 'Everything you need to know about implementation, deployment, and security.',
+            faqs: [
+              { question: 'How long does campus onboarding and data migration take?', answer: 'Our dedicated migration team can ingest student records, past fee ledgers, and staff profiles within 3 to 5 business days. We provide complete Excel/CSV data importing tools and run parallel validation to guarantee 100% accuracy.' },
+              { question: 'Are the parent and teacher mobile apps available on iOS and Android?', answer: 'Yes! SmartSchool ERP includes native iOS and Android mobile apps for parents, students, teachers, transport drivers, and daycare caregivers. For Enterprise plans, we can also publish white-label apps under your school’s own App Store developer account.' },
+              { question: 'Is student and financial data isolated and secure?', answer: 'Security is paramount. SmartSchool ERP utilizes multi-tenant schema isolation, 256-bit AES encryption at rest, and TLS 1.3 in transit. Data is hosted in SOC2 Type II certified Cloud Run and PostgreSQL environments with automated daily backups.' },
+              { question: 'How does Saraswati AI Assistant help our teaching staff?', answer: 'Saraswati AI allows educators to type a topic (e.g., "Photosynthesis for Grade 7") and generates structured 45-minute lesson plans, recommended homework assignments, and multiple-choice quizzes in under 10 seconds, saving teachers up to 15 hours per week.' },
+              { question: 'Can we customize fee structures and grading rules for our school board?', answer: 'Absolutely. The platform supports complex CBSE, ICSE, IB, Cambridge, and custom state board grading frameworks. Fee engines accommodate installment schedules, sibling discounts, scholarship deductions, and custom late fine logic.' }
+            ],
+            contactCtaBadge: 'START YOUR NEXT PROJECT',
+            contactCtaTitle: "Let's Build Something Extraordinary Together.",
+            contactCtaHighlight: 'Extraordinary Together.',
+            contactCtaDescription: 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.',
+            contactFormTitle: 'Send Us a Message',
+            contactFormSubtitle: "Fill out the details below and we'll reply within 24 hours.",
+            contactFormStatus: 'Available for New Projects',
+            contactEmail: 'hello@aprogra.com',
+            contactPhone: '+1 (800) 555-0199',
+            contactPhoneHours: 'Mon – Fri, 9:00 AM – 7:00 PM EST',
+            contactAddress: '500 Howard St, Suite 400',
+            contactCity: 'San Francisco, CA 94105',
+            contactPresenceBadge: 'Global Presence',
+            contactPresenceTitle: 'Engineering Across Global Time Zones',
+            contactPresenceDescription: 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'
+        };
+
+        await strapiAny.documents('api::school-erp-page.school-erp-page').create({
+          data: dataPayload,
+          status: 'published'
+        });
+        strapi.log.info('[Bootstrap] Seeded default School ERP Page content.');
+      }
+      // ------------------------------------
+
+      // --- NEW OMNICHAT PAGE SEEDING ---
+      const omnichatCount = await strapiAny.documents('api::omnichat-page.omnichat-page').count();
+      if (omnichatCount === 0) {
+        const omnichatPayload = {
+          heroBadge: 'OmniChat · Multichannel AI Platform',
+          heroTitle: 'Multichannel Messaging & Automation, Powered by the WhatsApp Business API.',
+          heroHighlight: 'the WhatsApp Business API.',
+          heroDescription: 'Unify WhatsApp, Instagram DMs, Messenger, and Telegram into one shared inbox equipped with visual no-code flowcharts and autonomous Gemini AI conversational agents.',
+          primaryButtonText: 'Book OmniChat Demo',
+          primaryButtonLink: '/contact',
+          secondaryButtonText: 'Explore 4 Channels',
+          secondaryButtonLink: '#channels-breakdown',
+          heroMetrics: [
+            { value: '4', label: 'Connected Channels', isPrimary: true },
+            { value: '60%', label: 'Faster Support', isPrimary: false },
+            { value: '1.2M+', label: 'Monthly Messages', isPrimary: false },
+            { value: '24/7', label: 'AI Response SLA', isPrimary: false }
+          ],
+          channelsBadge: 'Multi-Channel Connectivity',
+          channelsTitle: 'One Inbox. All Customer Touchpoints.',
+          channelsDescription: 'Switch between channels below to view native messaging capabilities.',
+          channels: [
+            {
+              channelId: 'whatsapp',
+              name: 'WhatsApp Business API',
+              badge: 'Official Meta Partner',
+              icon: 'MessageCircle',
+              tagline: 'Direct WhatsApp Marketing & Support at Scale',
+              description: 'Broadcast promotional templates, send automated transactional order updates, and run AI customer support via official WhatsApp API.',
+              metric: '98% Open Rate',
+              metricLabel: 'Average WhatsApp Message Engagement',
+              features: [
+                { label: 'Official Green Tick Badge Verification' },
+                { label: 'In-App Meta Template Submission & Approval' },
+                { label: 'Interactive Quick-Reply & CTA Button Messages' },
+                { label: '24-Hour Session Messaging Window Compliance' }
+              ]
+            },
+            {
+              channelId: 'instagram',
+              name: 'Instagram DMs & Comments',
+              badge: 'Meta Graph API',
+              icon: 'Sparkles',
+              tagline: 'Turn Comments & Story Mentions into Direct Revenue',
+              description: 'Auto-reply to Instagram post comments and trigger immediate private DMs with discount codes or product links.',
+              metric: '3.8x More DMs',
+              metricLabel: 'Converted from Post Comments',
+              features: [
+                { label: 'Comment-to-DM Instant Automated Triggers' },
+                { label: 'Story Mention Recognition & Automated Thank-You' },
+                { label: 'Influencer Campaign Inbound Routing' },
+                { label: 'Product Catalog Link Integration in DMs' }
+              ]
+            },
+            {
+              channelId: 'messenger',
+              name: 'Facebook Messenger',
+              badge: 'Meta Page Sync',
+              icon: 'MessageSquare',
+              tagline: 'Instant Lead Qualification from Facebook Ads',
+              description: 'Capture inbound leads directly from Facebook Lead Ads or page messaging with zero response delay.',
+              metric: '< 10 Sec',
+              metricLabel: 'First Response Time',
+              features: [
+                { label: 'Facebook Lead Ads Instant Form Capture' },
+                { label: 'Shared Team Inbox across Multiple Pages' },
+                { label: 'Automated FAQ & Menu Cards' },
+                { label: 'Seamless Live Agent Handover' }
+              ]
+            },
+            {
+              channelId: 'telegram',
+              name: 'Telegram Bot API',
+              badge: 'Unlimited Broadcasts',
+              icon: 'Send',
+              tagline: 'High-Volume Community & Channel Broadcasting',
+              description: 'Manage Telegram channels and groups with automated subscription bots, broadcasts, and file sharing.',
+              metric: 'Unlimited',
+              metricLabel: 'Broadcast Subscriber Capacity',
+              features: [
+                { label: 'High-Speed Broadcast Messages to Channels' },
+                { label: 'Automated Member Onboarding & Verification' },
+                { label: 'File, Media & Document Delivery Bots' },
+                { label: 'Command-Based Custom Bot Logic' }
+              ]
+            }
+          ],
+          automationBadge: 'No-Code Engine',
+          automationTitle: 'Visual Automation Flowchart Builder',
+          automationDescription: 'Map complex user journeys, conditional decision trees, and CRM webhooks on a drag-and-drop visual canvas.',
+          automationNodes: [
+            { icon: 'Workflow', title: 'Visual Flowchart Canvas', description: 'Drag-and-drop node builder to map complex customer journeys without writing a single line of code.' },
+            { icon: 'Zap', title: 'Conditional Branching', description: 'Route conversations based on user keywords, past purchase history, or customer tag attributes.' },
+            { icon: 'Share2', title: 'API Webhooks & Zapier', description: 'Trigger external CRM actions (Shopify, HubSpot, Salesforce) directly from chat interaction nodes.' },
+            { icon: 'Clock', title: 'Smart Delay & Drip Sequences', description: 'Schedule follow-up messages after 1 hour, 24 hours, or 3 days to re-engage warm prospects.' }
+          ],
+          aiBadge: 'Autonomous Intelligence',
+          aiTitle: 'AI Conversational Intelligence',
+          aiDescription: 'Powered by Gemini 1.5 LLM vector embeddings to resolve up to 80% of routine customer support inquiries automatically.',
+          aiCapabilities: [
+            { icon: 'Bot', title: 'Autonomous Gemini 1.5 LLM Engine', description: 'Trained on your company knowledge base, documentation, and product catalogs to answer complex queries.' },
+            { icon: 'Headphones', title: 'Seamless Human Handover', description: 'When AI detects high lead sentiment or complex issues, it seamlessly alerts and transfers to human agents.' },
+            { icon: 'UserCheck', title: 'Automated Lead Qualification', description: 'AI gathers customer name, email, budget, and requirements before scheduling a calendar call.' },
+            { icon: 'PhoneCall', title: 'AI Voice & Chat Answering', description: 'Intelligent fallback system handling both written chats and voice calls around the clock.' }
+          ],
+          pricingBadge: 'Subscription Plans',
+          pricingTitle: 'Simple, Predictable Pricing',
+          pricingDescription: 'Choose the plan that matches your monthly active contact volume.',
+          pricingTiers: [
+            {
+              name: 'Starter Inbox',
+              price: '$149',
+              period: '/ month',
+              tagline: 'For growing brands looking to automate WhatsApp & Instagram.',
+              badge: 'Single Brand',
+              isPopular: false,
+              cta: 'Get Started Starter',
+              features: [
+                { label: 'Up to 5,000 Monthly Active Contacts' },
+                { label: '2 Connected Channels (WhatsApp & Instagram)' },
+                { label: 'Shared Team Inbox for 3 Agent Seats' },
+                { label: 'No-Code Automation Builder' },
+                { label: 'Meta Template Submission Engine' },
+                { label: 'Standard Email & Chat Support' }
+              ]
+            },
+            {
+              name: 'Growth Automation',
+              price: '$399',
+              period: '/ month',
+              tagline: 'Comprehensive suite for scaling retail & e-commerce operations.',
+              badge: 'Most Popular Choice',
+              isPopular: true,
+              cta: 'Request Demo & Quote',
+              features: [
+                { label: 'Up to 25,000 Monthly Active Contacts' },
+                { label: 'All 4 Connected Channels Included' },
+                { label: 'Shared Team Inbox for 10 Agent Seats' },
+                { label: 'Autonomous Gemini AI Chatbot Integration' },
+                { label: 'Instagram Comment-to-DM Automation' },
+                { label: 'Shopify & CRM API Webhooks' },
+                { label: '24/7 Priority WhatsApp Support' }
+              ]
+            },
+            {
+              name: 'Enterprise Scale',
+              price: 'Custom',
+              period: '',
+              tagline: 'Custom high-volume broadcasting & dedicated throughput.',
+              badge: 'Enterprise Volume',
+              isPopular: false,
+              cta: 'Contact Enterprise Sales',
+              features: [
+                { label: 'Unlimited Monthly Active Contacts' },
+                { label: 'Unlimited Agent Seats & Department Queues' },
+                { label: 'Dedicated WhatsApp API High-Throughput Node' },
+                { label: 'Custom LLM Fine-Tuning & Knowledge Base' },
+                { label: 'Dedicated Account Manager & 99.9% SLA' },
+                { label: 'Custom On-Premise / Isolated Cloud Deploy' }
+              ]
+            }
+          ],
+          faqsBadge: 'Got Questions?',
+          faqsTitle: 'Frequently Asked Questions',
+          faqs: [
+            { question: 'How long does Meta WhatsApp Business API approval take?', answer: 'With OmniChat, official Meta WhatsApp Business API approval typically takes between 24 and 48 hours. We handle business verification assistance, phone number porting, and Meta display name guidelines directly.' },
+            { question: 'How do we train the AI chatbot on our company data?', answer: 'Simply paste your website URL, upload PDF product manuals, or sync your Notion/Google Drive knowledge base. OmniChat automatically indexes your documents using vector embeddings and starts answering customer questions immediately.' },
+            { question: 'Can human support agents intervene during an AI conversation?', answer: 'Yes! Human agents can monitor live AI conversations in the shared inbox and jump in at any time with a single click. The AI immediately pauses and hands over complete control to the agent.' },
+            { question: 'How does Instagram Comment-to-DM automation work?', answer: 'When a user leaves a comment on your Instagram post containing trigger keywords (e.g., "PRICE", "DEMO", "INFO"), OmniChat instantly posts a public reply and sends a direct private message to that user with your link.' },
+            { question: 'Can we migrate our existing WhatsApp Business number to OmniChat?', answer: 'Yes. You can migrate your existing phone number to the official WhatsApp Business Cloud API. Our onboarding specialists assist with OTP verification to ensure zero downtime during transfer.' }
+          ],
+          contactCtaBadge: 'START YOUR NEXT PROJECT',
+          contactCtaTitle: "Let's Build Something Extraordinary Together.",
+          contactCtaHighlight: 'Extraordinary Together.',
+          contactCtaDescription: 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.',
+          contactFormTitle: 'Send Us a Message',
+          contactFormSubtitle: "Fill out the details below and we'll reply within 24 hours.",
+          contactFormStatus: 'Available for New Projects',
+          contactEmail: 'hello@aprogra.com',
+          contactPhone: '+1 (800) 555-0199',
+          contactPhoneHours: 'Mon – Fri, 9:00 AM – 7:00 PM EST',
+          contactAddress: '500 Howard St, Suite 400',
+          contactCity: 'San Francisco, CA 94105',
+          contactPresenceBadge: 'Global Presence',
+          contactPresenceTitle: 'Engineering Across Global Time Zones',
+          contactPresenceDescription: 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'
+        };
+
+        await strapiAny.documents('api::omnichat-page.omnichat-page').create({
+          data: omnichatPayload,
+          status: 'published'
+        });
+        strapi.log.info('[Bootstrap] Seeded default OmniChat Page content.');
+      }
+
+      // Update existing omnichat-page if contact fields are missing
+      const existingOmnichat = (await strapiAny.documents('api::omnichat-page.omnichat-page').findFirst({ status: 'draft' })) || (await strapiAny.documents('api::omnichat-page.omnichat-page').findFirst({ status: 'published' }));
+      if (existingOmnichat && !existingOmnichat.contactCtaBadge) {
+        await strapiAny.documents('api::omnichat-page.omnichat-page').update({
+          documentId: existingOmnichat.documentId,
+          data: {
+            contactCtaBadge: 'START YOUR NEXT PROJECT',
+            contactCtaTitle: "Let's Build Something Extraordinary Together.",
+            contactCtaHighlight: 'Extraordinary Together.',
+            contactCtaDescription: 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.',
+            contactFormTitle: 'Send Us a Message',
+            contactFormSubtitle: "Fill out the details below and we'll reply within 24 hours.",
+            contactFormStatus: 'Available for New Projects',
+            contactEmail: 'hello@aprogra.com',
+            contactPhone: '+1 (800) 555-0199',
+            contactPhoneHours: 'Mon – Fri, 9:00 AM – 7:00 PM EST',
+            contactAddress: '500 Howard St, Suite 400',
+            contactCity: 'San Francisco, CA 94105',
+            contactPresenceBadge: 'Global Presence',
+            contactPresenceTitle: 'Engineering Across Global Time Zones',
+            contactPresenceDescription: 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'
+          }
+        });
+        strapi.log.info('[Bootstrap] Updated existing OmniChat Page with contact CTA fields.');
+      }
+
+      // Update existing school-erp-page if contact fields are missing
+      const existingSchoolErp = (await strapiAny.documents('api::school-erp-page.school-erp-page').findFirst({ status: 'draft' })) || (await strapiAny.documents('api::school-erp-page.school-erp-page').findFirst({ status: 'published' }));
+      if (existingSchoolErp && !existingSchoolErp.contactCtaBadge) {
+        await strapiAny.documents('api::school-erp-page.school-erp-page').update({
+          documentId: existingSchoolErp.documentId,
+          data: {
+            contactCtaBadge: 'START YOUR NEXT PROJECT',
+            contactCtaTitle: "Let's Build Something Extraordinary Together.",
+            contactCtaHighlight: 'Extraordinary Together.',
+            contactCtaDescription: 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.',
+            contactFormTitle: 'Send Us a Message',
+            contactFormSubtitle: "Fill out the details below and we'll reply within 24 hours.",
+            contactFormStatus: 'Available for New Projects',
+            contactEmail: 'hello@aprogra.com',
+            contactPhone: '+1 (800) 555-0199',
+            contactPhoneHours: 'Mon – Fri, 9:00 AM – 7:00 PM EST',
+            contactAddress: '500 Howard St, Suite 400',
+            contactCity: 'San Francisco, CA 94105',
+            contactPresenceBadge: 'Global Presence',
+            contactPresenceTitle: 'Engineering Across Global Time Zones',
+            contactPresenceDescription: 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'
+          }
+        });
+        strapi.log.info('[Bootstrap] Updated existing School ERP Page with contact CTA fields.');
+      }
+      // ------------------------------------
+
+      // Auto-configure Public Role permissions for products-page, product, career-page, career, school-erp-page & omnichat-page
       try {
         const publicRole = await strapiAny.query('plugin::users-permissions.role').findOne({
           where: { type: 'public' },
-          populate: ['permissions'],
         });
 
         if (publicRole) {
+          const existingPerms = await strapiAny.query('plugin::users-permissions.permission').findMany({
+            where: { role: publicRole.id },
+          });
+
           const requiredPermissions = [
-            { action: 'api::products-page.products-page.find' },
-            { action: 'api::product.product.find' },
-            { action: 'api::product.product.findOne' },
-            { action: 'api::career-page.career-page.find' },
-            { action: 'api::career.career.find' },
-            { action: 'api::career.career.findOne' },
+            'api::products-page.products-page.find',
+            'api::product.product.find',
+            'api::product.product.findOne',
+            'api::career-page.career-page.find',
+            'api::career.career.find',
+            'api::career.career.findOne',
+            'api::school-erp-page.school-erp-page.find',
+            'api::omnichat-page.omnichat-page.find',
           ];
 
-          for (const perm of requiredPermissions) {
-            const hasPerm = publicRole.permissions?.some((p: any) => p.action === perm.action);
+          for (const action of requiredPermissions) {
+            const hasPerm = existingPerms?.some((p: any) => p.action === action);
             if (!hasPerm) {
               await strapiAny.query('plugin::users-permissions.permission').create({
                 data: {
-                  action: perm.action,
+                  action: action,
                   role: publicRole.id,
                 },
               });
             }
           }
-          strapi.log.info('[Bootstrap] Configured Public permissions for products-page, product, career-page, and career.');
+          strapi.log.info('[Bootstrap] Configured Public permissions for products-page, product, career-page, career, school-erp-page, and omnichat-page.');
         }
       } catch (permErr) {
         strapi.log.warn('[Bootstrap] Public permissions auto-config notice:', permErr);

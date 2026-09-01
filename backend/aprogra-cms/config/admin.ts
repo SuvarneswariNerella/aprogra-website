@@ -20,6 +20,17 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
     promoteEE: env.bool('FLAG_PROMOTE_EE', true),
     docLinks: env.bool('FLAG_DOC_LINKS', true),
   },
+  preview: {
+    enabled: true,
+    config: {
+      allowedOrigins: [env('CLIENT_URL', 'http://localhost:3000')],
+      async handler(uid, { documentId, locale, status }) {
+        const clientUrl = env('CLIENT_URL', 'http://localhost:3000');
+        const secret = env('PREVIEW_SECRET', 'my-super-secret-key');
+        return `${clientUrl}/preview?secret=${secret}&uid=${uid}&documentId=${documentId}&status=${status}`;
+      },
+    },
+  },
 });
 
 export default config;

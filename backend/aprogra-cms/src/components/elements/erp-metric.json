@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_erp_metrics",
+  "info": {
+    "displayName": "ERP Metric",
+    "icon": "chartCircle",
+    "description": "A single metric/stat for the School ERP hero section"
+  },
+  "options": {},
+  "attributes": {
+    "value": {
+      "type": "string",
+      "required": true
+    },
+    "label": {
+      "type": "string",
+      "required": true
+    },
+    "isPrimary": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

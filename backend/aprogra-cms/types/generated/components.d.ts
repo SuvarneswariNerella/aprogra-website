@@ -66,6 +66,54 @@ export interface ElementsDeliverableItem extends Struct.ComponentSchema {
   };
 }
 
+export interface ElementsErpMetric extends Struct.ComponentSchema {
+  collectionName: 'components_elements_erp_metrics';
+  info: {
+    description: 'A single metric/stat for the School ERP hero section';
+    displayName: 'ERP Metric';
+    icon: 'chartCircle';
+  };
+  attributes: {
+    isPrimary: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    label: Schema.Attribute.String & Schema.Attribute.Required;
+    value: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ElementsErpPricingTier extends Struct.ComponentSchema {
+  collectionName: 'components_elements_erp_pricing_tiers';
+  info: {
+    description: 'A pricing tier card for the ERP';
+    displayName: 'ERP Pricing Tier';
+    icon: 'priceTag';
+  };
+  attributes: {
+    badge: Schema.Attribute.String;
+    cta: Schema.Attribute.String;
+    features: Schema.Attribute.Component<'elements.option-item', true>;
+    isPopular: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    period: Schema.Attribute.String & Schema.Attribute.Required;
+    price: Schema.Attribute.String & Schema.Attribute.Required;
+    tagline: Schema.Attribute.String;
+  };
+}
+
+export interface ElementsErpScreenshot extends Struct.ComponentSchema {
+  collectionName: 'components_elements_erp_screenshots';
+  info: {
+    description: 'A screenshot showcase for the ERP';
+    displayName: 'ERP Screenshot';
+    icon: 'picture';
+  };
+  attributes: {
+    category: Schema.Attribute.String & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
+    image: Schema.Attribute.Media<'images'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
 export interface ElementsFooterColumn extends Struct.ComponentSchema {
   collectionName: 'components_elements_footer_columns';
   info: {
@@ -244,6 +292,40 @@ export interface ElementsNavLink extends Struct.ComponentSchema {
     label: Schema.Attribute.String & Schema.Attribute.Required;
     order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<1>;
     url: Schema.Attribute.String & Schema.Attribute.Required;
+  };
+}
+
+export interface ElementsOmnichatChannel extends Struct.ComponentSchema {
+  collectionName: 'components_elements_omnichat_channels';
+  info: {
+    description: 'A communication channel item for OmniChat';
+    displayName: 'OmniChat Channel';
+    icon: 'message';
+  };
+  attributes: {
+    badge: Schema.Attribute.String;
+    channelId: Schema.Attribute.String & Schema.Attribute.Required;
+    description: Schema.Attribute.Text;
+    features: Schema.Attribute.Component<'elements.option-item', true>;
+    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'MessageCircle'>;
+    metric: Schema.Attribute.String;
+    metricLabel: Schema.Attribute.String;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    tagline: Schema.Attribute.String;
+  };
+}
+
+export interface ElementsOmnichatFeatureCard extends Struct.ComponentSchema {
+  collectionName: 'components_elements_omnichat_feature_cards';
+  info: {
+    description: 'Feature card for Automation nodes and AI capabilities';
+    displayName: 'OmniChat Feature Card';
+    icon: 'apps';
+  };
+  attributes: {
+    description: Schema.Attribute.Text & Schema.Attribute.Required;
+    icon: Schema.Attribute.String & Schema.Attribute.DefaultTo<'Workflow'>;
+    title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
 
@@ -1054,6 +1136,9 @@ declare module '@strapi/strapi' {
       'elements.contact-channel': ElementsContactChannel;
       'elements.culture-item': ElementsCultureItem;
       'elements.deliverable-item': ElementsDeliverableItem;
+      'elements.erp-metric': ElementsErpMetric;
+      'elements.erp-pricing-tier': ElementsErpPricingTier;
+      'elements.erp-screenshot': ElementsErpScreenshot;
       'elements.footer-column': ElementsFooterColumn;
       'elements.footer-link': ElementsFooterLink;
       'elements.home-hero-slide': ElementsHomeHeroSlide;
@@ -1064,6 +1149,8 @@ declare module '@strapi/strapi' {
       'elements.home-story-phase': ElementsHomeStoryPhase;
       'elements.kpi-stat': ElementsKpiStat;
       'elements.nav-link': ElementsNavLink;
+      'elements.omnichat-channel': ElementsOmnichatChannel;
+      'elements.omnichat-feature-card': ElementsOmnichatFeatureCard;
       'elements.option-item': ElementsOptionItem;
       'elements.panel-highlight': ElementsPanelHighlight;
       'elements.pillar-item': ElementsPillarItem;

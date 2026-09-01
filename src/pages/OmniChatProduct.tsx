@@ -30,21 +30,50 @@ import {
 
 import Testimonials from '@/components/home/Testimonials';
 import StartProjectCta from '@/components/home/StartProjectCta';
+import { useOmniChatPage, OmniChatChannelItem, OmniChatFeatureCardItem } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
+
+const ICON_MAP: Record<string, any> = {
+  MessageCircle,
+  Sparkles,
+  MessageSquare,
+  Send,
+  Workflow,
+  Zap,
+  Share2,
+  Clock,
+  Bot,
+  Headphones,
+  UserCheck,
+  PhoneCall,
+  ShieldCheck,
+  Cpu,
+  BarChart3,
+  Layers,
+  FileText
+};
+
+const resolveIcon = (iconNameOrComponent: any, fallback: any = MessageSquare) => {
+  if (!iconNameOrComponent) return fallback;
+  if (typeof iconNameOrComponent === 'string') {
+    return ICON_MAP[iconNameOrComponent] || fallback;
+  }
+  return iconNameOrComponent;
+};
 
 // ----------------------------------------------------
 // CHANNEL DATA
 // ----------------------------------------------------
-const CHANNELS = [
+const CHANNELS: OmniChatChannelItem[] = [
   {
+    channelId: 'whatsapp',
     id: 'whatsapp',
     name: 'WhatsApp Business API',
     badge: 'Official Meta Partner',
-    icon: MessageCircle,
-    color: 'from-emerald-500 to-teal-600',
+    icon: 'MessageCircle',
     tagline: 'Direct WhatsApp Marketing & Support at Scale',
-    desc: 'Broadcast promotional templates, send automated transactional order updates, and run AI customer support via official WhatsApp API.',
+    description: 'Broadcast promotional templates, send automated transactional order updates, and run AI customer support via official WhatsApp API.',
     metric: '98% Open Rate',
     metricLabel: 'Average WhatsApp Message Engagement',
     features: [
@@ -55,13 +84,13 @@ const CHANNELS = [
     ]
   },
   {
+    channelId: 'instagram',
     id: 'instagram',
     name: 'Instagram DMs & Comments',
     badge: 'Meta Graph API',
-    icon: Sparkles,
-    color: 'from-pink-500 to-[#EC4899]',
+    icon: 'Sparkles',
     tagline: 'Turn Comments & Story Mentions into Direct Revenue',
-    desc: 'Auto-reply to Instagram post comments and trigger immediate private DMs with discount codes or product links.',
+    description: 'Auto-reply to Instagram post comments and trigger immediate private DMs with discount codes or product links.',
     metric: '3.8x More DMs',
     metricLabel: 'Converted from Post Comments',
     features: [
@@ -72,13 +101,13 @@ const CHANNELS = [
     ]
   },
   {
+    channelId: 'messenger',
     id: 'messenger',
     name: 'Facebook Messenger',
     badge: 'Meta Page Sync',
-    icon: MessageSquare,
-    color: 'from-blue-500 to-indigo-600',
+    icon: 'MessageSquare',
     tagline: 'Instant Lead Qualification from Facebook Ads',
-    desc: 'Capture inbound leads directly from Facebook Lead Ads or page messaging with zero response delay.',
+    description: 'Capture inbound leads directly from Facebook Lead Ads or page messaging with zero response delay.',
     metric: '< 10 Sec',
     metricLabel: 'First Response Time',
     features: [
@@ -89,13 +118,13 @@ const CHANNELS = [
     ]
   },
   {
+    channelId: 'telegram',
     id: 'telegram',
     name: 'Telegram Bot API',
     badge: 'Unlimited Broadcasts',
-    icon: Send,
-    color: 'from-sky-400 to-blue-500',
+    icon: 'Send',
     tagline: 'High-Volume Community & Channel Broadcasting',
-    desc: 'Manage Telegram channels and groups with automated subscription bots, broadcasts, and file sharing.',
+    description: 'Manage Telegram channels and groups with automated subscription bots, broadcasts, and file sharing.',
     metric: 'Unlimited',
     metricLabel: 'Broadcast Subscriber Capacity',
     features: [
@@ -110,52 +139,52 @@ const CHANNELS = [
 // ----------------------------------------------------
 // AUTOMATION BUILDER FEATURES
 // ----------------------------------------------------
-const AUTOMATION_NODES = [
+const AUTOMATION_NODES: OmniChatFeatureCardItem[] = [
   {
-    icon: Workflow,
+    icon: 'Workflow',
     title: 'Visual Flowchart Canvas',
-    desc: 'Drag-and-drop node builder to map complex customer journeys without writing a single line of code.'
+    description: 'Drag-and-drop node builder to map complex customer journeys without writing a single line of code.'
   },
   {
-    icon: Zap,
+    icon: 'Zap',
     title: 'Conditional Branching',
-    desc: 'Route conversations based on user keywords, past purchase history, or customer tag attributes.'
+    description: 'Route conversations based on user keywords, past purchase history, or customer tag attributes.'
   },
   {
-    icon: Share2,
+    icon: 'Share2',
     title: 'API Webhooks & Zapier',
-    desc: 'Trigger external CRM actions (Shopify, HubSpot, Salesforce) directly from chat interaction nodes.'
+    description: 'Trigger external CRM actions (Shopify, HubSpot, Salesforce) directly from chat interaction nodes.'
   },
   {
-    icon: Clock,
+    icon: 'Clock',
     title: 'Smart Delay & Drip Sequences',
-    desc: 'Schedule follow-up messages after 1 hour, 24 hours, or 3 days to re-engage warm prospects.'
+    description: 'Schedule follow-up messages after 1 hour, 24 hours, or 3 days to re-engage warm prospects.'
   }
 ];
 
 // ----------------------------------------------------
 // AI CHATBOT FEATURES
 // ----------------------------------------------------
-const AI_CAPABILITIES = [
+const AI_CAPABILITIES: OmniChatFeatureCardItem[] = [
   {
-    icon: Bot,
+    icon: 'Bot',
     title: 'Autonomous Gemini 1.5 LLM Engine',
-    desc: 'Trained on your company knowledge base, documentation, and product catalogs to answer complex queries.'
+    description: 'Trained on your company knowledge base, documentation, and product catalogs to answer complex queries.'
   },
   {
-    icon: Headphones,
+    icon: 'Headphones',
     title: 'Seamless Human Handover',
-    desc: 'When AI detects high lead sentiment or complex issues, it seamlessly alerts and transfers to human agents.'
+    description: 'When AI detects high lead sentiment or complex issues, it seamlessly alerts and transfers to human agents.'
   },
   {
-    icon: UserCheck,
+    icon: 'UserCheck',
     title: 'Automated Lead Qualification',
-    desc: 'AI gathers customer name, email, budget, and requirements before scheduling a calendar call.'
+    description: 'AI gathers customer name, email, budget, and requirements before scheduling a calendar call.'
   },
   {
-    icon: PhoneCall,
+    icon: 'PhoneCall',
     title: 'AI Voice & Chat Answering',
-    desc: 'Intelligent fallback system handling both written chats and voice calls around the clock.'
+    description: 'Intelligent fallback system handling both written chats and voice calls around the clock.'
   }
 ];
 
@@ -250,6 +279,20 @@ export default function OmniChatProduct() {
   const pageRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLDivElement>(null);
 
+  const { config } = useOmniChatPage();
+
+  const displayChannels = (config.channels && config.channels.length > 0) ? config.channels : CHANNELS;
+  const displayAutomation = (config.automationNodes && config.automationNodes.length > 0) ? config.automationNodes : AUTOMATION_NODES;
+  const displayAi = (config.aiCapabilities && config.aiCapabilities.length > 0) ? config.aiCapabilities : AI_CAPABILITIES;
+  const displayPricing = (config.pricingTiers && config.pricingTiers.length > 0) ? config.pricingTiers : PRICING_TIERS;
+  const displayFaqs = (config.faqs && config.faqs.length > 0) ? config.faqs : FAQS;
+  const displayMetrics = (config.heroMetrics && config.heroMetrics.length > 0) ? config.heroMetrics : [
+    { value: '4', label: 'Connected Channels', isPrimary: true },
+    { value: '60%', label: 'Faster Support', isPrimary: false },
+    { value: '1.2M+', label: 'Monthly Messages', isPrimary: false },
+    { value: '24/7', label: 'AI Response SLA', isPrimary: false }
+  ];
+
   const [activeChannel, setActiveChannel] = useState<string>('whatsapp');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -290,7 +333,8 @@ export default function OmniChatProduct() {
     card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
   };
 
-  const currentChannelObj = CHANNELS.find(c => c.id === activeChannel) || CHANNELS[0];
+  const currentChannelObj = displayChannels.find(c => (c.channelId || (c as any).id) === activeChannel) || displayChannels[0];
+  const CurrentChannelIcon = resolveIcon(currentChannelObj.icon, MessageCircle);
 
   return (
     <div ref={pageRef} className="w-full relative bg-[#F4F1EA] text-[#0B0D12] overflow-hidden">
@@ -306,55 +350,47 @@ export default function OmniChatProduct() {
           
           <div className="omni-hero-anim inline-flex items-center gap-2 px-3.5 py-1.5 rounded border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-badge">
             <MessageSquare className="w-4 h-4 text-[#FF4A1C]" />
-            <span>OmniChat · Multichannel AI Platform</span>
+            <span>{config.heroBadge}</span>
           </div>
 
           <h1 className="omni-hero-anim text-h1 text-[#0B0D12] max-w-5xl mx-auto">
-            Multichannel Messaging & Automation, Powered by <br />
-            <span className="text-[#FF4A1C]">
-              the WhatsApp Business API.
-            </span>
+            {(config.heroTitle || '').replace(config.heroHighlight || '', '')}
+            {config.heroHighlight && (
+              <span className="text-[#FF4A1C]">
+                {config.heroHighlight}
+              </span>
+            )}
           </h1>
 
           <p className="omni-hero-anim text-body-lg text-[#0B0D12]/70 max-w-3xl mx-auto">
-            Unify WhatsApp, Instagram DMs, Messenger, and Telegram into one shared inbox equipped with visual no-code flowcharts and autonomous Gemini AI conversational agents.
+            {config.heroDescription}
           </p>
 
           {/* Action CTAs */}
           <div className="omni-hero-anim pt-2 flex flex-wrap justify-center gap-4 items-center">
             <Link
-              to="/contact"
+              to={config.primaryButtonLink || '/contact'}
               className="px-8 py-4 rounded bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-badge shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
-              <span>Book OmniChat Demo</span>
+              <span>{config.primaryButtonText || 'Book OmniChat Demo'}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <a
-              href="#channels-breakdown"
+              href={config.secondaryButtonLink || '#channels-breakdown'}
               className="px-7 py-4 rounded bg-white border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-badge transition-all shadow-sm"
             >
-              Explore 4 Channels
+              {config.secondaryButtonText || 'Explore 4 Channels'}
             </a>
           </div>
 
           {/* Highlights Ribbon */}
           <div className="omni-hero-anim grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6">
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#FF4A1C]">4</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Connected Channels</span>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#0B0D12]">60%</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Faster Support</span>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#0B0D12]">1.2M+</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Monthly Messages</span>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#0B0D12]">24/7</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">AI Response SLA</span>
-            </div>
+            {displayMetrics.map((m, mIdx) => (
+              <div key={mIdx} className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
+                <span className={`block text-h3 ${m.isPrimary ? 'text-[#FF4A1C]' : 'text-[#0B0D12]'}`}>{m.value}</span>
+                <span className="text-caption font-mono text-[#0B0D12]/60">{m.label}</span>
+              </div>
+            ))}
           </div>
 
         </div>
@@ -369,26 +405,27 @@ export default function OmniChatProduct() {
           
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge">
-              Multi-Channel Connectivity
+              {config.channelsBadge}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              One Inbox. All Customer Touchpoints.
+              {config.channelsTitle}
             </h2>
             <p className="text-body text-[#0B0D12]/70">
-              Switch between channels below to view native messaging capabilities.
+              {config.channelsDescription}
             </p>
           </div>
 
           {/* CHANNEL TABS SELECTOR */}
           <div className="flex flex-wrap gap-2.5 justify-center">
-            {CHANNELS.map((ch) => {
-              const IconComp = ch.icon;
-              const isActive = activeChannel === ch.id;
+            {displayChannels.map((ch, idx) => {
+              const chId = ch.channelId || (ch as any).id || `channel-${idx}`;
+              const IconComp = resolveIcon(ch.icon, MessageCircle);
+              const isActive = activeChannel === chId;
 
               return (
                 <button
-                  key={ch.id}
-                  onClick={() => setActiveChannel(ch.id)}
+                  key={chId}
+                  onClick={() => setActiveChannel(chId)}
                   className={`px-5 py-3 rounded text-badge transition-all duration-200 flex items-center gap-2.5 cursor-pointer border ${
                     isActive
                       ? 'bg-[#0B0D12] text-white border-[#0B0D12] shadow-sm'
@@ -413,7 +450,7 @@ export default function OmniChatProduct() {
               <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-[#0B0D12]/10">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-lg bg-white border border-[#0B0D12]/15 text-[#0B0D12] flex items-center justify-center">
-                    <currentChannelObj.icon className="w-7 h-7 text-[#FF4A1C]" />
+                    <CurrentChannelIcon className="w-7 h-7 text-[#FF4A1C]" />
                   </div>
                   <div>
                     <span className="text-label-mono text-[#FF4A1C] block">
@@ -436,19 +473,22 @@ export default function OmniChatProduct() {
                   {currentChannelObj.tagline}
                 </h4>
                 <p className="text-body text-[#0B0D12]/70 max-w-3xl">
-                  {currentChannelObj.desc}
+                  {currentChannelObj.description || (currentChannelObj as any).desc}
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                {currentChannelObj.features.map((feat, fIdx) => (
-                  <div key={fIdx} className="p-5 rounded bg-white border border-[#0B0D12]/10 space-y-1.5 flex items-start gap-3">
-                    <div className="w-5 h-5 rounded bg-[#FF4A1C]/10 text-[#FF4A1C] flex items-center justify-center shrink-0 mt-0.5">
-                      <Check className="w-3 h-3" />
+                {(currentChannelObj.features || []).map((feat: any, fIdx: number) => {
+                  const featText = typeof feat === 'string' ? feat : (feat.label || feat.name || String(feat));
+                  return (
+                    <div key={fIdx} className="p-5 rounded bg-white border border-[#0B0D12]/10 space-y-1.5 flex items-start gap-3">
+                      <div className="w-5 h-5 rounded bg-[#FF4A1C]/10 text-[#FF4A1C] flex items-center justify-center shrink-0 mt-0.5">
+                        <Check className="w-3 h-3" />
+                      </div>
+                      <span className="text-h4 text-[#0B0D12]">{featText}</span>
                     </div>
-                    <span className="text-h4 text-[#0B0D12]">{feat}</span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
             </div>
@@ -466,19 +506,19 @@ export default function OmniChatProduct() {
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-badge">
-              No-Code Engine
+              {config.automationBadge}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Visual Automation Flowchart Builder
+              {config.automationTitle}
             </h2>
             <p className="text-body text-[#0B0D12]/70">
-              Map complex user journeys, conditional decision trees, and CRM webhooks on a drag-and-drop visual canvas.
+              {config.automationDescription}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {AUTOMATION_NODES.map((node, idx) => {
-              const IconComp = node.icon;
+            {displayAutomation.map((node, idx) => {
+              const IconComp = resolveIcon(node.icon, Workflow);
               return (
                 <div 
                   key={idx}
@@ -491,7 +531,7 @@ export default function OmniChatProduct() {
                     {node.title}
                   </h3>
                   <p className="text-body text-[#0B0D12]/70">
-                    {node.desc}
+                    {node.description || (node as any).desc}
                   </p>
                 </div>
               );
@@ -510,19 +550,19 @@ export default function OmniChatProduct() {
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge">
-              Autonomous Intelligence
+              {config.aiBadge}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              AI Conversational Intelligence
+              {config.aiTitle}
             </h2>
             <p className="text-body text-[#0B0D12]/70">
-              Powered by Gemini 1.5 LLM vector embeddings to resolve up to 80% of routine customer support inquiries automatically.
+              {config.aiDescription}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {AI_CAPABILITIES.map((cap, idx) => {
-              const IconComp = cap.icon;
+            {displayAi.map((cap, idx) => {
+              const IconComp = resolveIcon(cap.icon, Bot);
               return (
                 <div 
                   key={idx}
@@ -535,7 +575,7 @@ export default function OmniChatProduct() {
                     {cap.title}
                   </h3>
                   <p className="text-body text-[#0B0D12]/70">
-                    {cap.desc}
+                    {cap.description || (cap as any).desc}
                   </p>
                 </div>
               );
@@ -554,73 +594,79 @@ export default function OmniChatProduct() {
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-badge">
-              Subscription Plans
+              {config.pricingBadge}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Simple, Predictable Pricing
+              {config.pricingTitle}
             </h2>
             <p className="text-body text-[#0B0D12]/70">
-              Choose the plan that matches your monthly active contact volume.
+              {config.pricingDescription}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {PRICING_TIERS.map((tier, idx) => (
-              <div 
-                key={idx}
-                className={`bg-white rounded-lg p-8 border ${
-                  tier.popular ? 'border-[#0B0D12] shadow-lg ring-1 ring-[#0B0D12]' : 'border-[#0B0D12]/15 shadow-sm'
-                } flex flex-col justify-between space-y-8 relative overflow-hidden`}
-              >
-                {tier.popular && (
-                  <div className="absolute top-0 right-0 bg-[#FF4A1C] text-white text-caption font-mono font-bold uppercase px-3 py-1 rounded-bl shadow-sm">
-                    {tier.badge}
-                  </div>
-                )}
-
-                <div className="space-y-6">
-                  <div>
-                    <span className="text-label-mono text-[#0B0D12]/50 block">
-                      {tier.badge}
-                    </span>
-                    <h3 className="text-h3 text-[#0B0D12]">
-                      {tier.name}
-                    </h3>
-                  </div>
-
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-h2 text-[#0B0D12]">{tier.price}</span>
-                    <span className="text-caption font-mono text-[#0B0D12]/60">{tier.period}</span>
-                  </div>
-
-                  <p className="text-body text-[#0B0D12]/70">
-                    {tier.tagline}
-                  </p>
-
-                  <div className="pt-4 border-t border-[#0B0D12]/10 space-y-3">
-                    <span className="text-label-mono text-[#0B0D12] block">Included Features:</span>
-                    {tier.features.map((feat, fIdx) => (
-                      <div key={fIdx} className="flex items-start gap-2.5 text-body text-[#0B0D12]/80">
-                        <Check className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0 mt-0.5" />
-                        <span>{feat}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <Link
-                  to="/contact"
-                  className={`w-full py-3.5 rounded text-badge text-center transition-all cursor-pointer ${
-                    tier.popular
-                      ? 'bg-[#FF4A1C] hover:bg-[#E03E14] text-white shadow-md'
-                      : 'bg-[#FAF8F5] text-[#0B0D12] border border-[#0B0D12]/15 hover:border-[#0B0D12]'
-                  }`}
+            {displayPricing.map((tier: any, idx) => {
+              const isPopular = tier.isPopular !== undefined ? tier.isPopular : tier.popular;
+              return (
+                <div 
+                  key={idx}
+                  className={`bg-white rounded-lg p-8 border ${
+                    isPopular ? 'border-[#0B0D12] shadow-lg ring-1 ring-[#0B0D12]' : 'border-[#0B0D12]/15 shadow-sm'
+                  } flex flex-col justify-between space-y-8 relative overflow-hidden`}
                 >
-                  {tier.cta}
-                </Link>
+                  {isPopular && (
+                    <div className="absolute top-0 right-0 bg-[#FF4A1C] text-white text-caption font-mono font-bold uppercase px-3 py-1 rounded-bl shadow-sm">
+                      {tier.badge}
+                    </div>
+                  )}
 
-              </div>
-            ))}
+                  <div className="space-y-6">
+                    <div>
+                      <span className="text-label-mono text-[#0B0D12]/50 block">
+                        {tier.badge}
+                      </span>
+                      <h3 className="text-h3 text-[#0B0D12]">
+                        {tier.name}
+                      </h3>
+                    </div>
+
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-h2 text-[#0B0D12]">{tier.price}</span>
+                      <span className="text-caption font-mono text-[#0B0D12]/60">{tier.period}</span>
+                    </div>
+
+                    <p className="text-body text-[#0B0D12]/70">
+                      {tier.tagline}
+                    </p>
+
+                    <div className="pt-4 border-t border-[#0B0D12]/10 space-y-3">
+                      <span className="text-label-mono text-[#0B0D12] block">Included Features:</span>
+                      {(tier.features || []).map((feat: any, fIdx: number) => {
+                        const featText = typeof feat === 'string' ? feat : (feat.label || feat.name || String(feat));
+                        return (
+                          <div key={fIdx} className="flex items-start gap-2.5 text-body text-[#0B0D12]/80">
+                            <Check className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0 mt-0.5" />
+                            <span>{featText}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/contact"
+                    className={`w-full py-3.5 rounded text-badge text-center transition-all cursor-pointer ${
+                      isPopular
+                        ? 'bg-[#FF4A1C] hover:bg-[#E03E14] text-white shadow-md'
+                        : 'bg-[#FAF8F5] text-[#0B0D12] border border-[#0B0D12]/15 hover:border-[#0B0D12]'
+                    }`}
+                  >
+                    {tier.cta || 'Get Started'}
+                  </Link>
+
+                </div>
+              );
+            })}
           </div>
 
         </div>
@@ -635,15 +681,15 @@ export default function OmniChatProduct() {
           
           <div className="text-center space-y-3">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge">
-              Got Questions?
+              {config.faqsBadge}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Frequently Asked Questions
+              {config.faqsTitle}
             </h2>
           </div>
 
           <div className="space-y-3">
-            {FAQS.map((faq, idx) => {
+            {displayFaqs.map((faq, idx) => {
               const isOpen = openFaq === idx;
               return (
                 <div 
@@ -673,7 +719,6 @@ export default function OmniChatProduct() {
         </div>
       </section>
 
-
       {/* ---------------------------------------------------- */}
       {/* 7. TESTIMONIALS (REUSED FROM HOME PAGE)             */}
       {/* ---------------------------------------------------- */}
@@ -683,7 +728,7 @@ export default function OmniChatProduct() {
       {/* ---------------------------------------------------- */}
       {/* 8. CONTACT US (REUSED FROM HOME PAGE)                */}
       {/* ---------------------------------------------------- */}
-      <StartProjectCta />
+      <StartProjectCta config={config} />
 
     </div>
   );

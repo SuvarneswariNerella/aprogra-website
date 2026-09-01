@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_omnichat_feature_cards",
+  "info": {
+    "displayName": "OmniChat Feature Card",
+    "icon": "apps",
+    "description": "Feature card for Automation nodes and AI capabilities"
+  },
+  "options": {},
+  "attributes": {
+    "icon": {
+      "type": "string",
+      "default": "Workflow"
+    },
+    "title": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    }
+  }
+}

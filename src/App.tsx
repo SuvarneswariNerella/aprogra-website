@@ -16,8 +16,28 @@ import Community from './pages/Community';
 import Contact from './pages/Contact';
 import Careers from './pages/Careers';
 import NotFound from './pages/NotFound';
+import Preview from './pages/Preview';
+
+import { useEffect } from 'react';
 
 export default function App() {
+  useEffect(() => {
+    // Check if embedded inside an iframe (Strapi Live Preview)
+    if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage({ type: 'previewReady' }, '*');
+      } catch {}
+
+      const handleMessage = (event: MessageEvent) => {
+        if (event.data?.type === 'strapiUpdate') {
+          window.location.reload();
+        }
+      };
+
+      window.addEventListener('message', handleMessage);
+      return () => window.removeEventListener('message', handleMessage);
+    }
+  }, []);
   return (
     <BrowserRouter>
       <Routes>
@@ -33,6 +53,7 @@ export default function App() {
           <Route path="community" element={<Community />} />
           <Route path="contact" element={<Contact />} />
           <Route path="careers" element={<Careers />} />
+          <Route path="preview" element={<Preview />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

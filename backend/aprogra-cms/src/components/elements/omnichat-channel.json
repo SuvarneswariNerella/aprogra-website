@@ -1,0 +1,43 @@
+{
+  "collectionName": "components_elements_omnichat_channels",
+  "info": {
+    "displayName": "OmniChat Channel",
+    "icon": "message",
+    "description": "A communication channel item for OmniChat"
+  },
+  "options": {},
+  "attributes": {
+    "channelId": {
+      "type": "string",
+      "required": true
+    },
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "badge": {
+      "type": "string"
+    },
+    "icon": {
+      "type": "string",
+      "default": "MessageCircle"
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "description": {
+      "type": "text"
+    },
+    "metric": {
+      "type": "string"
+    },
+    "metricLabel": {
+      "type": "string"
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    }
+  }
+}

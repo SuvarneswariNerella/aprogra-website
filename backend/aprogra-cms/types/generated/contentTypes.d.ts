@@ -881,7 +881,7 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
     singularName: 'home-page';
   };
   options: {
-    draftAndPublish: false;
+    draftAndPublish: true;
   };
   attributes: {
     createdAt: Schema.Attribute.DateTime;
@@ -913,6 +913,83 @@ export interface ApiHomePageHomePage extends Struct.SingleTypeSchema {
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
     whyStatements: Schema.Attribute.Component<'elements.home-statement', true>;
+  };
+}
+
+export interface ApiOmnichatPageOmnichatPage extends Struct.SingleTypeSchema {
+  collectionName: 'omnichat_pages';
+  info: {
+    description: 'Content for the OmniChat Multichannel AI Platform Product Page';
+    displayName: 'OmniChat Page';
+    pluralName: 'omnichat-pages';
+    singularName: 'omnichat-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    aiBadge: Schema.Attribute.String;
+    aiCapabilities: Schema.Attribute.Component<
+      'elements.omnichat-feature-card',
+      true
+    >;
+    aiDescription: Schema.Attribute.Text;
+    aiTitle: Schema.Attribute.String;
+    automationBadge: Schema.Attribute.String;
+    automationDescription: Schema.Attribute.Text;
+    automationNodes: Schema.Attribute.Component<
+      'elements.omnichat-feature-card',
+      true
+    >;
+    automationTitle: Schema.Attribute.String;
+    channels: Schema.Attribute.Component<'elements.omnichat-channel', true>;
+    channelsBadge: Schema.Attribute.String;
+    channelsDescription: Schema.Attribute.Text;
+    channelsTitle: Schema.Attribute.String;
+    contactAddress: Schema.Attribute.String;
+    contactCity: Schema.Attribute.String;
+    contactCtaBadge: Schema.Attribute.String;
+    contactCtaDescription: Schema.Attribute.Text;
+    contactCtaHighlight: Schema.Attribute.String;
+    contactCtaTitle: Schema.Attribute.String;
+    contactEmail: Schema.Attribute.String;
+    contactFormStatus: Schema.Attribute.String;
+    contactFormSubtitle: Schema.Attribute.String;
+    contactFormTitle: Schema.Attribute.String;
+    contactPhone: Schema.Attribute.String;
+    contactPhoneHours: Schema.Attribute.String;
+    contactPresenceBadge: Schema.Attribute.String;
+    contactPresenceDescription: Schema.Attribute.Text;
+    contactPresenceTitle: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faqs: Schema.Attribute.Component<'elements.about-faq-item', true>;
+    faqsBadge: Schema.Attribute.String;
+    faqsTitle: Schema.Attribute.String;
+    heroBadge: Schema.Attribute.String & Schema.Attribute.Required;
+    heroDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    heroHighlight: Schema.Attribute.String;
+    heroMetrics: Schema.Attribute.Component<'elements.erp-metric', true>;
+    heroTitle: Schema.Attribute.Text & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::omnichat-page.omnichat-page'
+    > &
+      Schema.Attribute.Private;
+    pricingBadge: Schema.Attribute.String;
+    pricingDescription: Schema.Attribute.Text;
+    pricingTiers: Schema.Attribute.Component<'elements.erp-pricing-tier', true>;
+    pricingTitle: Schema.Attribute.String;
+    primaryButtonLink: Schema.Attribute.String;
+    primaryButtonText: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    secondaryButtonLink: Schema.Attribute.String;
+    secondaryButtonText: Schema.Attribute.String;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
   };
 }
 
@@ -1020,6 +1097,74 @@ export interface ApiProductsPageProductsPage extends Struct.SingleTypeSchema {
     trustHeadline: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Why Teams Trust Aprogra Products'>;
     trustItems: Schema.Attribute.Component<'elements.trust-item', true>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiSchoolErpPageSchoolErpPage extends Struct.SingleTypeSchema {
+  collectionName: 'school_erp_pages';
+  info: {
+    description: 'Content for the School ERP Product Page';
+    displayName: 'School ERP Page';
+    pluralName: 'school-erp-pages';
+    singularName: 'school-erp-page';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    contactAddress: Schema.Attribute.String;
+    contactCity: Schema.Attribute.String;
+    contactCtaBadge: Schema.Attribute.String;
+    contactCtaDescription: Schema.Attribute.Text;
+    contactCtaHighlight: Schema.Attribute.String;
+    contactCtaTitle: Schema.Attribute.String;
+    contactEmail: Schema.Attribute.String;
+    contactFormStatus: Schema.Attribute.String;
+    contactFormSubtitle: Schema.Attribute.String;
+    contactFormTitle: Schema.Attribute.String;
+    contactPhone: Schema.Attribute.String;
+    contactPhoneHours: Schema.Attribute.String;
+    contactPresenceBadge: Schema.Attribute.String;
+    contactPresenceDescription: Schema.Attribute.Text;
+    contactPresenceTitle: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    faqs: Schema.Attribute.Component<'elements.about-faq-item', true>;
+    faqsBadge: Schema.Attribute.String;
+    faqsDescription: Schema.Attribute.Text;
+    faqsTitle: Schema.Attribute.String;
+    heroBadge: Schema.Attribute.String & Schema.Attribute.Required;
+    heroDescription: Schema.Attribute.Text & Schema.Attribute.Required;
+    heroHighlight: Schema.Attribute.String;
+    heroMetrics: Schema.Attribute.Component<'elements.erp-metric', true>;
+    heroTitle: Schema.Attribute.Text & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::school-erp-page.school-erp-page'
+    > &
+      Schema.Attribute.Private;
+    modules: Schema.Attribute.Component<'elements.product-feature', true>;
+    modulesBadge: Schema.Attribute.String;
+    modulesDescription: Schema.Attribute.Text;
+    modulesTitle: Schema.Attribute.String;
+    pricingBadge: Schema.Attribute.String;
+    pricingDescription: Schema.Attribute.Text;
+    pricingTiers: Schema.Attribute.Component<'elements.erp-pricing-tier', true>;
+    pricingTitle: Schema.Attribute.String;
+    primaryButtonLink: Schema.Attribute.String;
+    primaryButtonText: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    screenshots: Schema.Attribute.Component<'elements.erp-screenshot', true>;
+    screenshotsBadge: Schema.Attribute.String;
+    screenshotsDescription: Schema.Attribute.Text;
+    screenshotsTitle: Schema.Attribute.String;
+    secondaryButtonLink: Schema.Attribute.String;
+    secondaryButtonText: Schema.Attribute.String;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -1671,8 +1816,10 @@ declare module '@strapi/strapi' {
       'api::contact-page.contact-page': ApiContactPageContactPage;
       'api::global-config.global-config': ApiGlobalConfigGlobalConfig;
       'api::home-page.home-page': ApiHomePageHomePage;
+      'api::omnichat-page.omnichat-page': ApiOmnichatPageOmnichatPage;
       'api::product.product': ApiProductProduct;
       'api::products-page.products-page': ApiProductsPageProductsPage;
+      'api::school-erp-page.school-erp-page': ApiSchoolErpPageSchoolErpPage;
       'api::services-page.services-page': ApiServicesPageServicesPage;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::testimonial.testimonial': ApiTestimonialTestimonial;

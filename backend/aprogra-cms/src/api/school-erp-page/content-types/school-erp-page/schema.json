@@ -1,0 +1,149 @@
+{
+  "kind": "singleType",
+  "collectionName": "school_erp_pages",
+  "info": {
+    "singularName": "school-erp-page",
+    "pluralName": "school-erp-pages",
+    "displayName": "School ERP Page",
+    "description": "Content for the School ERP Product Page"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "heroBadge": {
+      "type": "string",
+      "required": true
+    },
+    "heroTitle": {
+      "type": "text",
+      "required": true
+    },
+    "heroHighlight": {
+      "type": "string"
+    },
+    "heroDescription": {
+      "type": "text",
+      "required": true
+    },
+    "primaryButtonText": {
+      "type": "string"
+    },
+    "primaryButtonLink": {
+      "type": "string"
+    },
+    "secondaryButtonText": {
+      "type": "string"
+    },
+    "secondaryButtonLink": {
+      "type": "string"
+    },
+    "heroMetrics": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.erp-metric"
+    },
+    "modulesBadge": {
+      "type": "string"
+    },
+    "modulesTitle": {
+      "type": "string"
+    },
+    "modulesDescription": {
+      "type": "text"
+    },
+    "modules": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.product-feature"
+    },
+    "screenshotsBadge": {
+      "type": "string"
+    },
+    "screenshotsTitle": {
+      "type": "string"
+    },
+    "screenshotsDescription": {
+      "type": "text"
+    },
+    "screenshots": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.erp-screenshot"
+    },
+    "pricingBadge": {
+      "type": "string"
+    },
+    "pricingTitle": {
+      "type": "string"
+    },
+    "pricingDescription": {
+      "type": "text"
+    },
+    "pricingTiers": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.erp-pricing-tier"
+    },
+    "faqsBadge": {
+      "type": "string"
+    },
+    "faqsTitle": {
+      "type": "string"
+    },
+    "faqsDescription": {
+      "type": "text"
+    },
+    "faqs": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.about-faq-item"
+    },
+    "contactCtaBadge": {
+      "type": "string"
+    },
+    "contactCtaTitle": {
+      "type": "string"
+    },
+    "contactCtaHighlight": {
+      "type": "string"
+    },
+    "contactCtaDescription": {
+      "type": "text"
+    },
+    "contactFormTitle": {
+      "type": "string"
+    },
+    "contactFormSubtitle": {
+      "type": "string"
+    },
+    "contactFormStatus": {
+      "type": "string"
+    },
+    "contactEmail": {
+      "type": "string"
+    },
+    "contactPhone": {
+      "type": "string"
+    },
+    "contactPhoneHours": {
+      "type": "string"
+    },
+    "contactAddress": {
+      "type": "string"
+    },
+    "contactCity": {
+      "type": "string"
+    },
+    "contactPresenceBadge": {
+      "type": "string"
+    },
+    "contactPresenceTitle": {
+      "type": "string"
+    },
+    "contactPresenceDescription": {
+      "type": "text"
+    }
+  }
+}

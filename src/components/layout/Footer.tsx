@@ -151,7 +151,7 @@ export default function Footer() {
             const spanClass = isLast ? 'lg:col-span-2' : 'lg:col-span-3';
 
             return (
-              <div key={col.id || col.title || colIndex} className={`${spanClass} space-y-3`}>
+              <div key={`footer-col-${col.id || col.title || colIndex}-${colIndex}`} className={`${spanClass} space-y-3`}>
                 <h4 className="text-[11px] font-bold uppercase tracking-wider text-[#0B0D12] flex items-center gap-1.5">
                   {colIndex === 0 && <Cpu className="w-3 h-3 text-[#FF4A1C]" />}
                   <span>{col.title}</span>
@@ -162,7 +162,7 @@ export default function Footer() {
 
                     if (isExternal) {
                       return (
-                        <li key={link.id || link.url || linkIndex}>
+                        <li key={`col-${colIndex}-link-${link.id || link.label || link.url}-${linkIndex}`}>
                           <a 
                             href={link.url} 
                             target="_blank" 
@@ -183,7 +183,7 @@ export default function Footer() {
                     }
 
                     return (
-                      <li key={link.id || link.url || linkIndex}>
+                      <li key={`col-${colIndex}-link-${link.id || link.label || link.url}-${linkIndex}`}>
                         <Link 
                           to={link.url} 
                           className="hover:text-[#FF4A1C] transition-colors inline-flex items-center justify-between w-full group"
@@ -207,7 +207,7 @@ export default function Footer() {
                     <div className="flex items-center gap-1.5">
                       {socialLinks.map((s: SocialLinkItem, sIndex: number) => (
                         <a 
-                          key={s.id || s.url || sIndex}
+                          key={`social-${s.id || s.platform || s.url}-${sIndex}`}
                           href={s.url} 
                           target="_blank" 
                           rel="noopener noreferrer" 
@@ -238,13 +238,13 @@ export default function Footer() {
                 const isExt = l.isExternal || l.url.startsWith('http://') || l.url.startsWith('https://');
                 if (isExt) {
                   return (
-                    <a key={l.id || l.url || lIdx} href={l.url} target="_blank" rel="noopener noreferrer" className="hover:text-[#0B0D12] transition-colors">
+                    <a key={`legal-ext-${l.id || l.label || l.url}-${lIdx}`} href={l.url} target="_blank" rel="noopener noreferrer" className="hover:text-[#0B0D12] transition-colors">
                       {l.label}
                     </a>
                   );
                 }
                 return (
-                  <Link key={l.id || l.url || lIdx} to={l.url} className="hover:text-[#0B0D12] transition-colors">
+                  <Link key={`legal-int-${l.id || l.label || l.url}-${lIdx}`} to={l.url} className="hover:text-[#0B0D12] transition-colors">
                     {l.label}
                   </Link>
                 );

@@ -20,7 +20,7 @@ function getStrapiBaseUrl(): string {
       host === '127.0.0.1' ||
       ENV_STRAPI_URL.includes('localhost') ||
       ENV_STRAPI_URL.includes('127.0.0.1');
-    if (isLocal) return ''; // → fetch('/api/...') via Vite proxy
+    if (isLocal) return ''; // â†’ fetch('/api/...') via Vite proxy
   }
   return ENV_STRAPI_URL;
 }
@@ -52,7 +52,30 @@ export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Pr
   const encodedEndpoint = cleanEndpoint.replace(/\[/g, '%5B').replace(/\]/g, '%5D');
   
   const base = getStrapiBaseUrl();
-  const url = `${base}/api/${encodedEndpoint}`;
+  let url = `${base}/api/${encodedEndpoint}`;
+
+  // Check if draft mode is requested via URL query param (?status=draft, ?draft=true, ?preview=true) or session
+  let preferDraft = false;
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    const statusParam = params.get('status');
+    if (statusParam === 'draft' || params.get('draft') === 'true' || params.get('preview') === 'true') {
+      sessionStorage.setItem('strapi_draft_mode', 'true');
+      preferDraft = true;
+    } else if (statusParam === 'published') {
+      sessionStorage.removeItem('strapi_draft_mode');
+      preferDraft = false;
+    } else if (sessionStorage.getItem('strapi_draft_mode') === 'true') {
+      preferDraft = true;
+    }
+  }
+
+  if (preferDraft) {
+    url += url.includes('?') ? '&status=draft' : '?status=draft';
+  } else {
+    // Explicitly fetch the published version for normal visitors in production
+    url += url.includes('?') ? '&status=published' : '?status=published';
+  }
 
   try {
     const headers: HeadersInit = {
@@ -63,32 +86,48 @@ export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Pr
       headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
     }
 
-    const res = await fetch(url, { headers, cache: 'no-store' });
-    if (!res.ok) {
-      if (res.status === 401 && STRAPI_TOKEN) {
-        console.warn('[Strapi] Token rejected (401). Retrying with public access...');
-        const retryRes = await fetch(url, {
-          headers: { 'Content-Type': 'application/json' },
-          cache: 'no-store',
-        });
-        if (retryRes.ok) {
-          const retryJson = await retryRes.json();
-          return retryJson.data as T;
+    const tryFetch = async (targetUrl: string) => {
+      try {
+        const res = await fetch(targetUrl, { headers, cache: 'no-store' });
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.data !== undefined && json.data !== null) {
+            return json.data;
+          }
         }
+        if (res.status === 401 && STRAPI_TOKEN) {
+          const retryRes = await fetch(targetUrl, {
+            headers: { 'Content-Type': 'application/json' },
+            cache: 'no-store',
+          });
+          if (retryRes.ok) {
+            const retryJson = await retryRes.json();
+            if (retryJson && retryJson.data !== undefined && retryJson.data !== null) {
+              return retryJson.data;
+            }
+          }
+        }
+      } catch {
+        // Continue to fallback
       }
+      return null;
+    };
 
-      console.warn(`[Strapi] API request failed with status ${res.status}: ${res.statusText} (${url})`);
-      if (fallbackData !== undefined) return fallbackData;
-      throw new Error(`Strapi request failed: ${res.status} ${res.statusText}`);
+    let data = await tryFetch(url);
+    if (!data) {
+      // Toggle status between draft and published as fallback
+      const altUrl = url.includes('status=draft')
+        ? url.replace('status=draft', 'status=published')
+        : url.replace('status=published', 'status=draft');
+      data = await tryFetch(altUrl);
     }
 
-    const json = await res.json();
-    if (json?.data === undefined || json?.data === null) {
-      console.warn(`[Strapi] Empty data from "${url}"`, json?.error || '');
-      if (fallbackData !== undefined) return fallbackData;
-      throw new Error('Strapi returned empty data');
+    if (data) {
+      return data as T;
     }
-    return json.data as T;
+
+    if (fallbackData !== undefined) return fallbackData;
+    throw new Error(`Strapi returned empty data from ${url}`);
   } catch (error) {
     console.warn(`[Strapi] Failed to fetch from "${url}". Using fallback data if available.`, error);
     if (fallbackData !== undefined) return fallbackData;
@@ -240,7 +279,7 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
   displayMode: 'logo_and_text',
   logoUrl: '',
   description: 'Engineering Infinite Possibilities. Full-cycle custom software, autonomous AI platforms, and mission-critical cloud systems built for hyper-scale enterprises.',
-  statusText: 'All Systems Operational • 99.99% Uptime',
+  statusText: 'All Systems Operational â€¢ 99.99% Uptime',
   badge1_text: 'SOC2 Type II',
   badge2_text: 'San Francisco & Global',
   columns: [
@@ -288,7 +327,7 @@ export const DEFAULT_FOOTER_CONFIG: FooterConfig = {
     { label: 'Security & Compliance', url: '/contact', isExternal: false, order: 3 },
     { label: 'Cookie Settings', url: '/contact', isExternal: false, order: 4 },
   ],
-  copyrightText: '© 2026 Aprogra Technologies Inc. All rights reserved.',
+  copyrightText: 'Â© 2026 Aprogra Technologies Inc. All rights reserved.',
   backToTopText: 'Back to top',
 };
 
@@ -595,7 +634,7 @@ export const DEFAULT_CONTACT_CHANNELS: ContactChannelItem[] = [
     type: 'phone',
     label: 'DIRECT PHONE LINE',
     primaryValue: '+1 (800) 555-0199',
-    subtext: 'Mon–Fri, 8:00 AM–6:00 PM PST',
+    subtext: 'Monâ€“Fri, 8:00 AMâ€“6:00 PM PST',
     buttonText: 'Copy Phone Number',
     iconName: 'phone',
   },
@@ -615,7 +654,7 @@ export const DEFAULT_CONTACT_CHANNELS: ContactChannelItem[] = [
     order: 4,
     type: 'hub',
     label: 'GLOBAL TECH HUBS',
-    primaryValue: 'New York • Austin • London',
+    primaryValue: 'New York â€¢ Austin â€¢ London',
     subtext: 'Serving enterprise partners across time zones',
     buttonText: 'Remote First Engineering',
     iconName: 'globe',
@@ -643,7 +682,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
     phone: '+1 (800) 555-0199',
     phoneCopyButtonText: 'Copy',
     studioHqLabel: 'STUDIO HQ',
-    studioHqValue: 'Hyderabad, India • Global Remote Pods',
+    studioHqValue: 'Hyderabad, India â€¢ Global Remote Pods',
     bookIntroCallButtonText: 'Book 15-Min Intro Call',
     heroImageUrl: 'https://picsum.photos/seed/163641868/1200/800',
   },
@@ -652,7 +691,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
     title: 'From First Contact to Sprint 1',
     steps: [
       {
-        timeframe: '01 / Days 1–3',
+        timeframe: '01 / Days 1â€“3',
         title: 'Architecture Blueprint',
         description:
           'We review your technical specifications, analyze legacy constraints, and formulate a full system topology and sprint milestones.',
@@ -664,7 +703,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
           'Repository setup, CI/CD pipelines, database schema design, and production environment provisioning with strict security policies.',
       },
       {
-        timeframe: '03 / Weeks 2–8',
+        timeframe: '03 / Weeks 2â€“8',
         title: 'Bi-Weekly Velocity Drops',
         description:
           'Continuous shipping with staging previews, real-time Slack/Discord sync, and weekly architectural review calls.',
@@ -694,9 +733,9 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
       'Enterprise ERP',
     ],
     budgetQuestion: 'Expected Investment Range',
-    budgetRangesList: ['< $15K', '$15K – $25K', '$25K – $75K', '$75K+'],
+    budgetRangesList: ['< $15K', '$15K â€“ $25K', '$25K â€“ $75K', '$75K+'],
     timelineQuestion: 'Target Timeline',
-    timelineRangesList: ['< 1 Month', '1–3 Months', '3–6 Months', 'Flexible'],
+    timelineRangesList: ['< 1 Month', '1â€“3 Months', '3â€“6 Months', 'Flexible'],
     messageQuestion: 'Project Overview & Objectives *',
     messagePlaceholder:
       'Describe your current tech stack, desired architecture, target timeline, and success criteria...',
@@ -749,7 +788,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
     headline: 'Engineering Infinite',
     highlight: 'Possibilities.',
     subtitle: 'Thank you for visiting. We look forward to building with you.',
-    backToTopText: 'BACK TO TOP ↑',
+    backToTopText: 'BACK TO TOP â†‘',
   },
   introCallModal: {
     title: 'Engineering Kickoff Call',
@@ -1173,7 +1212,7 @@ export const DEFAULT_BLOG_CATEGORIES: BlogCategory[] = [
 
 export const DEFAULT_BLOG_PAGE_CONTENT: BlogPageContent = {
   hero: {
-    badge: 'APROGRA TECH RADAR • ENGINEERING BLOG',
+    badge: 'APROGRA TECH RADAR â€¢ ENGINEERING BLOG',
     headline: 'Engineering, AI &',
     highlight: 'Product Insights.',
     description:
@@ -2388,7 +2427,7 @@ export const DEFAULT_TESTIMONIALS_LIST: TestimonialItem[] = [
     authorName: 'Devon Hayes',
     authorRole: 'VP of Engineering',
     authorCompany: 'CloudScale Inc',
-    quote: 'From initial brief to production launch in just 6 weeks. The team’s velocity, clean React code, and proactive communication set a new benchmark.',
+    quote: 'From initial brief to production launch in just 6 weeks. The teamâ€™s velocity, clean React code, and proactive communication set a new benchmark.',
     avatarUrl: 'https://picsum.photos/seed/970296839/1200/800',
     rating: 5,
     highlight: 'Production launch in 6 weeks',
@@ -2943,7 +2982,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
     heroImageUrl: undefined,
     kpiStats: [
       { label: 'In-House Engineers', value: '100%' },
-      { label: 'Clutch / G2 Rating', value: '4.9★' },
+      { label: 'Clutch / G2 Rating', value: '4.9â˜…' },
       { label: 'Avg API Latency', value: '<100ms' },
       { label: 'Production SLA', value: '99.98%' },
     ],
@@ -2955,7 +2994,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
       badge: 'Who We Are',
       headline: 'Not just another dev shop.',
       description:
-        'AProgra was built on a single belief — that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.',
+        'AProgra was built on a single belief â€” that exceptional software demands exceptional people working in exceptional ways. No outsourcing. No middlemen. Just a team that cares about your product as much as you do.',
       highlights: [
         { id: '1', title: 'In-house only', description: 'Every line of code written by our team' },
         { id: '2', title: 'End-to-end ownership', description: 'Design through deployment' },
@@ -2969,7 +3008,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
       badge: 'Our Mission',
       headline: 'Build software that actually matters.',
       description:
-        'Our mission is simple — engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.',
+        'Our mission is simple â€” engineer products that solve real problems, for real people, with real business impact. We measure success not in lines of code but in businesses transformed.',
       quote: '"To make world-class engineering accessible to every visionary who dares to build."',
       highlights: [],
       imageUrl: 'https://picsum.photos/seed/160668355/1200/800',
@@ -3004,49 +3043,49 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
       {
         id: '2',
         question: 'What types of projects do you take on?',
-        answer: 'We work on product engineering (web, mobile, SaaS), AI and automation systems, UI/UX design, and cloud infrastructure. From early-stage MVPs to scaling enterprise platforms — if it involves building software, we can help.',
+        answer: 'We work on product engineering (web, mobile, SaaS), AI and automation systems, UI/UX design, and cloud infrastructure. From early-stage MVPs to scaling enterprise platforms â€” if it involves building software, we can help.',
         category: 'Capabilities',
         order: 2,
       },
       {
         id: '3',
         question: 'How long does it take to start a project?',
-        answer: 'After an initial discovery call, we typically scope and onboard within 1–2 weeks. For urgent projects, we’ve started within days. We don’t believe in unnecessary delays.',
+        answer: 'After an initial discovery call, we typically scope and onboard within 1â€“2 weeks. For urgent projects, weâ€™ve started within days. We donâ€™t believe in unnecessary delays.',
         category: 'Engagement',
         order: 3,
       },
       {
         id: '4',
         question: 'Do you work with international clients?',
-        answer: 'Absolutely. We’ve partnered with clients across 12 countries including the US, UK, UAE, Singapore, and Australia. We work async-first and adapt to your timezone for key meetings.',
+        answer: 'Absolutely. Weâ€™ve partnered with clients across 12 countries including the US, UK, UAE, Singapore, and Australia. We work async-first and adapt to your timezone for key meetings.',
         category: 'Global Delivery',
         order: 4,
       },
       {
         id: '5',
         question: 'What does your development process look like?',
-        answer: 'We follow an iterative, milestone-driven approach: Discovery → Design → Build → Test → Launch → Support. You’re involved at every stage with regular demos, Slack updates, and transparent timelines.',
+        answer: 'We follow an iterative, milestone-driven approach: Discovery â†’ Design â†’ Build â†’ Test â†’ Launch â†’ Support. Youâ€™re involved at every stage with regular demos, Slack updates, and transparent timelines.',
         category: 'Process',
         order: 5,
       },
       {
         id: '6',
         question: 'Can you take over an existing project or codebase?',
-        answer: 'Yes — and we do it often. We conduct a thorough code audit first, document what we find, then propose a clear path forward. We’ve rescued several projects that were over-budget and behind schedule.',
+        answer: 'Yes â€” and we do it often. We conduct a thorough code audit first, document what we find, then propose a clear path forward. Weâ€™ve rescued several projects that were over-budget and behind schedule.',
         category: 'Engineering',
         order: 6,
       },
       {
         id: '7',
         question: 'What is your pricing model?',
-        answer: 'We offer project-based pricing for fixed-scope work and monthly retainers for ongoing development. We’ll share a detailed quote after a discovery call. We believe in transparent pricing — no hidden fees, no scope creep surprises.',
+        answer: 'We offer project-based pricing for fixed-scope work and monthly retainers for ongoing development. Weâ€™ll share a detailed quote after a discovery call. We believe in transparent pricing â€” no hidden fees, no scope creep surprises.',
         category: 'Commercial',
         order: 7,
       },
       {
         id: '8',
         question: 'How do we get started?',
-        answer: 'Simply fill out the contact form on this page or email us at hello@aprogra.com. We’ll schedule a discovery call within 24 hours, understand your project, and come back with a clear proposal.',
+        answer: 'Simply fill out the contact form on this page or email us at hello@aprogra.com. Weâ€™ll schedule a discovery call within 24 hours, understand your project, and come back with a clear proposal.',
         category: 'Onboarding',
         order: 8,
       },
@@ -3067,7 +3106,7 @@ export const DEFAULT_ABOUT_PAGE_DATA: AboutPageData = {
       'Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.',
     email: 'hello@aprogra.com',
     phone: '+1 (800) 555-0199',
-    officeLocation: 'Hyderabad, India • Global Remote Pods',
+    officeLocation: 'Hyderabad, India â€¢ Global Remote Pods',
     ctaLabel: 'Submit Project Brief',
     ctaUrl: '/contact',
   },
@@ -3168,49 +3207,49 @@ export const DEFAULT_ABOUT_FAQS: AboutFaqItem[] = [
   {
     id: '2',
     question: 'What types of projects do you take on?',
-    answer: 'We work on product engineering (web, mobile, SaaS), AI and automation systems, UI/UX design, and cloud infrastructure. From early-stage MVPs to scaling enterprise platforms — if it involves building software, we can help.',
+    answer: 'We work on product engineering (web, mobile, SaaS), AI and automation systems, UI/UX design, and cloud infrastructure. From early-stage MVPs to scaling enterprise platforms â€” if it involves building software, we can help.',
     category: 'Capabilities',
     order: 2,
   },
   {
     id: '3',
     question: 'How long does it take to start a project?',
-    answer: 'After an initial discovery call, we typically scope and onboard within 1–2 weeks. For urgent projects, we’ve started within days. We don’t believe in unnecessary delays.',
+    answer: 'After an initial discovery call, we typically scope and onboard within 1â€“2 weeks. For urgent projects, weâ€™ve started within days. We donâ€™t believe in unnecessary delays.',
     category: 'Engagement',
     order: 3,
   },
   {
     id: '4',
     question: 'Do you work with international clients?',
-    answer: 'Absolutely. We’ve partnered with clients across 12 countries including the US, UK, UAE, Singapore, and Australia. We work async-first and adapt to your timezone for key meetings.',
+    answer: 'Absolutely. Weâ€™ve partnered with clients across 12 countries including the US, UK, UAE, Singapore, and Australia. We work async-first and adapt to your timezone for key meetings.',
     category: 'Global Delivery',
     order: 4,
   },
   {
     id: '5',
     question: 'What does your development process look like?',
-    answer: 'We follow an iterative, milestone-driven approach: Discovery → Design → Build → Test → Launch → Support. You’re involved at every stage with regular demos, Slack updates, and transparent timelines.',
+    answer: 'We follow an iterative, milestone-driven approach: Discovery â†’ Design â†’ Build â†’ Test â†’ Launch â†’ Support. Youâ€™re involved at every stage with regular demos, Slack updates, and transparent timelines.',
     category: 'Process',
     order: 5,
   },
   {
     id: '6',
     question: 'Can you take over an existing project or codebase?',
-    answer: 'Yes — and we do it often. We conduct a thorough code audit first, document what we find, then propose a clear path forward. We’ve rescued several projects that were over-budget and behind schedule.',
+    answer: 'Yes â€” and we do it often. We conduct a thorough code audit first, document what we find, then propose a clear path forward. Weâ€™ve rescued several projects that were over-budget and behind schedule.',
     category: 'Engineering',
     order: 6,
   },
   {
     id: '7',
     question: 'What is your pricing model?',
-    answer: 'We offer project-based pricing for fixed-scope work and monthly retainers for ongoing development. We’ll share a detailed quote after a discovery call. We believe in transparent pricing — no hidden fees, no scope creep surprises.',
+    answer: 'We offer project-based pricing for fixed-scope work and monthly retainers for ongoing development. Weâ€™ll share a detailed quote after a discovery call. We believe in transparent pricing â€” no hidden fees, no scope creep surprises.',
     category: 'Commercial',
     order: 7,
   },
   {
     id: '8',
     question: 'How do we get started?',
-    answer: 'Simply fill out the contact form on this page or email us at hello@aprogra.com. We’ll schedule a discovery call within 24 hours, understand your project, and come back with a clear proposal.',
+    answer: 'Simply fill out the contact form on this page or email us at hello@aprogra.com. Weâ€™ll schedule a discovery call within 24 hours, understand your project, and come back with a clear proposal.',
     category: 'Onboarding',
     order: 8,
   },
@@ -3564,7 +3603,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       id: "3",
       badgeText: "Zero Outsourcing",
       title: "Engineered In-House.",
-      subtitle: "Every line of code, every system architecture, every pixel—built entirely by our full-stack engineering pods based in our own studios.",
+      subtitle: "Every line of code, every system architecture, every pixelâ€”built entirely by our full-stack engineering pods based in our own studios.",
       tags: ["100% In-House", "Dedicated Pods", "Direct Access"],
       imageUrl: "https://picsum.photos/seed/1693179706/1200/800",
       imageLabel: "Engineering Pods",
@@ -3586,7 +3625,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       id: "1",
       badgeText: "Our Story",
       title: "Not just another dev shop.",
-      description: "AProgra was built on one belief — that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.",
+      description: "AProgra was built on one belief â€” that exceptional software requires exceptional people working in exceptional ways. No outsourcing. No guesswork. Just craft.",
       imageUrl: "https://picsum.photos/seed/1323529153/1200/800",
       showMetricsGrid: false
     },
@@ -3594,7 +3633,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       id: "2",
       badgeText: "How We Work",
       title: "Full-stack. Full-cycle. Full-ownership.",
-      description: "From the first discovery call to post-launch support, our in-house team owns every layer. Design. Frontend. Backend. QA. DevOps. All under one roof — your one point of contact.",
+      description: "From the first discovery call to post-launch support, our in-house team owns every layer. Design. Frontend. Backend. QA. DevOps. All under one roof â€” your one point of contact.",
       imageUrl: "https://picsum.photos/seed/1678069599/1200/800",
       showMetricsGrid: false
     },
@@ -3602,7 +3641,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       id: "3",
       badgeText: "Our Team",
       title: "25+ specialists. Zero strangers.",
-      description: "Designers who code. Engineers who think about UX. PMs who understand business. Everyone at AProgra is a specialist — and everyone cares about your product like it's their own.",
+      description: "Designers who code. Engineers who think about UX. PMs who understand business. Everyone at AProgra is a specialist â€” and everyone cares about your product like it's their own.",
       imageUrl: "https://picsum.photos/seed/1693179706/1200/800",
       showMetricsGrid: false
     },
@@ -3626,7 +3665,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       orderNumber: "01",
       badgeText: "Core Service",
       title: "Product Engineering",
-      description: "We don't just build features — we engineer products. From architecture decisions to deployment pipelines, every choice we make is deliberate, scalable, and built to last.",
+      description: "We don't just build features â€” we engineer products. From architecture decisions to deployment pipelines, every choice we make is deliberate, scalable, and built to last.",
       tags: ["Discovery", "Architecture", "Development", "QA", "Launch"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
@@ -3648,7 +3687,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       orderNumber: "03",
       badgeText: "Applied AI",
       title: "AI Integration & Automation",
-      description: "From custom LLM integrations to intelligent workflow automations — we make AI work for your actual business, not just your marketing copy.",
+      description: "From custom LLM integrations to intelligent workflow automations â€” we make AI work for your actual business, not just your marketing copy.",
       tags: ["LLM Pipelines", "RAG Systems", "Agents & Swarms", "Data Triage", "Fine-Tuning"],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
@@ -3691,22 +3730,22 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
   productsCards: [
     {
       id: "1",
-      badge: "NOTIFICATION 01 / 02 • SCHOOL ERP",
+      badge: "NOTIFICATION 01 / 02 â€¢ SCHOOL ERP",
       versionStatus: "v3.2 OPERATIONAL",
       category: "EdTech Platform",
       categorySubtext: "Multi-Campus Ready",
       title: "SmartSchool ERP",
-      description: "The complete operational platform for modern institutions — unifying admissions, fee management, student records, and parent communication.",
+      description: "The complete operational platform for modern institutions â€” unifying admissions, fee management, student records, and parent communication.",
       specs: ["Role-Based Portals", "Automated Fee Invoicing", "Instant SMS/WhatsApp Alerts", "Gradebook & Report Cards"],
       productUrl: "/products/school-erp",
       productUrlText: "View Product Details",
       demoUrl: "/contact",
-      demoUrlText: "Request Demo →",
+      demoUrlText: "Request Demo â†’",
       imageUrl: "https://picsum.photos/seed/912714368/1200/800"
     },
     {
       id: "2",
-      badge: "NOTIFICATION 02 / 02 • OMNICHAT INBOX",
+      badge: "NOTIFICATION 02 / 02 â€¢ OMNICHAT INBOX",
       versionStatus: "NEW MESSAGE",
       category: "Customer Engagement",
       categorySubtext: "AI-Assisted Inbox",
@@ -3716,7 +3755,7 @@ export const DEFAULT_HOME_PAGE_DATA: HomePageData = {
       productUrl: "/products/omnichat",
       productUrlText: "View Product Details",
       demoUrl: "/contact",
-      demoUrlText: "Request Demo →",
+      demoUrlText: "Request Demo â†’",
       imageUrl: "https://picsum.photos/seed/862930265/1200/800"
     }
   ]
@@ -3808,7 +3847,7 @@ export async function fetchHomePage(): Promise<HomePageData> {
       productUrl: p.productUrl || '/products',
       productUrlText: p.productUrlText || 'View Product Details',
       demoUrl: p.demoUrl || '/contact',
-      demoUrlText: p.demoUrlText || 'Request Demo →',
+      demoUrlText: p.demoUrlText || 'Request Demo â†’',
       imageUrl: getStrapiMediaUrl(p.image) || p.imageUrl || DEFAULT_HOME_PAGE_DATA.productsCards[idx]?.imageUrl || "https://picsum.photos/seed/default/1200/800",
     })) : DEFAULT_HOME_PAGE_DATA.productsCards;
     
@@ -3959,7 +3998,7 @@ const DEFAULT_PRODUCTS_PAGE: ProductsPageConfig = {
   contactDescription: "Whether you have a fully scoped product brief or just an ambitious concept, our technical architects are standing by to explore your vision.",
   contactEmail: "hello@aprogra.com",
   contactPhone: "+1 (800) 555-0199",
-  contactLocation: "Hyderabad, India • Global Remote Pods",
+  contactLocation: "Hyderabad, India â€¢ Global Remote Pods",
   inquiryFormTitle: "Quick Inquiry",
   inquiryFormSubtitle: "Direct line to our technical architecture pod.",
   inquiryButtonText: "Send Inquiry"
@@ -4257,3 +4296,603 @@ export function useCareers() {
 
   return { careers, isLoading };
 }
+export interface SchoolErpPageConfig {
+  modulesBadge?: string;
+  modulesTitle?: string;
+  modulesDescription?: string;
+  modules: any[];
+  screenshotsBadge?: string;
+  screenshotsTitle?: string;
+  screenshotsDescription?: string;
+  screenshots: any[];
+  pricingBadge?: string;
+  pricingTitle?: string;
+  pricingDescription?: string;
+  pricingTiers: any[];
+  faqsBadge?: string;
+  faqsTitle?: string;
+  faqsDescription?: string;
+  faqs: any[];
+  heroBadge: string;
+  heroTitle: string;
+  heroHighlight: string;
+  heroDescription: string;
+  primaryButtonText: string;
+  primaryButtonLink: string;
+  secondaryButtonText: string;
+  secondaryButtonLink: string;
+  heroMetrics: { value: string; label: string; isPrimary: boolean }[];
+  contactCtaBadge?: string;
+  contactCtaTitle?: string;
+  contactCtaHighlight?: string;
+  contactCtaDescription?: string;
+  contactFormTitle?: string;
+  contactFormSubtitle?: string;
+  contactFormStatus?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPhoneHours?: string;
+  contactAddress?: string;
+  contactCity?: string;
+  contactPresenceBadge?: string;
+  contactPresenceTitle?: string;
+  contactPresenceDescription?: string;
+}
+
+const DEFAULT_SCHOOL_ERP_PAGE: SchoolErpPageConfig = {
+  heroBadge: 'SmartSchool ERP · Unified Campus OS',
+  heroTitle: 'The Complete Multi-Tenant Operating System for Modern Schools & Daycares.',
+  heroHighlight: 'Modern Schools & Daycares.',
+  heroDescription: 'Digitize every campus touchpoint — admissions CRM, attendance automation, fee collections, live GPS transport tracking, daycare logs, and AI-powered Saraswati lesson planning in one unified platform.',
+  primaryButtonText: 'Request Campus Demo',
+  primaryButtonLink: '/contact',
+  secondaryButtonText: 'Explore 11 Core Modules',
+  secondaryButtonLink: '#module-breakdown',
+  heroMetrics: [
+    { value: '480+', label: 'Campus Screens', isPrimary: false },
+    { value: '120K+', label: 'Active Students', isPrimary: true },
+    { value: '99.9%', label: 'Uptime SLA', isPrimary: false },
+    { value: '60+', label: 'Institutions', isPrimary: false }
+  ],
+  modulesBadge: 'Comprehensive Feature Architecture',
+  modulesTitle: '{count} Specialized Modules for Every Department',
+  modulesDescription: 'Click through the modules below to explore how SmartSchool ERP transforms every aspect of campus management.',
+  modules: [],
+  screenshotsBadge: 'Interface Showcase',
+  screenshotsTitle: 'Designed for Speed & Clarity',
+  screenshotsDescription: 'Explore actual operational screens from the SmartSchool ERP ecosystem.',
+  screenshots: [],
+  pricingBadge: 'Flexible Subscriptions',
+  pricingTitle: 'Simple, Transparent Pricing',
+  pricingDescription: 'Choose the plan that fits your campus size. All plans include automated cloud updates and SSL encryption.',
+  pricingTiers: [],
+  faqsBadge: 'Got Questions?',
+  faqsTitle: 'Frequently Asked Questions',
+  faqsDescription: 'Everything you need to know about implementation, deployment, and security.',
+  faqs: [],
+  contactCtaBadge: 'START YOUR NEXT PROJECT',
+  contactCtaTitle: "Let's Build Something Extraordinary Together.",
+  contactCtaHighlight: 'Extraordinary Together.',
+  contactCtaDescription: 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.',
+  contactFormTitle: 'Send Us a Message',
+  contactFormSubtitle: "Fill out the details below and we'll reply within 24 hours.",
+  contactFormStatus: 'Available for New Projects',
+  contactEmail: 'hello@aprogra.com',
+  contactPhone: '+1 (800) 555-0199',
+  contactPhoneHours: 'Mon – Fri, 9:00 AM – 7:00 PM EST',
+  contactAddress: '500 Howard St, Suite 400',
+  contactCity: 'San Francisco, CA 94105',
+  contactPresenceBadge: 'Global Presence',
+  contactPresenceTitle: 'Engineering Across Global Time Zones',
+  contactPresenceDescription: 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'
+};
+
+export async function fetchSchoolErpPage(): Promise<SchoolErpPageConfig> {
+  try {
+    const raw = await fetchFromStrapi<any>(
+      'school-erp-page?populate[heroMetrics]=true&populate[modules]=true&populate[screenshots][populate]=image&populate[pricingTiers][populate]=features&populate[faqs]=true'
+    );
+    if (!raw) {
+      console.warn('[Strapi] school-erp-page returned empty, using defaults');
+      return DEFAULT_SCHOOL_ERP_PAGE;
+    }
+    
+    console.info('[Strapi] school-erp-page loaded from CMS', {
+      documentId: raw.documentId || raw.id,
+      publishedAt: raw.publishedAt,
+      updatedAt: raw.updatedAt,
+    });
+    
+    const data = raw.attributes || raw;
+    
+    // Normalize pricing tiers so features is always an array of strings or objects
+    const rawTiers = Array.isArray(data.pricingTiers) && data.pricingTiers.length > 0 ? data.pricingTiers : [];
+    const pricingTiers = rawTiers.map((tier: any, idx: number) => {
+      let rawFeatures = tier.features;
+      let features: any[] = [];
+      if (Array.isArray(rawFeatures)) {
+        features = rawFeatures.map((f: any) => (typeof f === 'string' ? f : (f.label || f.name || f.title || String(f))));
+      } else if (typeof rawFeatures === 'string') {
+        features = rawFeatures.split('\n').map((f: string) => f.trim()).filter(Boolean);
+      }
+      return {
+        ...tier,
+        features: features.length > 0 ? features : (DEFAULT_SCHOOL_ERP_PAGE.pricingTiers[idx]?.features || [])
+      };
+    });
+
+    return {
+      heroBadge: data.heroBadge || DEFAULT_SCHOOL_ERP_PAGE.heroBadge,
+      heroTitle: data.heroTitle || DEFAULT_SCHOOL_ERP_PAGE.heroTitle,
+      heroHighlight: data.heroHighlight || DEFAULT_SCHOOL_ERP_PAGE.heroHighlight,
+      heroDescription: data.heroDescription || DEFAULT_SCHOOL_ERP_PAGE.heroDescription,
+      primaryButtonText: data.primaryButtonText || DEFAULT_SCHOOL_ERP_PAGE.primaryButtonText,
+      primaryButtonLink: data.primaryButtonLink || DEFAULT_SCHOOL_ERP_PAGE.primaryButtonLink,
+      secondaryButtonText: data.secondaryButtonText || DEFAULT_SCHOOL_ERP_PAGE.secondaryButtonText,
+      secondaryButtonLink: data.secondaryButtonLink || DEFAULT_SCHOOL_ERP_PAGE.secondaryButtonLink,
+      heroMetrics: (data.heroMetrics && Array.isArray(data.heroMetrics) && data.heroMetrics.length > 0) ? data.heroMetrics : DEFAULT_SCHOOL_ERP_PAGE.heroMetrics,
+      modulesBadge: data.modulesBadge || DEFAULT_SCHOOL_ERP_PAGE.modulesBadge,
+      modulesTitle: data.modulesTitle || DEFAULT_SCHOOL_ERP_PAGE.modulesTitle,
+      modulesDescription: data.modulesDescription || DEFAULT_SCHOOL_ERP_PAGE.modulesDescription,
+      modules: Array.isArray(data.modules) ? data.modules : [],
+      screenshotsBadge: data.screenshotsBadge || DEFAULT_SCHOOL_ERP_PAGE.screenshotsBadge,
+      screenshotsTitle: data.screenshotsTitle || DEFAULT_SCHOOL_ERP_PAGE.screenshotsTitle,
+      screenshotsDescription: data.screenshotsDescription || DEFAULT_SCHOOL_ERP_PAGE.screenshotsDescription,
+      screenshots: Array.isArray(data.screenshots) ? data.screenshots : [],
+      pricingBadge: data.pricingBadge || DEFAULT_SCHOOL_ERP_PAGE.pricingBadge,
+      pricingTitle: data.pricingTitle || DEFAULT_SCHOOL_ERP_PAGE.pricingTitle,
+      pricingDescription: data.pricingDescription || DEFAULT_SCHOOL_ERP_PAGE.pricingDescription,
+      pricingTiers: pricingTiers.length > 0 ? pricingTiers : DEFAULT_SCHOOL_ERP_PAGE.pricingTiers,
+      faqsBadge: data.faqsBadge || DEFAULT_SCHOOL_ERP_PAGE.faqsBadge,
+      faqsTitle: data.faqsTitle || DEFAULT_SCHOOL_ERP_PAGE.faqsTitle,
+      faqsDescription: data.faqsDescription || DEFAULT_SCHOOL_ERP_PAGE.faqsDescription,
+      faqs: Array.isArray(data.faqs) ? data.faqs : [],
+      contactCtaBadge: data.contactCtaBadge || DEFAULT_SCHOOL_ERP_PAGE.contactCtaBadge,
+      contactCtaTitle: data.contactCtaTitle || DEFAULT_SCHOOL_ERP_PAGE.contactCtaTitle,
+      contactCtaHighlight: data.contactCtaHighlight || DEFAULT_SCHOOL_ERP_PAGE.contactCtaHighlight,
+      contactCtaDescription: data.contactCtaDescription || DEFAULT_SCHOOL_ERP_PAGE.contactCtaDescription,
+      contactFormTitle: data.contactFormTitle || DEFAULT_SCHOOL_ERP_PAGE.contactFormTitle,
+      contactFormSubtitle: data.contactFormSubtitle || DEFAULT_SCHOOL_ERP_PAGE.contactFormSubtitle,
+      contactFormStatus: data.contactFormStatus || DEFAULT_SCHOOL_ERP_PAGE.contactFormStatus,
+      contactEmail: data.contactEmail || DEFAULT_SCHOOL_ERP_PAGE.contactEmail,
+      contactPhone: data.contactPhone || DEFAULT_SCHOOL_ERP_PAGE.contactPhone,
+      contactPhoneHours: data.contactPhoneHours || DEFAULT_SCHOOL_ERP_PAGE.contactPhoneHours,
+      contactAddress: data.contactAddress || DEFAULT_SCHOOL_ERP_PAGE.contactAddress,
+      contactCity: data.contactCity || DEFAULT_SCHOOL_ERP_PAGE.contactCity,
+      contactPresenceBadge: data.contactPresenceBadge || DEFAULT_SCHOOL_ERP_PAGE.contactPresenceBadge,
+      contactPresenceTitle: data.contactPresenceTitle || DEFAULT_SCHOOL_ERP_PAGE.contactPresenceTitle,
+      contactPresenceDescription: data.contactPresenceDescription || DEFAULT_SCHOOL_ERP_PAGE.contactPresenceDescription,
+    };
+  } catch (error) {
+    console.warn('[Strapi] Could not load School ERP Page content, using defaults:', error);
+    return DEFAULT_SCHOOL_ERP_PAGE;
+  }
+}
+
+export function useSchoolErpPage() {
+  const [config, setConfig] = useState<SchoolErpPageConfig>(DEFAULT_SCHOOL_ERP_PAGE);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    fetchSchoolErpPage().then(data => {
+      if (isMounted) {
+        setConfig(data);
+        setIsLoading(false);
+      }
+    }).catch(() => {
+      if (isMounted) setIsLoading(false);
+    });
+    return () => { isMounted = false; };
+  }, [typeof window !== 'undefined' ? window.location.search : '']);
+
+  return { config, isLoading };
+}
+
+// ============================================================================
+// OMNICHAT PAGE CMS INTERFACES & HOOKS
+// ============================================================================
+
+export interface OmniChatChannelItem {
+  id?: string;
+  channelId: string;
+  name: string;
+  badge: string;
+  icon: string;
+  tagline: string;
+  description: string;
+  metric: string;
+  metricLabel: string;
+  features: string[];
+}
+
+export interface OmniChatFeatureCardItem {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export interface OmniChatPricingTierItem {
+  name: string;
+  price: string;
+  period: string;
+  tagline: string;
+  badge: string;
+  isPopular: boolean;
+  cta: string;
+  features: string[];
+}
+
+export interface OmniChatPageConfig {
+  heroBadge: string;
+  heroTitle: string;
+  heroHighlight: string;
+  heroDescription: string;
+  primaryButtonText: string;
+  primaryButtonLink: string;
+  secondaryButtonText: string;
+  secondaryButtonLink: string;
+  heroMetrics: { value: string; label: string; isPrimary: boolean }[];
+  channelsBadge: string;
+  channelsTitle: string;
+  channelsDescription: string;
+  channels: OmniChatChannelItem[];
+  automationBadge: string;
+  automationTitle: string;
+  automationDescription: string;
+  automationNodes: OmniChatFeatureCardItem[];
+  aiBadge: string;
+  aiTitle: string;
+  aiDescription: string;
+  aiCapabilities: OmniChatFeatureCardItem[];
+  pricingBadge: string;
+  pricingTitle: string;
+  pricingDescription: string;
+  pricingTiers: OmniChatPricingTierItem[];
+  faqsBadge: string;
+  faqsTitle: string;
+  faqs: { question: string; answer: string }[];
+  contactCtaBadge?: string;
+  contactCtaTitle?: string;
+  contactCtaHighlight?: string;
+  contactCtaDescription?: string;
+  contactFormTitle?: string;
+  contactFormSubtitle?: string;
+  contactFormStatus?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPhoneHours?: string;
+  contactAddress?: string;
+  contactCity?: string;
+  contactPresenceBadge?: string;
+  contactPresenceTitle?: string;
+  contactPresenceDescription?: string;
+}
+
+export const DEFAULT_OMNICHAT_PAGE: OmniChatPageConfig = {
+  heroBadge: 'OmniChat · Multichannel AI Platform',
+  heroTitle: 'Multichannel Messaging & Automation, Powered by the WhatsApp Business API.',
+  heroHighlight: 'the WhatsApp Business API.',
+  heroDescription: 'Unify WhatsApp, Instagram DMs, Messenger, and Telegram into one shared inbox equipped with visual no-code flowcharts and autonomous Gemini AI conversational agents.',
+  primaryButtonText: 'Book OmniChat Demo',
+  primaryButtonLink: '/contact',
+  secondaryButtonText: 'Explore 4 Channels',
+  secondaryButtonLink: '#channels-breakdown',
+  heroMetrics: [
+    { value: '4', label: 'Connected Channels', isPrimary: true },
+    { value: '60%', label: 'Faster Support', isPrimary: false },
+    { value: '1.2M+', label: 'Monthly Messages', isPrimary: false },
+    { value: '24/7', label: 'AI Response SLA', isPrimary: false }
+  ],
+  channelsBadge: 'Multi-Channel Connectivity',
+  channelsTitle: 'One Inbox. All Customer Touchpoints.',
+  channelsDescription: 'Switch between channels below to view native messaging capabilities.',
+  channels: [
+    {
+      channelId: 'whatsapp',
+      name: 'WhatsApp Business API',
+      badge: 'Official Meta Partner',
+      icon: 'MessageCircle',
+      tagline: 'Direct WhatsApp Marketing & Support at Scale',
+      description: 'Broadcast promotional templates, send automated transactional order updates, and run AI customer support via official WhatsApp API.',
+      metric: '98% Open Rate',
+      metricLabel: 'Average WhatsApp Message Engagement',
+      features: [
+        'Official Green Tick Badge Verification',
+        'In-App Meta Template Submission & Approval',
+        'Interactive Quick-Reply & CTA Button Messages',
+        '24-Hour Session Messaging Window Compliance'
+      ]
+    },
+    {
+      channelId: 'instagram',
+      name: 'Instagram DMs & Comments',
+      badge: 'Meta Graph API',
+      icon: 'Sparkles',
+      tagline: 'Turn Comments & Story Mentions into Direct Revenue',
+      description: 'Auto-reply to Instagram post comments and trigger immediate private DMs with discount codes or product links.',
+      metric: '3.8x More DMs',
+      metricLabel: 'Converted from Post Comments',
+      features: [
+        'Comment-to-DM Instant Automated Triggers',
+        'Story Mention Recognition & Automated Thank-You',
+        'Influencer Campaign Inbound Routing',
+        'Product Catalog Link Integration in DMs'
+      ]
+    },
+    {
+      channelId: 'messenger',
+      name: 'Facebook Messenger',
+      badge: 'Meta Page Sync',
+      icon: 'MessageSquare',
+      tagline: 'Instant Lead Qualification from Facebook Ads',
+      description: 'Capture inbound leads directly from Facebook Lead Ads or page messaging with zero response delay.',
+      metric: '< 10 Sec',
+      metricLabel: 'First Response Time',
+      features: [
+        'Facebook Lead Ads Instant Form Capture',
+        'Shared Team Inbox across Multiple Pages',
+        'Automated FAQ & Menu Cards',
+        'Seamless Live Agent Handover'
+      ]
+    },
+    {
+      channelId: 'telegram',
+      name: 'Telegram Bot API',
+      badge: 'Unlimited Broadcasts',
+      icon: 'Send',
+      tagline: 'High-Volume Community & Channel Broadcasting',
+      description: 'Manage Telegram channels and groups with automated subscription bots, broadcasts, and file sharing.',
+      metric: 'Unlimited',
+      metricLabel: 'Broadcast Subscriber Capacity',
+      features: [
+        'High-Speed Broadcast Messages to Channels',
+        'Automated Member Onboarding & Verification',
+        'File, Media & Document Delivery Bots',
+        'Command-Based Custom Bot Logic'
+      ]
+    }
+  ],
+  automationBadge: 'No-Code Engine',
+  automationTitle: 'Visual Automation Flowchart Builder',
+  automationDescription: 'Map complex user journeys, conditional decision trees, and CRM webhooks on a drag-and-drop visual canvas.',
+  automationNodes: [
+    { icon: 'Workflow', title: 'Visual Flowchart Canvas', description: 'Drag-and-drop node builder to map complex customer journeys without writing a single line of code.' },
+    { icon: 'Zap', title: 'Conditional Branching', description: 'Route conversations based on user keywords, past purchase history, or customer tag attributes.' },
+    { icon: 'Share2', title: 'API Webhooks & Zapier', description: 'Trigger external CRM actions (Shopify, HubSpot, Salesforce) directly from chat interaction nodes.' },
+    { icon: 'Clock', title: 'Smart Delay & Drip Sequences', description: 'Schedule follow-up messages after 1 hour, 24 hours, or 3 days to re-engage warm prospects.' }
+  ],
+  aiBadge: 'Autonomous Intelligence',
+  aiTitle: 'AI Conversational Intelligence',
+  aiDescription: 'Powered by Gemini 1.5 LLM vector embeddings to resolve up to 80% of routine customer support inquiries automatically.',
+  aiCapabilities: [
+    { icon: 'Bot', title: 'Autonomous Gemini 1.5 LLM Engine', description: 'Trained on your company knowledge base, documentation, and product catalogs to answer complex queries.' },
+    { icon: 'Headphones', title: 'Seamless Human Handover', description: 'When AI detects high lead sentiment or complex issues, it seamlessly alerts and transfers to human agents.' },
+    { icon: 'UserCheck', title: 'Automated Lead Qualification', description: 'AI gathers customer name, email, budget, and requirements before scheduling a calendar call.' },
+    { icon: 'PhoneCall', title: 'AI Voice & Chat Answering', description: 'Intelligent fallback system handling both written chats and voice calls around the clock.' }
+  ],
+  pricingBadge: 'Subscription Plans',
+  pricingTitle: 'Simple, Predictable Pricing',
+  pricingDescription: 'Choose the plan that matches your monthly active contact volume.',
+  pricingTiers: [
+    {
+      name: 'Starter Inbox',
+      price: '$149',
+      period: '/ month',
+      tagline: 'For growing brands looking to automate WhatsApp & Instagram.',
+      badge: 'Single Brand',
+      isPopular: false,
+      cta: 'Get Started Starter',
+      features: [
+        'Up to 5,000 Monthly Active Contacts',
+        '2 Connected Channels (WhatsApp & Instagram)',
+        'Shared Team Inbox for 3 Agent Seats',
+        'No-Code Automation Builder',
+        'Meta Template Submission Engine',
+        'Standard Email & Chat Support'
+      ]
+    },
+    {
+      name: 'Growth Automation',
+      price: '$399',
+      period: '/ month',
+      tagline: 'Comprehensive suite for scaling retail & e-commerce operations.',
+      badge: 'Most Popular Choice',
+      isPopular: true,
+      cta: 'Request Demo & Quote',
+      features: [
+        'Up to 25,000 Monthly Active Contacts',
+        'All 4 Connected Channels Included',
+        'Shared Team Inbox for 10 Agent Seats',
+        'Autonomous Gemini AI Chatbot Integration',
+        'Instagram Comment-to-DM Automation',
+        'Shopify & CRM API Webhooks',
+        '24/7 Priority WhatsApp Support'
+      ]
+    },
+    {
+      name: 'Enterprise Scale',
+      price: 'Custom',
+      period: '',
+      tagline: 'Custom high-volume broadcasting & dedicated throughput.',
+      badge: 'Enterprise Volume',
+      isPopular: false,
+      cta: 'Contact Enterprise Sales',
+      features: [
+        'Unlimited Monthly Active Contacts',
+        'Unlimited Agent Seats & Department Queues',
+        'Dedicated WhatsApp API High-Throughput Node',
+        'Custom LLM Fine-Tuning & Knowledge Base',
+        'Dedicated Account Manager & 99.9% SLA',
+        'Custom On-Premise / Isolated Cloud Deploy'
+      ]
+    }
+  ],
+  faqsBadge: 'Got Questions?',
+  faqsTitle: 'Frequently Asked Questions',
+  faqs: [
+    { question: 'How long does Meta WhatsApp Business API approval take?', answer: 'With OmniChat, official Meta WhatsApp Business API approval typically takes between 24 and 48 hours. We handle business verification assistance, phone number porting, and Meta display name guidelines directly.' },
+    { question: 'How do we train the AI chatbot on our company data?', answer: 'Simply paste your website URL, upload PDF product manuals, or sync your Notion/Google Drive knowledge base. OmniChat automatically indexes your documents using vector embeddings and starts answering customer questions immediately.' },
+    { question: 'Can human support agents intervene during an AI conversation?', answer: 'Yes! Human agents can monitor live AI conversations in the shared inbox and jump in at any time with a single click. The AI immediately pauses and hands over complete control to the agent.' },
+    { question: 'How does Instagram Comment-to-DM automation work?', answer: 'When a user leaves a comment on your Instagram post containing trigger keywords (e.g., "PRICE", "DEMO", "INFO"), OmniChat instantly posts a public reply and sends a direct private message to that user with your link.' },
+    { question: 'Can we migrate our existing WhatsApp Business number to OmniChat?', answer: 'Yes. You can migrate your existing phone number to the official WhatsApp Business Cloud API. Our onboarding specialists assist with OTP verification to ensure zero downtime during transfer.' }
+  ],
+  contactCtaBadge: 'START YOUR NEXT PROJECT',
+  contactCtaTitle: "Let's Build Something Extraordinary Together.",
+  contactCtaHighlight: 'Extraordinary Together.',
+  contactCtaDescription: 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.',
+  contactFormTitle: 'Send Us a Message',
+  contactFormSubtitle: "Fill out the details below and we'll reply within 24 hours.",
+  contactFormStatus: 'Available for New Projects',
+  contactEmail: 'hello@aprogra.com',
+  contactPhone: '+1 (800) 555-0199',
+  contactPhoneHours: 'Mon – Fri, 9:00 AM – 7:00 PM EST',
+  contactAddress: '500 Howard St, Suite 400',
+  contactCity: 'San Francisco, CA 94105',
+  contactPresenceBadge: 'Global Presence',
+  contactPresenceTitle: 'Engineering Across Global Time Zones',
+  contactPresenceDescription: 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'
+};
+
+export async function fetchOmniChatPage(): Promise<OmniChatPageConfig> {
+  try {
+    const raw = await fetchFromStrapi<any>(
+      'omnichat-page?populate[heroMetrics]=true&populate[channels][populate]=features&populate[automationNodes]=true&populate[aiCapabilities]=true&populate[pricingTiers][populate]=features&populate[faqs]=true'
+    );
+    if (!raw) {
+      console.warn('[Strapi] omnichat-page returned empty, using defaults');
+      return DEFAULT_OMNICHAT_PAGE;
+    }
+
+    console.info('[Strapi] omnichat-page loaded from CMS', {
+      documentId: raw.documentId || raw.id,
+      publishedAt: raw.publishedAt,
+      updatedAt: raw.updatedAt,
+    });
+
+    const data = raw.attributes || raw;
+
+    // Normalize channels
+    const rawChannels = Array.isArray(data.channels) && data.channels.length > 0 ? data.channels : [];
+    const channels: OmniChatChannelItem[] = rawChannels.length > 0
+      ? rawChannels.map((ch: any, idx: number) => {
+          let feats = ch.features;
+          let features: string[] = [];
+          if (Array.isArray(feats)) {
+            features = feats.map((f: any) => (typeof f === 'string' ? f : (f.label || f.name || f.title || String(f))));
+          } else if (typeof feats === 'string') {
+            features = feats.split('\n').map((f: string) => f.trim()).filter(Boolean);
+          }
+          return {
+            id: ch.channelId || ch.id || `channel-${idx}`,
+            channelId: ch.channelId || ch.id || `channel-${idx}`,
+            name: ch.name || DEFAULT_OMNICHAT_PAGE.channels[idx]?.name || '',
+            badge: ch.badge || DEFAULT_OMNICHAT_PAGE.channels[idx]?.badge || '',
+            icon: ch.icon || DEFAULT_OMNICHAT_PAGE.channels[idx]?.icon || 'MessageCircle',
+            tagline: ch.tagline || DEFAULT_OMNICHAT_PAGE.channels[idx]?.tagline || '',
+            description: ch.description || DEFAULT_OMNICHAT_PAGE.channels[idx]?.description || '',
+            metric: ch.metric || DEFAULT_OMNICHAT_PAGE.channels[idx]?.metric || '',
+            metricLabel: ch.metricLabel || DEFAULT_OMNICHAT_PAGE.channels[idx]?.metricLabel || '',
+            features: features.length > 0 ? features : (DEFAULT_OMNICHAT_PAGE.channels[idx]?.features || []),
+          };
+        })
+      : DEFAULT_OMNICHAT_PAGE.channels;
+
+    // Normalize pricing tiers
+    const rawTiers = Array.isArray(data.pricingTiers) && data.pricingTiers.length > 0 ? data.pricingTiers : [];
+    const pricingTiers: OmniChatPricingTierItem[] = rawTiers.length > 0
+      ? rawTiers.map((tier: any, idx: number) => {
+          let rawFeatures = tier.features;
+          let features: string[] = [];
+          if (Array.isArray(rawFeatures)) {
+            features = rawFeatures.map((f: any) => (typeof f === 'string' ? f : (f.label || f.name || f.title || String(f))));
+          } else if (typeof rawFeatures === 'string') {
+            features = rawFeatures.split('\n').map((f: string) => f.trim()).filter(Boolean);
+          }
+          return {
+            name: tier.name || DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.name || '',
+            price: tier.price || DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.price || '',
+            period: tier.period !== undefined ? tier.period : (DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.period || ''),
+            tagline: tier.tagline || DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.tagline || '',
+            badge: tier.badge || DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.badge || '',
+            isPopular: typeof tier.isPopular === 'boolean' ? tier.isPopular : (DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.isPopular || false),
+            cta: tier.cta || DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.cta || 'Get Started',
+            features: features.length > 0 ? features : (DEFAULT_OMNICHAT_PAGE.pricingTiers[idx]?.features || [])
+          };
+        })
+      : DEFAULT_OMNICHAT_PAGE.pricingTiers;
+
+    return {
+      heroBadge: data.heroBadge || DEFAULT_OMNICHAT_PAGE.heroBadge,
+      heroTitle: data.heroTitle || DEFAULT_OMNICHAT_PAGE.heroTitle,
+      heroHighlight: data.heroHighlight || DEFAULT_OMNICHAT_PAGE.heroHighlight,
+      heroDescription: data.heroDescription || DEFAULT_OMNICHAT_PAGE.heroDescription,
+      primaryButtonText: data.primaryButtonText || DEFAULT_OMNICHAT_PAGE.primaryButtonText,
+      primaryButtonLink: data.primaryButtonLink || DEFAULT_OMNICHAT_PAGE.primaryButtonLink,
+      secondaryButtonText: data.secondaryButtonText || DEFAULT_OMNICHAT_PAGE.secondaryButtonText,
+      secondaryButtonLink: data.secondaryButtonLink || DEFAULT_OMNICHAT_PAGE.secondaryButtonLink,
+      heroMetrics: (data.heroMetrics && Array.isArray(data.heroMetrics) && data.heroMetrics.length > 0) ? data.heroMetrics : DEFAULT_OMNICHAT_PAGE.heroMetrics,
+      channelsBadge: data.channelsBadge || DEFAULT_OMNICHAT_PAGE.channelsBadge,
+      channelsTitle: data.channelsTitle || DEFAULT_OMNICHAT_PAGE.channelsTitle,
+      channelsDescription: data.channelsDescription || DEFAULT_OMNICHAT_PAGE.channelsDescription,
+      channels,
+      automationBadge: data.automationBadge || DEFAULT_OMNICHAT_PAGE.automationBadge,
+      automationTitle: data.automationTitle || DEFAULT_OMNICHAT_PAGE.automationTitle,
+      automationDescription: data.automationDescription || DEFAULT_OMNICHAT_PAGE.automationDescription,
+      automationNodes: (data.automationNodes && Array.isArray(data.automationNodes) && data.automationNodes.length > 0) ? data.automationNodes : DEFAULT_OMNICHAT_PAGE.automationNodes,
+      aiBadge: data.aiBadge || DEFAULT_OMNICHAT_PAGE.aiBadge,
+      aiTitle: data.aiTitle || DEFAULT_OMNICHAT_PAGE.aiTitle,
+      aiDescription: data.aiDescription || DEFAULT_OMNICHAT_PAGE.aiDescription,
+      aiCapabilities: (data.aiCapabilities && Array.isArray(data.aiCapabilities) && data.aiCapabilities.length > 0) ? data.aiCapabilities : DEFAULT_OMNICHAT_PAGE.aiCapabilities,
+      pricingBadge: data.pricingBadge || DEFAULT_OMNICHAT_PAGE.pricingBadge,
+      pricingTitle: data.pricingTitle || DEFAULT_OMNICHAT_PAGE.pricingTitle,
+      pricingDescription: data.pricingDescription || DEFAULT_OMNICHAT_PAGE.pricingDescription,
+      pricingTiers,
+      faqsBadge: data.faqsBadge || DEFAULT_OMNICHAT_PAGE.faqsBadge,
+      faqsTitle: data.faqsTitle || DEFAULT_OMNICHAT_PAGE.faqsTitle,
+      faqs: (data.faqs && Array.isArray(data.faqs) && data.faqs.length > 0) ? data.faqs : DEFAULT_OMNICHAT_PAGE.faqs,
+      contactCtaBadge: data.contactCtaBadge || DEFAULT_OMNICHAT_PAGE.contactCtaBadge,
+      contactCtaTitle: data.contactCtaTitle || DEFAULT_OMNICHAT_PAGE.contactCtaTitle,
+      contactCtaHighlight: data.contactCtaHighlight || DEFAULT_OMNICHAT_PAGE.contactCtaHighlight,
+      contactCtaDescription: data.contactCtaDescription || DEFAULT_OMNICHAT_PAGE.contactCtaDescription,
+      contactFormTitle: data.contactFormTitle || DEFAULT_OMNICHAT_PAGE.contactFormTitle,
+      contactFormSubtitle: data.contactFormSubtitle || DEFAULT_OMNICHAT_PAGE.contactFormSubtitle,
+      contactFormStatus: data.contactFormStatus || DEFAULT_OMNICHAT_PAGE.contactFormStatus,
+      contactEmail: data.contactEmail || DEFAULT_OMNICHAT_PAGE.contactEmail,
+      contactPhone: data.contactPhone || DEFAULT_OMNICHAT_PAGE.contactPhone,
+      contactPhoneHours: data.contactPhoneHours || DEFAULT_OMNICHAT_PAGE.contactPhoneHours,
+      contactAddress: data.contactAddress || DEFAULT_OMNICHAT_PAGE.contactAddress,
+      contactCity: data.contactCity || DEFAULT_OMNICHAT_PAGE.contactCity,
+      contactPresenceBadge: data.contactPresenceBadge || DEFAULT_OMNICHAT_PAGE.contactPresenceBadge,
+      contactPresenceTitle: data.contactPresenceTitle || DEFAULT_OMNICHAT_PAGE.contactPresenceTitle,
+      contactPresenceDescription: data.contactPresenceDescription || DEFAULT_OMNICHAT_PAGE.contactPresenceDescription,
+    };
+  } catch (error) {
+    console.warn('[Strapi] Could not load OmniChat Page content, using defaults:', error);
+    return DEFAULT_OMNICHAT_PAGE;
+  }
+}
+
+export function useOmniChatPage() {
+  const [config, setConfig] = useState<OmniChatPageConfig>(DEFAULT_OMNICHAT_PAGE);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    setIsLoading(true);
+    fetchOmniChatPage().then(data => {
+      if (isMounted) {
+        setConfig(data);
+        setIsLoading(false);
+      }
+    }).catch(() => {
+      if (isMounted) setIsLoading(false);
+    });
+    return () => { isMounted = false; };
+  }, [typeof window !== 'undefined' ? window.location.search : '']);
+
+  return { config, isLoading };
+}
+
+

@@ -11,6 +11,8 @@ import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
+import DraftBanner from '../DraftBanner';
+
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Layout() {
@@ -57,6 +59,7 @@ export default function Layout() {
   return (
     <ScrollSnapProvider>
       <Cursor />
+      <DraftBanner />
       <div className="min-h-screen flex flex-col relative selection:bg-[#FF4A1C] selection:text-white bg-[#F4F1EA]">
         <Navbar />
         <main className="flex-grow flex flex-col">

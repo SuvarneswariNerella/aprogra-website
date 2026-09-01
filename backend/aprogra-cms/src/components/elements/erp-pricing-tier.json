@@ -1,0 +1,41 @@
+{
+  "collectionName": "components_elements_erp_pricing_tiers",
+  "info": {
+    "displayName": "ERP Pricing Tier",
+    "icon": "priceTag",
+    "description": "A pricing tier card for the ERP"
+  },
+  "options": {},
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "price": {
+      "type": "string",
+      "required": true
+    },
+    "period": {
+      "type": "string",
+      "required": true
+    },
+    "tagline": {
+      "type": "string"
+    },
+    "badge": {
+      "type": "string"
+    },
+    "isPopular": {
+      "type": "boolean",
+      "default": false
+    },
+    "cta": {
+      "type": "string"
+    },
+    "features": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.option-item"
+    }
+  }
+}

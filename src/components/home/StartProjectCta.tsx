@@ -24,7 +24,25 @@ const BUDGET_RANGES = [
   "Flexible / Let's Discuss"
 ];
 
-export default function StartProjectCta() {
+export interface StartProjectCtaData {
+  contactCtaBadge?: string;
+  contactCtaTitle?: string;
+  contactCtaHighlight?: string;
+  contactCtaDescription?: string;
+  contactFormTitle?: string;
+  contactFormSubtitle?: string;
+  contactFormStatus?: string;
+  contactEmail?: string;
+  contactPhone?: string;
+  contactPhoneHours?: string;
+  contactAddress?: string;
+  contactCity?: string;
+  contactPresenceBadge?: string;
+  contactPresenceTitle?: string;
+  contactPresenceDescription?: string;
+}
+
+export default function StartProjectCta({ config }: { config?: StartProjectCtaData }) {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -37,6 +55,10 @@ export default function StartProjectCta() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
+
+  const contactEmail = config?.contactEmail || 'hello@aprogra.com';
+  const ctaTitle = config?.contactCtaTitle || "Let's Build Something Extraordinary Together.";
+  const ctaHighlight = config?.contactCtaHighlight || 'Extraordinary Together.';
 
   // Refs for ScrollTrigger animations
   const sectionRef = useRef<HTMLElement>(null);
@@ -92,7 +114,7 @@ export default function StartProjectCta() {
   }, []);
 
   const handleCopyEmail = () => {
-    navigator.clipboard.writeText('hello@aprogra.com');
+    navigator.clipboard.writeText(contactEmail);
     setCopiedEmail(true);
     setTimeout(() => setCopiedEmail(false), 2000);
   };
@@ -118,16 +140,21 @@ export default function StartProjectCta() {
       <div ref={headingRef} className="relative z-10 text-center px-6 max-w-3xl mx-auto space-y-3 pb-12 sm:pb-16">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded bg-[#FAF8F5] border border-[#0B0D12]/15 text-[#0B0D12] text-xs font-semibold uppercase tracking-wider font-mono">
           <Sparkles className="w-3.5 h-3.5 text-[#FF4A1C]" />
-          <span>Start Your Next Project</span>
+          <span>{config?.contactCtaBadge || 'Start Your Next Project'}</span>
         </div>
 
         <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0B0D12] font-display leading-[1.15]">
-          Let's Build Something <br />
-          <span className="text-[#FF4A1C]">Extraordinary Together.</span>
+          {ctaTitle.replace(ctaHighlight, '')}
+          {ctaHighlight && (
+            <>
+              <br />
+              <span className="text-[#FF4A1C]">{ctaHighlight}</span>
+            </>
+          )}
         </h2>
 
         <p className="text-sm sm:text-base text-[#5A5E6E] leading-relaxed max-w-xl mx-auto font-sans">
-          Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.
+          {config?.contactCtaDescription || 'Whether you need a full-scale web application, custom school ERP, or technical architecture advisory — our dedicated engineering team is ready to deliver.'}
         </p>
       </div>
 
@@ -142,15 +169,15 @@ export default function StartProjectCta() {
           <div className="flex items-center justify-between pb-4 border-b border-[#0B0D12]/10">
             <div>
               <h3 className="text-xl sm:text-2xl font-bold text-[#0B0D12] font-display">
-                Send Us a Message
+                {config?.contactFormTitle || 'Send Us a Message'}
               </h3>
               <p className="text-xs sm:text-sm text-[#5A5E6E] mt-0.5">
-                Fill out the details below and we'll reply within 24 hours.
+                {config?.contactFormSubtitle || "Fill out the details below and we'll reply within 24 hours."}
               </p>
             </div>
             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded bg-[#FAF8F5] text-[#0B0D12] text-xs font-mono font-medium border border-[#0B0D12]/15">
               <span className="w-2 h-2 rounded-full bg-[#FF4A1C] animate-pulse" />
-              <span>Available for New Projects</span>
+              <span>{config?.contactFormStatus || 'Available for New Projects'}</span>
             </div>
           </div>
 
@@ -333,7 +360,7 @@ export default function StartProjectCta() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-xs text-[#5A5E6E] font-mono">Email Us Directly</div>
-                  <div className="text-sm font-bold text-[#0B0D12] truncate font-mono">hello@aprogra.com</div>
+                  <div className="text-sm font-bold text-[#0B0D12] truncate font-mono">{contactEmail}</div>
                   <button
                     onClick={handleCopyEmail}
                     className="inline-flex items-center gap-1 text-xs text-[#FF4A1C] font-mono font-semibold mt-0.5 hover:underline cursor-pointer"
@@ -351,8 +378,8 @@ export default function StartProjectCta() {
                 </div>
                 <div>
                   <div className="text-xs text-[#5A5E6E] font-mono">Phone / WhatsApp</div>
-                  <div className="text-sm font-bold text-[#0B0D12] font-mono">+1 (800) 555-0199</div>
-                  <div className="text-xs text-[#5A5E6E]">Mon – Fri, 9:00 AM – 7:00 PM EST</div>
+                  <div className="text-sm font-bold text-[#0B0D12] font-mono">{config?.contactPhone || '+1 (800) 555-0199'}</div>
+                  <div className="text-xs text-[#5A5E6E]">{config?.contactPhoneHours || 'Mon – Fri, 9:00 AM – 7:00 PM EST'}</div>
                 </div>
               </div>
 
@@ -363,8 +390,8 @@ export default function StartProjectCta() {
                 </div>
                 <div>
                   <div className="text-xs text-[#5A5E6E] font-mono">Global Headquarters</div>
-                  <div className="text-sm font-bold text-[#0B0D12]">500 Howard St, Suite 400</div>
-                  <div className="text-xs text-[#5A5E6E]">San Francisco, CA 94105</div>
+                  <div className="text-sm font-bold text-[#0B0D12]">{config?.contactAddress || '500 Howard St, Suite 400'}</div>
+                  <div className="text-xs text-[#5A5E6E]">{config?.contactCity || 'San Francisco, CA 94105'}</div>
                 </div>
               </div>
 
@@ -376,15 +403,15 @@ export default function StartProjectCta() {
             
             <div className="flex items-center gap-2 text-xs font-semibold text-[#FF4A1C] font-mono uppercase tracking-wider">
               <Globe className="w-4 h-4 text-[#FF4A1C]" />
-              <span>Global Presence</span>
+              <span>{config?.contactPresenceBadge || 'Global Presence'}</span>
             </div>
 
             <h4 className="text-lg font-bold font-display text-white">
-              Engineering Across Global Time Zones
+              {config?.contactPresenceTitle || 'Engineering Across Global Time Zones'}
             </h4>
 
             <p className="text-xs text-[#FAF8F5]/80 leading-relaxed font-sans">
-              Operating hub networks in <span className="text-white font-medium">San Francisco, London, and Hyderabad</span> to provide uninterrupted product velocity and active support.
+              {config?.contactPresenceDescription || 'Operating hub networks in San Francisco, London, and Hyderabad to provide uninterrupted product velocity and active support.'}
             </p>
 
             <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/10 text-center">

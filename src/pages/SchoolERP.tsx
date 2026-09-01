@@ -35,7 +35,7 @@ import {
 
 import Testimonials from '@/components/home/Testimonials';
 import StartProjectCta from '@/components/home/StartProjectCta';
-import { useProduct } from '@/lib/strapi';
+import { useProduct, useSchoolErpPage } from '@/lib/strapi';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -258,7 +258,7 @@ const SCREENSHOTS = [
     image: 'https://picsum.photos/seed/533658531/1200/800',
     desc: 'Map display tracking bus route velocity, stop arrival predictions, and automated speed alerts.'
   },
-  {
+    {
     title: 'Daycare Daily Moments & Activity Feed',
     category: 'Daycare Module',
     image: 'https://picsum.photos/seed/486150965/1200/800',
@@ -465,9 +465,10 @@ export default function SchoolERP() {
   };
 
   const { product } = useProduct('school-erp');
+  const { config } = useSchoolErpPage();
 
-  const dynamicCategories: ERPModuleCategory[] = (product?.features && product.features.length > 0)
-    ? product.features.map((f, index) => {
+  const dynamicCategories: ERPModuleCategory[] = (config.modules && config.modules.length > 0)
+    ? config.modules.map((f: any, index: number) => {
         const IconComponent = getModuleIcon(f.icon);
         const highlightLines = f.highlights ? f.highlights.split('\n').map(l => l.trim()).filter(Boolean) : [];
         const featureList = highlightLines.length > 0
@@ -505,6 +506,28 @@ export default function SchoolERP() {
 
   const currentCategoryObj = dynamicCategories.find(c => c.id === activeCategory) || dynamicCategories[0] || ERP_CATEGORIES[0];
 
+  const displayScreenshots = (config.screenshots && config.screenshots.length > 0) ? config.screenshots : SCREENSHOTS;
+  const displayPricingTiers = (config.pricingTiers && config.pricingTiers.length > 0)
+    ? config.pricingTiers.map((tier: any, idx: number) => ({
+        ...tier,
+        features: (tier.features && Array.isArray(tier.features) && tier.features.length > 0)
+          ? tier.features
+          : (PRICING_TIERS[idx]?.features || [])
+      }))
+    : PRICING_TIERS;
+  const displayFaqs = (config.faqs && config.faqs.length > 0) ? config.faqs : FAQS;
+  
+  // Helper to resolve Strapi images
+  const getImageUrl = (img: any, fallback: string) => {
+    if (!img) return fallback;
+    if (typeof img === 'string') return img;
+    if (img.url) {
+      if (img.url.startsWith('http')) return img.url;
+      return `${import.meta.env.VITE_STRAPI_URL || 'http://localhost:1337'}${img.url}`;
+    }
+    return fallback;
+  };
+
   return (
     <div ref={pageRef} className="w-full relative bg-[#F4F1EA] text-[#0B0D12] overflow-hidden">
       
@@ -519,55 +542,47 @@ export default function SchoolERP() {
           
           <div className="erp-hero-anim inline-flex items-center gap-2 px-3.5 py-1.5 rounded border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-badge">
             <GraduationCap className="w-4 h-4 text-[#FF4A1C]" />
-            <span>SmartSchool ERP · Unified Campus OS</span>
+            <span>{config.heroBadge}</span>
           </div>
 
           <h1 className="erp-hero-anim text-h1 text-[#0B0D12] max-w-5xl mx-auto">
-            The Complete Multi-Tenant Operating System for <br />
-            <span className="text-[#FF4A1C]">
-              Modern Schools & Daycares.
-            </span>
+            {(config.heroTitle || '').replace(config.heroHighlight || '', '')}
+            {config.heroHighlight && (
+              <span className="text-[#FF4A1C]">
+                {config.heroHighlight}
+              </span>
+            )}
           </h1>
 
           <p className="erp-hero-anim text-body-lg text-[#0B0D12]/70 max-w-3xl mx-auto">
-            Digitize every campus touchpoint — admissions CRM, attendance automation, fee collections, live GPS transport tracking, daycare logs, and AI-powered Saraswati lesson planning in one unified platform.
+            {config.heroDescription}
           </p>
 
           {/* Action CTAs */}
           <div className="erp-hero-anim pt-2 flex flex-wrap justify-center gap-4 items-center">
             <Link
-              to="/contact"
+              to={config.primaryButtonLink || '/contact'}
               className="px-8 py-4 rounded bg-[#FF4A1C] hover:bg-[#E03E14] text-white text-badge shadow-md transition-all flex items-center gap-2 cursor-pointer"
             >
-              <span>Request Campus Demo</span>
+              <span>{config.primaryButtonText || 'Request Campus Demo'}</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <a
-              href="#module-breakdown"
+              href={config.secondaryButtonLink || '#module-breakdown'}
               className="px-7 py-4 rounded bg-white border border-[#0B0D12]/15 hover:border-[#0B0D12] text-[#0B0D12] text-badge transition-all shadow-sm"
             >
-              Explore {dynamicCategories.length} Core Modules
+              {(config.secondaryButtonText || 'Explore 11 Core Modules').replace('11', dynamicCategories.length.toString())}
             </a>
           </div>
 
           {/* Metrics Ribbon */}
           <div className="erp-hero-anim grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto pt-6">
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#0B0D12]">480+</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Campus Screens</span>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#FF4A1C]">120K+</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Active Students</span>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#0B0D12]">99.9%</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Uptime SLA</span>
-            </div>
-            <div className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
-              <span className="block text-h3 text-[#0B0D12]">60+</span>
-              <span className="text-caption font-mono text-[#0B0D12]/60">Institutions</span>
-            </div>
+            {(config.heroMetrics || []).map((metric, idx) => (
+              <div key={idx} className="p-4 rounded-lg bg-white border border-[#0B0D12]/10 shadow-sm text-center">
+                <span className={`block text-h3 ${metric.isPrimary ? 'text-[#FF4A1C]' : 'text-[#0B0D12]'}`}>{metric.value}</span>
+                <span className="text-caption font-mono text-[#0B0D12]/60">{metric.label}</span>
+              </div>
+            ))}
           </div>
 
         </div>
@@ -586,13 +601,16 @@ export default function SchoolERP() {
           
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="erp-module-anim inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge">
-              Comprehensive Feature Architecture
+              {config.modulesBadge || 'Comprehensive Feature Architecture'}
             </span>
             <h2 className="erp-module-anim text-h2 text-[#0B0D12]">
-              {dynamicCategories.length} Specialized Modules for Every Department
+              {(config.modulesTitle || '{count} Specialized Modules for Every Department')
+                .replace('{count}', dynamicCategories.length.toString())
+                .replace('8', dynamicCategories.length.toString())
+                .replace('11', dynamicCategories.length.toString())}
             </h2>
             <p className="erp-module-anim text-body text-[#0B0D12]/70">
-              Click through the modules below to explore how SmartSchool ERP transforms every aspect of campus management.
+              {config.modulesDescription || 'Click through the modules below to explore how SmartSchool ERP transforms every aspect of campus management.'}
             </p>
           </div>
 
@@ -692,19 +710,19 @@ export default function SchoolERP() {
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="erp-shot-anim inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-badge">
-              Interface Showcase
+              {config.screenshotsBadge || 'Interface Showcase'}
             </span>
             <h2 className="erp-shot-anim text-h2 text-[#0B0D12]">
-              Designed for Speed & Clarity
+              {config.screenshotsTitle || 'Designed for Speed & Clarity'}
             </h2>
             <p className="erp-shot-anim text-body text-[#0B0D12]/70">
-              Explore actual operational screens from the SmartSchool ERP ecosystem.
+              {config.screenshotsDescription || 'Explore actual operational screens from the SmartSchool ERP ecosystem.'}
             </p>
           </div>
 
           {/* SCREENSHOT SELECTOR THUMBNAILS */}
           <div className="erp-shot-anim grid grid-cols-1 md:grid-cols-5 gap-3">
-            {SCREENSHOTS.map((shot, idx) => (
+            {displayScreenshots.map((shot: any, idx: number) => (
               <button
                 key={idx}
                 onClick={() => setActiveScreenshot(idx)}
@@ -723,13 +741,13 @@ export default function SchoolERP() {
           {/* MAIN FEATURED SCREENSHOT PREVIEW WITH LIGHTBOX TRIGGER */}
           <div className="erp-shot-anim">
             <div 
-              onClick={() => setSelectedImageModal(SCREENSHOTS[activeScreenshot].image)}
+              onClick={() => setSelectedImageModal(getImageUrl(displayScreenshots[activeScreenshot].image, SCREENSHOTS[activeScreenshot]?.image))}
               className="bg-white border border-[#0B0D12]/15 rounded-lg p-4 shadow-md relative overflow-hidden group cursor-pointer"
             >
               <div className="relative h-80 sm:h-[450px] w-full rounded overflow-hidden bg-[#FAF8F5]">
                 <img 
-                  src={SCREENSHOTS[activeScreenshot].image} 
-                  alt={SCREENSHOTS[activeScreenshot].title}
+                  src={getImageUrl(displayScreenshots[activeScreenshot].image, SCREENSHOTS[activeScreenshot]?.image)} 
+                  alt={displayScreenshots[activeScreenshot].title}
                   className="w-full h-full object-cover object-top group-hover:scale-102 transition-transform duration-500" 
                 />
                 
@@ -743,8 +761,8 @@ export default function SchoolERP() {
               </div>
 
               <div className="p-4 space-y-1">
-                <h4 className="text-h4 text-[#0B0D12]">{SCREENSHOTS[activeScreenshot].title}</h4>
-                <p className="text-body text-[#0B0D12]/70">{SCREENSHOTS[activeScreenshot].desc}</p>
+                <h4 className="text-h4 text-[#0B0D12]">{displayScreenshots[activeScreenshot]?.title}</h4>
+                <p className="text-body text-[#0B0D12]/70">{displayScreenshots[activeScreenshot]?.description || displayScreenshots[activeScreenshot]?.desc}</p>
               </div>
             </div>
           </div>
@@ -761,25 +779,27 @@ export default function SchoolERP() {
           
           <div className="text-center max-w-2xl mx-auto space-y-3">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-[#FAF8F5] text-[#0B0D12] text-badge">
-              Flexible Subscriptions
+              {config.pricingBadge || 'Flexible Subscriptions'}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Simple, Transparent Pricing
+              {config.pricingTitle || 'Simple, Transparent Pricing'}
             </h2>
             <p className="text-body text-[#0B0D12]/70">
-              Choose the plan that fits your campus size. All plans include automated cloud updates and SSL encryption.
+              {config.pricingDescription || 'Choose the plan that fits your campus size. All plans include automated cloud updates and SSL encryption.'}
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {PRICING_TIERS.map((tier, idx) => (
+            {displayPricingTiers.map((tier: any, idx: number) => {
+              const isPopular = tier.popular !== undefined ? tier.popular : tier.isPopular;
+              return (
               <div 
                 key={idx}
                 className={`bg-[#FAF8F5] rounded-lg p-8 border ${
-                  tier.popular ? 'border-[#0B0D12] shadow-lg bg-white ring-1 ring-[#0B0D12]' : 'border-[#0B0D12]/15 shadow-sm'
+                  isPopular ? 'border-[#0B0D12] shadow-lg bg-white ring-1 ring-[#0B0D12]' : 'border-[#0B0D12]/15 shadow-sm'
                 } flex flex-col justify-between space-y-8 relative overflow-hidden`}
               >
-                {tier.popular && (
+                {isPopular && (
                   <div className="absolute top-0 right-0 bg-[#FF4A1C] text-white text-caption font-mono font-bold uppercase px-3 py-1 rounded-bl shadow-sm">
                     {tier.badge}
                   </div>
@@ -806,10 +826,10 @@ export default function SchoolERP() {
 
                   <div className="pt-4 border-t border-[#0B0D12]/10 space-y-3">
                     <span className="text-label-mono text-[#0B0D12] block">Included Features:</span>
-                    {tier.features.map((feat, fIdx) => (
+                    {(tier.features || []).map((feat: any, fIdx: number) => (
                       <div key={fIdx} className="flex items-start gap-2.5 text-body text-[#0B0D12]/80">
                         <Check className="w-3.5 h-3.5 text-[#FF4A1C] shrink-0 mt-0.5" />
-                        <span>{feat}</span>
+                        <span>{typeof feat === 'string' ? feat : (feat?.label || feat?.name || feat?.title || '')}</span>
                       </div>
                     ))}
                   </div>
@@ -818,7 +838,7 @@ export default function SchoolERP() {
                 <Link
                   to="/contact"
                   className={`w-full py-3.5 rounded text-badge text-center transition-all cursor-pointer ${
-                    tier.popular
+                    isPopular
                       ? 'bg-[#FF4A1C] hover:bg-[#E03E14] text-white shadow-md'
                       : 'bg-white text-[#0B0D12] border border-[#0B0D12]/15 hover:border-[#0B0D12]'
                   }`}
@@ -827,7 +847,7 @@ export default function SchoolERP() {
                 </Link>
 
               </div>
-            ))}
+            )})}
           </div>
 
         </div>
@@ -842,15 +862,20 @@ export default function SchoolERP() {
           
           <div className="text-center space-y-3">
             <span className="inline-block px-3.5 py-1 rounded border border-[#0B0D12]/15 bg-white text-[#0B0D12] text-badge">
-              Got Questions?
+              {config.faqsBadge || 'Got Questions?'}
             </span>
             <h2 className="text-h2 text-[#0B0D12]">
-              Frequently Asked Questions
+              {config.faqsTitle || 'Frequently Asked Questions'}
             </h2>
+            {config.faqsDescription && (
+              <p className="text-body text-[#0B0D12]/70 max-w-xl mx-auto">
+                {config.faqsDescription}
+              </p>
+            )}
           </div>
 
           <div className="space-y-3">
-            {FAQS.map((faq, idx) => {
+            {(displayFaqs || []).map((faq: any, idx: number) => {
               const isOpen = openFaq === idx;
               return (
                 <div 
@@ -890,7 +915,7 @@ export default function SchoolERP() {
       {/* ---------------------------------------------------- */}
       {/* 7. CONTACT US (REUSED FROM HOME PAGE)                */}
       {/* ---------------------------------------------------- */}
-      <StartProjectCta />
+      <StartProjectCta config={config} />
 
 
       {/* LIGHTBOX MODAL */}
