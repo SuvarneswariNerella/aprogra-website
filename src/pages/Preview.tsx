@@ -25,6 +25,12 @@ export default function Preview() {
       return;
     }
 
+    // If an API URL is passed from the CMS backend, save it for API fetches in this session
+    const apiUrl = searchParams.get('apiUrl') || searchParams.get('strapiUrl');
+    if (apiUrl) {
+      sessionStorage.setItem('strapi_backend_url', decodeURIComponent(apiUrl));
+    }
+
     // Enable or disable Draft Mode based on Strapi's requested status
     if (status === 'published') {
       sessionStorage.removeItem('strapi_draft_mode');

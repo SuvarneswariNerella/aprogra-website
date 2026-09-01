@@ -23,11 +23,19 @@ const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => 
   preview: {
     enabled: true,
     config: {
-      allowedOrigins: [env('CLIENT_URL', 'http://localhost:3000')],
+      allowedOrigins: [
+        env('CLIENT_URL', 'http://localhost:3000'),
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:5173',
+      ],
       async handler(uid, { documentId, locale, status }) {
-        const clientUrl = env('CLIENT_URL', 'http://localhost:3000');
+        const clientUrl = env('CLIENT_URL', 'http://localhost:3000').replace(/\/$/, '');
         const secret = env('PREVIEW_SECRET', 'my-super-secret-key');
-        return `${clientUrl}/preview?secret=${secret}&uid=${uid}&documentId=${documentId}&status=${status}`;
+        const serverUrl = env('SERVER_URL', env('PUBLIC_URL', ''));
+        const apiParam = serverUrl ? `&apiUrl=${encodeURIComponent(serverUrl)}` : '';
+        return `${clientUrl}/preview?secret=${secret}&uid=${uid}&documentId=${documentId}&status=${status}${apiParam}`;
       },
     },
   },

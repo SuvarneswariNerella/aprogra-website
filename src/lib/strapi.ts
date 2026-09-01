@@ -14,13 +14,20 @@ const STRAPI_TOKEN = (import.meta.env.VITE_STRAPI_API_TOKEN || '').trim();
  */
 function getStrapiBaseUrl(): string {
   if (typeof window !== 'undefined') {
+    // 1. If stored from Strapi Preview session, use it
+    const sessionStrapiUrl = sessionStorage.getItem('strapi_backend_url');
+    if (sessionStrapiUrl) {
+      return sessionStrapiUrl.replace(/\/$/, '');
+    }
+
+    // 2. If running locally on localhost/127.0.0.1 and target is localhost, use relative '' (Vite proxy)
     const host = window.location.hostname;
-    const isLocal =
-      host === 'localhost' ||
-      host === '127.0.0.1' ||
-      ENV_STRAPI_URL.includes('localhost') ||
-      ENV_STRAPI_URL.includes('127.0.0.1');
-    if (isLocal) return ''; // â†’ fetch('/api/...') via Vite proxy
+    const isLocalHost = host === 'localhost' || host === '127.0.0.1';
+    const isLocalTarget = ENV_STRAPI_URL.includes('localhost') || ENV_STRAPI_URL.includes('127.0.0.1');
+
+    if (isLocalHost && isLocalTarget) {
+      return ''; // -> fetch('/api/...') via Vite proxy
+    }
   }
   return ENV_STRAPI_URL;
 }
