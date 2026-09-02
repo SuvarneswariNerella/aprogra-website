@@ -774,6 +774,7 @@ const DEFAULT_CONTACT_PAGE_SEED_DATA = {
   closingBannerHeadline: 'Engineering Infinite',
   closingBannerHighlight: 'Possibilities.',
   closingBannerSubtitle: 'Thank you for visiting. We look forward to building with you.',
+  closingBannerBackToTopText: 'BACK TO TOP',
   metaTitle: 'Contact Lead Architects | Aprogra',
   metaDescription: 'Connect directly with Aprogra lead architects for enterprise custom software, agentic AI, and scalable cloud systems.',
 };
@@ -1172,6 +1173,145 @@ export default {
           status: 'published',
         });
         strapi.log.info('[Bootstrap] Created and published Contact Page Settings in Strapi.');
+      } else {
+        await strapiAny.documents('api::contact-page.contact-page').update({
+          documentId: existingContactPage.documentId,
+          data: {
+            closingBannerBackToTopText: existingContactPage.closingBannerBackToTopText || 'BACK TO TOP',
+          },
+        });
+        try {
+          await strapiAny.documents('api::contact-page.contact-page').publish({
+            documentId: existingContactPage.documentId,
+          });
+        } catch (pubErr) {
+          // In case already published or draft-publish behaves slightly differently
+        }
+        strapi.log.info('[Bootstrap] Updated and published Contact Page Settings with closingBannerBackToTopText in Strapi.');
+      }
+
+      // Ensure closingBannerBackToTopText is visible in Content Manager Admin Edit View
+      try {
+        // 1. Try content-manager plugin service
+        const cmService = (strapi as any).plugin('content-manager')?.service('content-types');
+        if (cmService?.getConfiguration && cmService?.setConfiguration) {
+          try {
+            const conf = await cmService.getConfiguration('api::contact-page.contact-page');
+            if (conf) {
+              if (!conf.metas) conf.metas = {};
+              conf.metas.closingBannerBackToTopText = {
+                edit: {
+                  label: 'Closing Banner Back To Top Text',
+                  description: 'Text displayed on the back-to-top button in the closing banner',
+                  placeholder: 'BACK TO TOP',
+                  visible: true,
+                  editable: true,
+                },
+                list: {
+                  label: 'Back To Top Text',
+                  searchable: true,
+                  sortable: true,
+                },
+              };
+
+              if (conf.layouts && Array.isArray(conf.layouts.edit)) {
+                const hasField = conf.layouts.edit.some((row: any[]) =>
+                  row.some((col: any) => col.name === 'closingBannerBackToTopText')
+                );
+                if (!hasField) {
+                  let inserted = false;
+                  for (let i = 0; i < conf.layouts.edit.length; i++) {
+                    const row = conf.layouts.edit[i];
+                    const subIdx = row.findIndex((col: any) => col.name === 'closingBannerSubtitle');
+                    if (subIdx !== -1) {
+                      if (row.length === 1) {
+                        row.push({ name: 'closingBannerBackToTopText', size: 6 });
+                      } else {
+                        conf.layouts.edit.splice(i + 1, 0, [{ name: 'closingBannerBackToTopText', size: 6 }]);
+                      }
+                      inserted = true;
+                      break;
+                    }
+                  }
+                  if (!inserted) {
+                    conf.layouts.edit.push([{ name: 'closingBannerBackToTopText', size: 6 }]);
+                  }
+                }
+              }
+              await cmService.setConfiguration('api::contact-page.contact-page', conf);
+              strapi.log.info('[Bootstrap] Configured Content Manager Edit layout for closingBannerBackToTopText via CM service.');
+            }
+          } catch (cmErr) {
+            strapi.log.warn('[Bootstrap] CM service configuration notice:', cmErr);
+          }
+        }
+
+        // 2. Direct core-store database record fallback
+        const storeKey = 'plugin_content_manager_configuration_content_types::api::contact-page.contact-page';
+        const configRecord = await strapi.db.query('strapi::core-store').findOne({
+          where: { key: storeKey },
+        });
+
+        if (configRecord) {
+          const conf = typeof configRecord.value === 'string' ? JSON.parse(configRecord.value) : configRecord.value;
+          let modified = false;
+
+          if (!conf.metas) conf.metas = {};
+          if (!conf.metas.closingBannerBackToTopText) {
+            conf.metas.closingBannerBackToTopText = {
+              edit: {
+                label: 'Closing Banner Back To Top Text',
+                description: 'Text displayed on the back-to-top button in the closing banner',
+                placeholder: 'BACK TO TOP',
+                visible: true,
+                editable: true,
+              },
+              list: {
+                label: 'Back To Top Text',
+                searchable: true,
+                sortable: true,
+              },
+            };
+            modified = true;
+          }
+
+          if (conf.layouts && Array.isArray(conf.layouts.edit)) {
+            const hasField = conf.layouts.edit.some((row: any[]) =>
+              row.some((col: any) => col.name === 'closingBannerBackToTopText')
+            );
+            if (!hasField) {
+              let inserted = false;
+              for (let i = 0; i < conf.layouts.edit.length; i++) {
+                const row = conf.layouts.edit[i];
+                const subIdx = row.findIndex((col: any) => col.name === 'closingBannerSubtitle');
+                if (subIdx !== -1) {
+                  if (row.length === 1) {
+                    row.push({ name: 'closingBannerBackToTopText', size: 6 });
+                  } else {
+                    conf.layouts.edit.splice(i + 1, 0, [{ name: 'closingBannerBackToTopText', size: 6 }]);
+                  }
+                  inserted = true;
+                  modified = true;
+                  break;
+                }
+              }
+              if (!inserted) {
+                conf.layouts.edit.push([{ name: 'closingBannerBackToTopText', size: 6 }]);
+                modified = true;
+              }
+            }
+          }
+
+          if (modified) {
+            await strapi.db.query('strapi::core-store').update({
+              where: { id: configRecord.id },
+              data: { value: JSON.stringify(conf) },
+            });
+            strapi.log.info('[Bootstrap] Updated Content Manager layout for contact-page in core-store.');
+          }
+        }
+      } catch (layoutErr) {
+        strapi.log.warn('[Bootstrap] Could not update Content Manager layout for contact-page:', layoutErr);
       }
 
       // 12. About Page Settings Single Type

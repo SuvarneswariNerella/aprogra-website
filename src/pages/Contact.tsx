@@ -938,7 +938,7 @@ export default function Contact() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-[#FAF8F5] hover:bg-[#0B0D12] text-[#0B0D12] hover:text-white border border-[#0B0D12]/15 text-badge transition-all duration-200 cursor-pointer shadow-xs"
             >
               <ArrowUp className="w-4 h-4" />
-              <span>{content.closingBanner.backToTopText}</span>
+              <span>{content.closingBanner?.backToTopText || 'BACK TO TOP'}</span>
             </button>
           </div>
         </div>

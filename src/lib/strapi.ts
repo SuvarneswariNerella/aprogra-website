@@ -806,7 +806,7 @@ export const DEFAULT_CONTACT_PAGE_CONTENT: ContactPageContent = {
     headline: 'Engineering Infinite',
     highlight: 'Possibilities.',
     subtitle: 'Thank you for visiting. We look forward to building with you.',
-    backToTopText: 'BACK TO TOP â†‘',
+    backToTopText: 'BACK TO TOP',
   },
   introCallModal: {
     title: 'Engineering Kickoff Call',
@@ -996,7 +996,7 @@ export async function fetchContactPageContent(): Promise<ContactPageContent> {
         headline: pick(data.closingBannerHeadline, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.headline),
         highlight: pick(data.closingBannerHighlight, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.highlight),
         subtitle: pick(data.closingBannerSubtitle, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.subtitle),
-        backToTopText: DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.backToTopText,
+        backToTopText: pick(data.closingBannerBackToTopText, DEFAULT_CONTACT_PAGE_CONTENT.closingBanner.backToTopText),
       },
       introCallModal: {
         title: pick(introCallModal.title, DEFAULT_CONTACT_PAGE_CONTENT.introCallModal.title),

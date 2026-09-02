@@ -28,9 +28,7 @@ import {
 
 import ProductsHero from '@/components/products/ProductsHero';
 import ProductsWhyTrust from '@/components/products/ProductsWhyTrust';
-import { Component as TestimonialSlider } from '@/components/ui/testimonial-slider';
-import ScrollReveal from '@/components/animations/ScrollReveal';
-import { useTestimonials } from '@/lib/strapi';
+import Testimonials from '@/components/home/Testimonials';
 import AboutContact from '@/components/about/AboutContact';
 import { SchoolModulesSection } from '@/components/products/SchoolModulesSection';
 import { OmniChatModulesSection } from '@/components/products/OmniChatModulesSection';
@@ -326,16 +324,7 @@ export default function Products() {
 
   const { product: schoolProduct } = useProduct('school-erp');
   const { product: omnichatProduct } = useProduct('omnichat');
-  const { testimonials: apiTestimonials } = useTestimonials();
   const { productsPage } = useProductsPage();
-
-  const TESTIMONIALS = apiTestimonials.map((t: any, i: number) => ({
-    img: t.avatarUrl || `https://images.unsplash.com/photo-${['1507003211169-0a1dd7228f2d', '1573496359142-b8d87734a5a2', '1580489944761-15a19d654956'][i % 3]}?auto=format&fit=crop&w=200&q=80`,
-    quote: t.quote,
-    name: t.authorName,
-    role: t.authorCompany ? `${t.authorRole}, ${t.authorCompany}` : t.authorRole,
-  }));
-
   const schoolModules = (schoolProduct?.features && schoolProduct.features.length > 0)
     ? schoolProduct.features.map((f: any) => ({
         icon: getModuleIcon(f.icon),
@@ -392,30 +381,9 @@ export default function Products() {
       <ProductsWhyTrust productsPage={productsPage} />
 
       {/* ---------------------------------------------------- */}
-      {/* 5. CLIENT TESTIMONIALS (no GSAP pin — avoids conflict */}
-      {/*    with the 2 pinned product sections above)          */}
+      {/* 5. CLIENT TESTIMONIALS (Scroll-driven slider)        */}
       {/* ---------------------------------------------------- */}
-      {TESTIMONIALS.length > 0 && (
-        <section className="relative w-full py-16 sm:py-20 px-4 sm:px-6 md:px-12 bg-[#FAF8F5] text-[#0B0D12] border-b border-[#0B0D12]/10">
-          <div className="max-w-7xl mx-auto w-full space-y-10 relative z-10">
-            <ScrollReveal className="text-center max-w-3xl mx-auto space-y-3">
-              <span className="text-badge text-[#0B0D12] block">
-                Client Feedback
-              </span>
-              <h2 className="text-h2 text-[#0B0D12]">
-                Clients Don't Just Say It. They Mean It.
-              </h2>
-              <p className="text-body text-[#5A5E6E]">
-                Real feedback from partners who scale with AProgra.
-              </p>
-            </ScrollReveal>
-
-            <div className="pt-2">
-              <TestimonialSlider testimonials={TESTIMONIALS} />
-            </div>
-          </div>
-        </section>
-      )}
+      <Testimonials />
 
       {/* ---------------------------------------------------- */}
       {/* 6. CONTACT SECTION                                    */}

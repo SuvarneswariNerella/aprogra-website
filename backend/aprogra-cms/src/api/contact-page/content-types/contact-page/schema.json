@@ -66,6 +66,10 @@
       "type": "string",
       "default": "Thank you for visiting. We look forward to building with you."
     },
+    "closingBannerBackToTopText": {
+      "type": "string",
+      "default": "BACK TO TOP"
+    },
     "metaTitle": {
       "type": "string",
       "default": "Contact Lead Architects | Aprogra"

@@ -804,6 +804,8 @@ export interface ApiContactPageContactPage extends Struct.SingleTypeSchema {
   attributes: {
     brief: Schema.Attribute.Component<'sections.contact-brief', false>;
     channels: Schema.Attribute.Component<'elements.contact-channel', true>;
+    closingBannerBackToTopText: Schema.Attribute.String &
+      Schema.Attribute.DefaultTo<'BACK TO TOP'>;
     closingBannerHeadline: Schema.Attribute.String &
       Schema.Attribute.DefaultTo<'Engineering Infinite'>;
     closingBannerHighlight: Schema.Attribute.String &
