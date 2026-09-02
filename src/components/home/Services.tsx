@@ -51,7 +51,7 @@ export default function Services({ servicesSlides = [] }: { servicesSlides?: Hom
           tags: ["LLM Pipelines", "RAG Systems", "Agents & Swarms", "Data Triage", "Fine-Tuning"],
           serviceUrl: "/services",
           serviceUrlText: "Explore Service",
-          imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80"
+          imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
         },
         {
           id: "4",

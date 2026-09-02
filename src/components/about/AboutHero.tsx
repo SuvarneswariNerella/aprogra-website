@@ -159,7 +159,7 @@ export default function AboutHero() {
               src={heroData.heroImageUrl || "https://picsum.photos/seed/1135490967/1200/800"} 
               alt="AProgra Global Engineering Studio"
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
+              loading="eager"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/60 via-transparent to-transparent pointer-events-none" />
             <div className="absolute bottom-3.5 left-3.5 right-3.5 flex items-center justify-between text-white text-xs font-mono">

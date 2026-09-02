@@ -370,7 +370,7 @@ const DEFAULT_SERVICES_SEED_DATA = [
     description: 'We develop domain-specific autonomous agent pipelines capable of multi-step task execution, automated data triage, and human-in-the-loop escalation with deterministic safeguards.',
     icon: 'ai',
     accentColor: '#8B5CF6',
-    imageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 2,
     kpiNumber: '70%',
     kpiLabel: 'Triage Automation',
@@ -529,7 +529,7 @@ const DEFAULT_FLIP_CARDS_SEED_DATA = [
     icon: 'ai',
     color: '#8B5CF6',
     cardOrder: 2,
-    coverImageUrl: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80',
+    coverImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80',
     deliverables: [
       { title: 'Multi-Agent Loops' },
       { title: 'Dense Vector RAG' },
@@ -914,7 +914,7 @@ const DEFAULT_HOME_PAGE_SEED_DATA = {
       ],
       serviceUrl: "/services",
       serviceUrlText: "Explore Service",
-      imageUrl: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1000&q=80"
+      imageUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80"
     },
     {
       orderNumber: "04",

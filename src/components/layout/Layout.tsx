@@ -56,6 +56,16 @@ export default function Layout() {
     };
   }, []);
 
+  // Scroll to top immediately on route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if ((window as any).lenis) {
+      (window as any).lenis.scrollTo(0, { immediate: true });
+    }
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [location.pathname]);
+
   return (
     <ScrollSnapProvider>
       <Cursor />

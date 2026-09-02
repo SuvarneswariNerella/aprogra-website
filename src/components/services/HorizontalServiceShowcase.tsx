@@ -9,21 +9,21 @@ import { ServiceItem, ServicesFeaturesSection, getStrapiMediaUrl } from '@/lib/s
 gsap.registerPlugin(ScrollTrigger);
 
 const SERVICE_IMAGES: Record<string, string> = {
-  web: 'https://picsum.photos/seed/1615007644/1200/800',
-  ai: 'https://picsum.photos/seed/646225886/1200/800',
-  saas: 'https://picsum.photos/seed/611021275/1200/800',
-  design: 'https://picsum.photos/seed/468325482/1200/800',
-  cloud: 'https://picsum.photos/seed/54940735/1200/800',
-  mobile: 'https://picsum.photos/seed/1897555988/1200/800',
+  web: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+  ai: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80',
+  saas: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+  design: 'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+  cloud: 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+  mobile: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
 };
 
 const DEFAULT_IMAGES_BY_INDEX = [
-  'https://picsum.photos/seed/1615007644/1200/800',
-  'https://picsum.photos/seed/646225886/1200/800',
-  'https://picsum.photos/seed/611021275/1200/800',
-  'https://picsum.photos/seed/468325482/1200/800',
-  'https://picsum.photos/seed/54940735/1200/800',
-  'https://picsum.photos/seed/1897555988/1200/800',
+  'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80',
+  'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1000&q=80',
+  'https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1000&q=80',
+  'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1000&q=80',
+  'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=1000&q=80',
 ];
 
 interface HorizontalServiceShowcaseProps {
@@ -330,6 +330,10 @@ export default function HorizontalServiceShowcase({
                           alt={service.title}
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                           loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = DEFAULT_IMAGES_BY_INDEX[index % DEFAULT_IMAGES_BY_INDEX.length] || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80';
+                          }}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/50 via-transparent to-transparent pointer-events-none" />
                         <div className="absolute bottom-2.5 left-3 right-3 flex items-center justify-between text-white text-[11px] font-mono">

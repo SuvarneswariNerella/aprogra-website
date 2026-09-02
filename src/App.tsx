@@ -19,10 +19,14 @@ import NotFound from './pages/NotFound';
 import Preview from './pages/Preview';
 
 import { useEffect } from 'react';
+import { prefetchAllStrapiData, clearStrapiCache } from './lib/strapi';
 
 export default function App() {
   useEffect(() => {
-    // Check if embedded inside an iframe (Strapi Live Preview)
+    // 1. Pre-warm cache for all routes in the background (0ms route navigation, zero delay)
+    prefetchAllStrapiData();
+
+    // 2. Check if embedded inside an iframe (Strapi Live Preview)
     if (typeof window !== 'undefined' && window.parent && window.parent !== window) {
       try {
         window.parent.postMessage({ type: 'previewReady' }, '*');
@@ -30,6 +34,7 @@ export default function App() {
 
       const handleMessage = (event: MessageEvent) => {
         if (event.data?.type === 'strapiUpdate') {
+          clearStrapiCache();
           window.location.reload();
         }
       };

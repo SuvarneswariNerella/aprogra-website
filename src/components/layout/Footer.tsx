@@ -186,7 +186,13 @@ export default function Footer() {
                       <li key={`col-${colIndex}-link-${link.id || link.label || link.url}-${linkIndex}`}>
                         <Link 
                           to={link.url} 
-                          className="hover:text-[#FF4A1C] transition-colors inline-flex items-center justify-between w-full group"
+                          onClick={() => {
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                            if ((window as any).lenis) {
+                              (window as any).lenis.scrollTo(0, { immediate: false });
+                            }
+                          }}
+                          className="hover:text-[#FF4A1C] transition-colors inline-flex items-center justify-between w-full group cursor-pointer"
                         >
                           <span className="group-hover:translate-x-0.5 transition-transform">{link.label}</span>
                           {link.badge && (

@@ -1,5 +1,15 @@
 import { useState, useEffect } from 'react';
 
+export {
+  getCachedData,
+  setCachedData,
+  subscribeToCache,
+  clearStrapiCache,
+  fetchWithCache,
+  useStrapiQuery,
+} from './strapiCache';
+import { fetchWithCache, useStrapiQuery } from './strapiCache';
+
 /**
  * Strapi API Client Service
  * Provides helper functions to query Strapi REST API endpoints, manage inquiries, and resolve media URLs.
@@ -49,6 +59,8 @@ export interface StrapiResponse<T> {
   meta?: StrapiMeta;
 }
 
+const inFlightUrls = new Map<string, Promise<any>>();
+
 /**
  * Generic fetcher from Strapi REST endpoints
  */
@@ -85,62 +97,75 @@ export async function fetchFromStrapi<T>(endpoint: string, fallbackData?: T): Pr
     url += url.includes('?') ? '&status=published' : '?status=published';
   }
 
-  try {
-    const headers: HeadersInit = {
-      'Content-Type': 'application/json',
-    };
+  // Deduplicate identical in-flight fetch requests
+  if (inFlightUrls.has(url)) {
+    return inFlightUrls.get(url)! as Promise<T>;
+  }
 
-    if (STRAPI_TOKEN) {
-      headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
-    }
+  const executeFetch = async (): Promise<T> => {
+    try {
+      const headers: HeadersInit = {
+        'Content-Type': 'application/json',
+      };
 
-    const tryFetch = async (targetUrl: string) => {
-      try {
-        const res = await fetch(targetUrl, { headers, cache: 'no-store' });
-        if (res.ok) {
-          const json = await res.json();
-          if (json && json.data !== undefined && json.data !== null) {
-            return json.data;
-          }
-        }
-        if (res.status === 401 && STRAPI_TOKEN) {
-          const retryRes = await fetch(targetUrl, {
-            headers: { 'Content-Type': 'application/json' },
-            cache: 'no-store',
-          });
-          if (retryRes.ok) {
-            const retryJson = await retryRes.json();
-            if (retryJson && retryJson.data !== undefined && retryJson.data !== null) {
-              return retryJson.data;
+      if (STRAPI_TOKEN) {
+        headers['Authorization'] = `Bearer ${STRAPI_TOKEN}`;
+      }
+
+      const tryFetch = async (targetUrl: string) => {
+        try {
+          const res = await fetch(targetUrl, { headers, cache: 'no-store' });
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.data !== undefined && json.data !== null) {
+              return json.data;
             }
           }
+          if (res.status === 401 && STRAPI_TOKEN) {
+            const retryRes = await fetch(targetUrl, {
+              headers: { 'Content-Type': 'application/json' },
+              cache: 'no-store',
+            });
+            if (retryRes.ok) {
+              const retryJson = await retryRes.json();
+              if (retryJson && retryJson.data !== undefined && retryJson.data !== null) {
+                return retryJson.data;
+              }
+            }
+          }
+        } catch {
+          // Continue to fallback
         }
-      } catch {
-        // Continue to fallback
+        return null;
+      };
+
+      let data = await tryFetch(url);
+      if (!data) {
+        // Toggle status between draft and published as fallback
+        const altUrl = url.includes('status=draft')
+          ? url.replace('status=draft', 'status=published')
+          : url.replace('status=published', 'status=draft');
+        data = await tryFetch(altUrl);
       }
-      return null;
-    };
 
-    let data = await tryFetch(url);
-    if (!data) {
-      // Toggle status between draft and published as fallback
-      const altUrl = url.includes('status=draft')
-        ? url.replace('status=draft', 'status=published')
-        : url.replace('status=published', 'status=draft');
-      data = await tryFetch(altUrl);
+      if (data) {
+        return data as T;
+      }
+
+      if (fallbackData !== undefined) return fallbackData;
+      throw new Error(`Strapi returned empty data from ${url}`);
+    } catch (error) {
+      console.warn(`[Strapi] Failed to fetch from "${url}". Using fallback data if available.`, error);
+      if (fallbackData !== undefined) return fallbackData;
+      throw error;
+    } finally {
+      inFlightUrls.delete(url);
     }
+  };
 
-    if (data) {
-      return data as T;
-    }
-
-    if (fallbackData !== undefined) return fallbackData;
-    throw new Error(`Strapi returned empty data from ${url}`);
-  } catch (error) {
-    console.warn(`[Strapi] Failed to fetch from "${url}". Using fallback data if available.`, error);
-    if (fallbackData !== undefined) return fallbackData;
-    throw error;
-  }
+  const fetchPromise = executeFetch();
+  inFlightUrls.set(url, fetchPromise);
+  return fetchPromise;
 }
 
 /**
@@ -454,26 +479,11 @@ export async function fetchGlobalConfig(): Promise<GlobalConfig> {
  * React hook for consuming dynamic Global Header & Footer Configuration
  */
 export function useGlobalConfig() {
-  const [config, setConfig] = useState<GlobalConfig>(DEFAULT_GLOBAL_CONFIG);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchGlobalConfig()
-      .then((data) => {
-        if (isMounted && data) {
-          setConfig(data);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { data: config, isLoading } = useStrapiQuery<GlobalConfig>(
+    'global_config',
+    fetchGlobalConfig,
+    DEFAULT_GLOBAL_CONFIG
+  );
 
   return { config, header: config.header, footer: config.footer, isLoading };
 }
@@ -1024,72 +1034,24 @@ export async function fetchContactChannels(): Promise<ContactChannelItem[]> {
 
 /**
  * React hook for consuming dynamic Contact Page content & Contact Channels.
- * Renders defaults immediately, then always applies live CMS data when it arrives.
- * A late successful fetch must never be blocked by a prior timeout/default.
  */
 export function useContactPageContent() {
-  const [content, setContent] = useState<ContactPageContent>(DEFAULT_CONTACT_PAGE_CONTENT);
-  const [channels, setChannels] = useState<ContactChannelItem[]>(DEFAULT_CONTACT_CHANNELS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [lastFetched, setLastFetched] = useState<Date | null>(null);
-  const [source, setSource] = useState<'defaults' | 'cms'>('defaults');
+  const { data: content, isLoading, refetch } = useStrapiQuery<ContactPageContent>(
+    'contact_page_content',
+    fetchContactPageContent,
+    DEFAULT_CONTACT_PAGE_CONTENT
+  );
 
-  const applyPageData = (
-    pageData: ContactPageContent | null | undefined,
-    from: 'defaults' | 'cms'
-  ) => {
-    if (!pageData) return;
-    setContent(pageData);
-    if (pageData.channels && pageData.channels.length > 0) {
-      setChannels(pageData.channels);
-    }
-    setSource(from);
-    if (from === 'cms') setLastFetched(new Date());
+  const channels = content.channels && content.channels.length > 0 ? content.channels : DEFAULT_CONTACT_CHANNELS;
+
+  return {
+    content,
+    channels,
+    isLoading,
+    lastFetched: null,
+    source: isLoading ? 'defaults' : 'cms',
+    refetch,
   };
-
-  const load = async () => {
-    setIsLoading(true);
-    try {
-      const pageData = await fetchContactPageContent();
-      applyPageData(pageData, 'cms');
-      return pageData;
-    } catch (error) {
-      console.warn('[Strapi] Failed to fetch contact page content:', error);
-      applyPageData(DEFAULT_CONTACT_PAGE_CONTENT, 'defaults');
-      return DEFAULT_CONTACT_PAGE_CONTENT;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    let cancelled = false;
-
-    (async () => {
-      setIsLoading(true);
-      try {
-        const pageData = await fetchContactPageContent();
-        if (cancelled) return;
-        applyPageData(pageData, 'cms');
-        console.info('[Contact] CMS content applied', {
-          availabilityBadge: pageData.hero?.availabilityBadge,
-          step0: pageData.roadmap?.steps?.[0]?.timeframe,
-        });
-      } catch (error) {
-        if (cancelled) return;
-        console.warn('[Contact] CMS fetch failed, showing defaults', error);
-        applyPageData(DEFAULT_CONTACT_PAGE_CONTENT, 'defaults');
-      } finally {
-        if (!cancelled) setIsLoading(false);
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return { content, channels, isLoading, lastFetched, source, refetch: load };
 }
 
 // ============================================================================
@@ -1521,38 +1483,42 @@ export async function fetchBlogPosts(): Promise<BlogPost[]> {
   }
 }
 
+export async function fetchAllBlogData(): Promise<{
+  pageContent: BlogPageContent;
+  categories: BlogCategory[];
+  posts: BlogPost[];
+}> {
+  const [pageContent, categories, posts] = await Promise.all([
+    fetchWithCache('blog_page_content', fetchBlogPageContent, DEFAULT_BLOG_PAGE_CONTENT),
+    fetchWithCache('blog_categories', fetchCategories, DEFAULT_BLOG_CATEGORIES),
+    fetchWithCache('blog_posts', fetchBlogPosts, DEFAULT_BLOG_POSTS),
+  ]);
+  return { pageContent, categories, posts };
+}
+
 /**
  * React hook for consuming dynamic Blog Page configuration, Categories, and Blog Posts
  */
 export function useBlogData() {
-  const [pageContent, setPageContent] = useState<BlogPageContent>(DEFAULT_BLOG_PAGE_CONTENT);
-  const [categories, setCategories] = useState<BlogCategory[]>(DEFAULT_BLOG_CATEGORIES);
-  const [posts, setPosts] = useState<BlogPost[]>(DEFAULT_BLOG_POSTS);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useStrapiQuery(
+    'all_blog_data',
+    fetchAllBlogData,
+    {
+      pageContent: DEFAULT_BLOG_PAGE_CONTENT,
+      categories: DEFAULT_BLOG_CATEGORIES,
+      posts: DEFAULT_BLOG_POSTS,
+    }
+  );
 
-  useEffect(() => {
-    let isMounted = true;
-    Promise.all([fetchBlogPageContent(), fetchCategories(), fetchBlogPosts()])
-      .then(([pageData, categoriesData, postsData]) => {
-        if (isMounted) {
-          if (pageData) setPageContent(pageData);
-          if (categoriesData && categoriesData.length > 0) setCategories(categoriesData);
-          if (postsData && postsData.length > 0) setPosts(postsData);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsLoading(false);
-      });
+  const featuredPosts = data.posts.filter((p) => p.featured);
 
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const featuredPosts = posts.filter((p) => p.featured);
-
-  return { pageContent, categories, posts, featuredPosts, isLoading };
+  return {
+    pageContent: data.pageContent,
+    categories: data.categories,
+    posts: data.posts,
+    featuredPosts,
+    isLoading,
+  };
 }
 
 // ============================================================================
@@ -1768,7 +1734,7 @@ export const DEFAULT_SERVICE_FLIP_CARDS: ServiceFlipCardItem[] = [
     tag: '02 / AI & AGENTIC',
     color: '#8B5CF6',
     cardOrder: 2,
-    coverImageUrl: 'https://picsum.photos/seed/646225886/1200/800',
+    coverImageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80',
     deliverables: [
       'Multi-Agent Loops',
       'Dense Vector RAG',
@@ -1868,7 +1834,7 @@ export const DEFAULT_SERVICES_LIST: ServiceItem[] = [
     description:
       'We develop domain-specific autonomous agent pipelines capable of multi-step task execution, automated data triage, and human-in-the-loop escalation with deterministic safeguards.',
     icon: 'ai',
-    imageUrl: 'https://picsum.photos/seed/646225886/1200/800',
+    imageUrl: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1000&q=80',
     cardOrder: 2,
     kpiNumber: '70%',
     kpiLabel: 'Triage Automation',
@@ -2242,31 +2208,11 @@ export async function fetchServiceFlipCards(): Promise<ServiceFlipCardItem[]> {
  * React Hook for Service Flip Cards
  */
 export function useServiceFlipCards() {
-  const [flipCards, setFlipCards] = useState<ServiceFlipCardItem[]>(DEFAULT_SERVICE_FLIP_CARDS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchServiceFlipCards()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setFlipCards(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: flipCards, isLoading, error } = useStrapiQuery<ServiceFlipCardItem[]>(
+    'service_flip_cards',
+    fetchServiceFlipCards,
+    DEFAULT_SERVICE_FLIP_CARDS
+  );
   return { flipCards, isLoading, error };
 }
 
@@ -2289,31 +2235,11 @@ export async function fetchServiceBySlug(slug: string): Promise<ServiceItem | nu
  * React Hook for Services Page configuration
  */
 export function useServicesPage() {
-  const [content, setContent] = useState<ServicesPageContent>(DEFAULT_SERVICES_PAGE_CONTENT);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchServicesPageContent()
-      .then((data) => {
-        if (isMounted) {
-          setContent(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: content, isLoading, error } = useStrapiQuery<ServicesPageContent>(
+    'services_page_content',
+    fetchServicesPageContent,
+    DEFAULT_SERVICES_PAGE_CONTENT
+  );
   return { content, isLoading, error };
 }
 
@@ -2321,31 +2247,11 @@ export function useServicesPage() {
  * React Hook for all Services list
  */
 export function useServices() {
-  const [services, setServices] = useState<ServiceItem[]>(DEFAULT_SERVICES_LIST);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchServicesList()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setServices(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: services, isLoading, error } = useStrapiQuery<ServiceItem[]>(
+    'services_list',
+    fetchServicesList,
+    DEFAULT_SERVICES_LIST
+  );
   return { services, isLoading, error };
 }
 
@@ -2353,40 +2259,16 @@ export function useServices() {
  * React Hook for a single Service detail
  */
 export function useServiceDetail(slug: string | undefined) {
-  const [service, setService] = useState<ServiceItem | null>(() => {
-    if (!slug) return null;
-    return DEFAULT_SERVICES_LIST.find((s) => s.slug === slug || s.id === slug) || null;
-  });
-  const [isLoading, setIsLoading] = useState(Boolean(slug));
-  const [error, setError] = useState<Error | null>(null);
+  const fallback = slug
+    ? DEFAULT_SERVICES_LIST.find((s) => s.slug === slug || s.id === slug) || null
+    : null;
 
-  useEffect(() => {
-    if (!slug) {
-      setIsLoading(false);
-      return;
-    }
-
-    let isMounted = true;
-    setIsLoading(true);
-
-    fetchServiceBySlug(slug)
-      .then((data) => {
-        if (isMounted) {
-          setService(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [slug]);
+  const { data: service, isLoading, error } = useStrapiQuery<ServiceItem | null>(
+    `service_detail_${slug || ''}`,
+    () => (slug ? fetchServiceBySlug(slug) : Promise.resolve(null)),
+    fallback,
+    { enabled: Boolean(slug) }
+  );
 
   return { service, isLoading, error };
 }
@@ -2492,31 +2374,11 @@ export async function fetchTestimonials(): Promise<TestimonialItem[]> {
 }
 
 export function useTestimonials() {
-  const [testimonials, setTestimonials] = useState<TestimonialItem[]>(DEFAULT_TESTIMONIALS_LIST);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchTestimonials()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setTestimonials(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: testimonials, isLoading, error } = useStrapiQuery<TestimonialItem[]>(
+    'testimonials',
+    fetchTestimonials,
+    DEFAULT_TESTIMONIALS_LIST
+  );
   return { testimonials, isLoading, error };
 }
 
@@ -2626,38 +2488,35 @@ export async function fetchBrands(): Promise<PartnerBrand[]> {
   }
 }
 
+export async function fetchAllBrandsData(): Promise<{
+  section: BrandsSectionConfig;
+  brands: PartnerBrand[];
+}> {
+  const [section, brands] = await Promise.all([
+    fetchWithCache('brands_section', fetchBrandsSection, DEFAULT_BRANDS_SECTION),
+    fetchWithCache('brands_list', fetchBrands, DEFAULT_BRANDS_LIST),
+  ]);
+  return { section, brands };
+}
+
 export function useBrands() {
-  const [section, setSection] = useState<BrandsSectionConfig>(DEFAULT_BRANDS_SECTION);
-  const [brands, setBrands] = useState<PartnerBrand[]>(DEFAULT_BRANDS_LIST);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, isLoading } = useStrapiQuery(
+    'all_brands_data',
+    fetchAllBrandsData,
+    {
+      section: DEFAULT_BRANDS_SECTION,
+      brands: DEFAULT_BRANDS_LIST,
+    }
+  );
 
-  useEffect(() => {
-    let isMounted = true;
-    Promise.all([fetchBrandsSection(), fetchBrands()])
-      .then(([sectionData, brandsData]) => {
-        if (isMounted) {
-          if (sectionData) setSection(sectionData);
-          if (brandsData && brandsData.length > 0) setBrands(brandsData);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  const row1Brands = brands.filter((b) => b.row === 1);
-  const row2Brands = brands.filter((b) => b.row === 2);
+  const row1Brands = data.brands.filter((b) => b.row === 1);
+  const row2Brands = data.brands.filter((b) => b.row === 2);
 
   return {
-    section,
-    brands,
-    row1Brands: row1Brands.length > 0 ? row1Brands : brands.slice(0, Math.ceil(brands.length / 2)),
-    row2Brands: row2Brands.length > 0 ? row2Brands : brands.slice(Math.ceil(brands.length / 2)),
+    section: data.section,
+    brands: data.brands,
+    row1Brands: row1Brands.length > 0 ? row1Brands : data.brands.slice(0, Math.ceil(data.brands.length / 2)),
+    row2Brands: row2Brands.length > 0 ? row2Brands : data.brands.slice(Math.ceil(data.brands.length / 2)),
     isLoading,
   };
 }
@@ -2853,60 +2712,21 @@ export async function fetchProductBySlug(slug: string): Promise<ProductItem | nu
 }
 
 export function useProducts() {
-  const [products, setProducts] = useState<ProductItem[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchProducts()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setProducts(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: products, isLoading, error } = useStrapiQuery<ProductItem[]>(
+    'products_list',
+    fetchProducts,
+    []
+  );
   return { products, isLoading, error };
 }
 
 export function useProduct(slug: string) {
-  const [product, setProduct] = useState<ProductItem | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchProductBySlug(slug)
-      .then((data) => {
-        if (isMounted) {
-          if (data) setProduct(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [slug]);
-
+  const { data: product, isLoading, error } = useStrapiQuery<ProductItem | null>(
+    `product_detail_${slug}`,
+    () => fetchProductBySlug(slug),
+    null,
+    { enabled: Boolean(slug) }
+  );
   return { product, isLoading, error };
 }
 
@@ -3360,31 +3180,11 @@ export async function fetchAboutPage(): Promise<AboutPageData> {
 }
 
 export function useAboutPage() {
-  const [aboutPage, setAboutPage] = useState<AboutPageData>(DEFAULT_ABOUT_PAGE_DATA);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchAboutPage()
-      .then((data) => {
-        if (isMounted) {
-          if (data) setAboutPage(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: aboutPage, isLoading, error } = useStrapiQuery<AboutPageData>(
+    'about_page',
+    fetchAboutPage,
+    DEFAULT_ABOUT_PAGE_DATA
+  );
   return { aboutPage, isLoading, error };
 }
 
@@ -3427,31 +3227,11 @@ export async function fetchTeamMembers(): Promise<TeamMemberItem[]> {
 }
 
 export function useTeamMembers() {
-  const [teamMembers, setTeamMembers] = useState<TeamMemberItem[]>(DEFAULT_TEAM_MEMBERS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchTeamMembers()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setTeamMembers(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: teamMembers, isLoading, error } = useStrapiQuery<TeamMemberItem[]>(
+    'team_members',
+    fetchTeamMembers,
+    DEFAULT_TEAM_MEMBERS
+  );
   return { teamMembers, isLoading, error };
 }
 
@@ -3477,31 +3257,11 @@ export async function fetchAboutFaqs(): Promise<AboutFaqItem[]> {
 }
 
 export function useAboutFaqs() {
-  const [faqs, setFaqs] = useState<AboutFaqItem[]>(DEFAULT_ABOUT_FAQS);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchAboutFaqs()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setFaqs(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: faqs, isLoading, error } = useStrapiQuery<AboutFaqItem[]>(
+    'about_faqs',
+    fetchAboutFaqs,
+    DEFAULT_ABOUT_FAQS
+  );
   return { faqs, isLoading, error };
 }
 
@@ -3875,31 +3635,11 @@ export async function fetchHomePage(): Promise<HomePageData> {
 }
 
 export function useHomePage() {
-  const [homePage, setHomePage] = useState<HomePageData>(DEFAULT_HOME_PAGE_DATA);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchHomePage()
-      .then((data) => {
-        if (isMounted) {
-          if (data) setHomePage(data);
-          setIsLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (isMounted) {
-          setError(err);
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: homePage, isLoading, error } = useStrapiQuery<HomePageData>(
+    'home_page',
+    fetchHomePage,
+    DEFAULT_HOME_PAGE_DATA
+  );
   return { homePage, isLoading, error };
 }
 
@@ -4065,29 +3805,11 @@ export async function fetchProductsPage(): Promise<ProductsPageConfig> {
 }
 
 export function useProductsPage() {
-  const [productsPage, setProductsPage] = useState<ProductsPageConfig>(DEFAULT_PRODUCTS_PAGE);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchProductsPage()
-      .then((data) => {
-        if (isMounted) {
-          if (data) setProductsPage(data);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: productsPage, isLoading } = useStrapiQuery<ProductsPageConfig>(
+    'products_page',
+    fetchProductsPage,
+    DEFAULT_PRODUCTS_PAGE
+  );
   return { productsPage, isLoading };
 }
 
@@ -4256,52 +3978,20 @@ export async function fetchCareers(): Promise<CareerRole[]> {
 }
 
 export function useCareerPage() {
-  const [careerPage, setCareerPage] = useState<CareerPageConfig>(DEFAULT_CAREER_PAGE);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchCareerPage()
-      .then((data) => {
-        if (isMounted) {
-          if (data) setCareerPage(data);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: careerPage, isLoading } = useStrapiQuery<CareerPageConfig>(
+    'career_page',
+    fetchCareerPage,
+    DEFAULT_CAREER_PAGE
+  );
   return { careerPage, isLoading };
 }
 
 export function useCareers() {
-  const [careers, setCareers] = useState<CareerRole[]>(DEFAULT_CAREERS);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    fetchCareers()
-      .then((data) => {
-        if (isMounted) {
-          if (data && data.length > 0) setCareers(data);
-          setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        if (isMounted) setIsLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
+  const { data: careers, isLoading } = useStrapiQuery<CareerRole[]>(
+    'careers_list',
+    fetchCareers,
+    DEFAULT_CAREERS
+  );
   return { careers, isLoading };
 }
 export interface SchoolErpPageConfig {
@@ -4478,23 +4168,11 @@ export async function fetchSchoolErpPage(): Promise<SchoolErpPageConfig> {
 }
 
 export function useSchoolErpPage() {
-  const [config, setConfig] = useState<SchoolErpPageConfig>(DEFAULT_SCHOOL_ERP_PAGE);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-    fetchSchoolErpPage().then(data => {
-      if (isMounted) {
-        setConfig(data);
-        setIsLoading(false);
-      }
-    }).catch(() => {
-      if (isMounted) setIsLoading(false);
-    });
-    return () => { isMounted = false; };
-  }, [typeof window !== 'undefined' ? window.location.search : '']);
-
+  const { data: config, isLoading } = useStrapiQuery<SchoolErpPageConfig>(
+    'school_erp_page',
+    fetchSchoolErpPage,
+    DEFAULT_SCHOOL_ERP_PAGE
+  );
   return { config, isLoading };
 }
 
@@ -4883,24 +4561,45 @@ export async function fetchOmniChatPage(): Promise<OmniChatPageConfig> {
 }
 
 export function useOmniChatPage() {
-  const [config, setConfig] = useState<OmniChatPageConfig>(DEFAULT_OMNICHAT_PAGE);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true;
-    setIsLoading(true);
-    fetchOmniChatPage().then(data => {
-      if (isMounted) {
-        setConfig(data);
-        setIsLoading(false);
-      }
-    }).catch(() => {
-      if (isMounted) setIsLoading(false);
-    });
-    return () => { isMounted = false; };
-  }, [typeof window !== 'undefined' ? window.location.search : '']);
-
+  const { data: config, isLoading } = useStrapiQuery<OmniChatPageConfig>(
+    'omnichat_page',
+    fetchOmniChatPage,
+    DEFAULT_OMNICHAT_PAGE
+  );
   return { config, isLoading };
 }
+
+/**
+ * Global prefetching function that pre-warms the SWR cache in memory and localStorage.
+ * Runs non-blockingly on app startup so navigating to ANY page (About, Products, Services, Blog, etc.)
+ * renders instantly in 0ms without delay or layout flash.
+ */
+export async function prefetchAllStrapiData(): Promise<void> {
+  try {
+    await Promise.allSettled([
+      fetchWithCache('global_config', fetchGlobalConfig, DEFAULT_GLOBAL_CONFIG),
+      fetchWithCache('home_page', fetchHomePage, DEFAULT_HOME_PAGE_DATA),
+      fetchWithCache('about_page', fetchAboutPage, DEFAULT_ABOUT_PAGE_DATA),
+      fetchWithCache('team_members', fetchTeamMembers, DEFAULT_TEAM_MEMBERS),
+      fetchWithCache('about_faqs', fetchAboutFaqs, DEFAULT_ABOUT_FAQS),
+      fetchWithCache('all_brands_data', fetchAllBrandsData, { section: DEFAULT_BRANDS_SECTION, brands: DEFAULT_BRANDS_LIST }),
+      fetchWithCache('testimonials', fetchTestimonials, DEFAULT_TESTIMONIALS_LIST),
+      fetchWithCache('services_page_content', fetchServicesPageContent, DEFAULT_SERVICES_PAGE_CONTENT),
+      fetchWithCache('services_list', fetchServicesList, DEFAULT_SERVICES_LIST),
+      fetchWithCache('service_flip_cards', fetchServiceFlipCards, DEFAULT_SERVICE_FLIP_CARDS),
+      fetchWithCache('products_page', fetchProductsPage, DEFAULT_PRODUCTS_PAGE),
+      fetchWithCache('products_list', fetchProducts, []),
+      fetchWithCache('school_erp_page', fetchSchoolErpPage, DEFAULT_SCHOOL_ERP_PAGE),
+      fetchWithCache('omnichat_page', fetchOmniChatPage, DEFAULT_OMNICHAT_PAGE),
+      fetchWithCache('all_blog_data', fetchAllBlogData, { pageContent: DEFAULT_BLOG_PAGE_CONTENT, categories: DEFAULT_BLOG_CATEGORIES, posts: DEFAULT_BLOG_POSTS }),
+      fetchWithCache('career_page', fetchCareerPage, DEFAULT_CAREER_PAGE),
+      fetchWithCache('careers_list', fetchCareers, DEFAULT_CAREERS),
+      fetchWithCache('contact_page_content', fetchContactPageContent, DEFAULT_CONTACT_PAGE_CONTENT),
+    ]);
+  } catch (err) {
+    console.warn('[Strapi] Background prefetch encountered an error (continuing with cached/default data):', err);
+  }
+}
+
 
 

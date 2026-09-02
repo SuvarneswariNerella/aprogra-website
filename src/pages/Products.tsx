@@ -214,7 +214,7 @@ const SCHOOL_FEATURES = [
     desc: "Built-in enterprise AI for syllabus-aligned lesson planning, automated quiz generation, and fast semantic search.",
     kpi: "Autonomous LLM · Instant Lesson Planner",
     tag: "Next-Gen AI",
-    image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "Syllabus-aligned lesson plan & pedagogical worksheet generator",
       "Automated quiz & rubric creator with Bloom's taxonomy mapping",
@@ -272,7 +272,7 @@ const OMNICHAT_FEATURES = [
     desc: "Autonomous conversational AI trained on your custom knowledge base, delivering instant 24/7 answers.",
     kpi: "Autonomous LLM · 24/7 Instant Answers",
     tag: "Conversational AI",
-    image: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
     highlights: [
       "RAG architecture trained on PDFs, websites & product catalogs",
       "Smart sentiment analysis with graceful human-agent escalation",
